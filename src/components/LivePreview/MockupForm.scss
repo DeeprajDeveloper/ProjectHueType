@@ -1,0 +1,77 @@
+.mockup-form {
+  padding: 32px 24px;
+  background: var(--preview-secondary);
+}
+
+.mockup-form__label {
+  font-family: var(--preview-font-heading), sans-serif;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--preview-text);
+  opacity: 0.6;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 16px;
+}
+
+.mockup-form__fields {
+  max-width: 360px;
+}
+
+.mockup-form__field {
+  margin-bottom: 16px;
+}
+
+.mockup-form__field-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--preview-text);
+  margin-bottom: 6px;
+}
+
+.mockup-form__input {
+  width: 100%;
+  padding: 10px 14px;
+  font-family: var(--preview-font-body), sans-serif;
+  font-size: 0.875rem;
+  color: var(--preview-text);
+  background: var(--preview-background);
+  border: 1px solid var(--preview-primary);
+  border-radius: 4px;
+  opacity: 0.9;
+
+  &::placeholder {
+    color: var(--preview-text);
+    opacity: 0.4;
+  }
+
+  &:focus {
+    outline: 2px solid var(--preview-accent);
+    outline-offset: 1px;
+  }
+}
+
+.mockup-form__helper {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.75rem;
+  color: var(--preview-text);
+  opacity: 0.55;
+}
+
+.mockup-form__submit {
+  padding: 10px 24px;
+  font-family: var(--preview-font-body), sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--preview-background);
+  background: var(--preview-primary);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.9;
+  }
+}

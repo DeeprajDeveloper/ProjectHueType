@@ -1,0 +1,37 @@
+.mockup-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 24px;
+  background: var(--preview-primary);
+  color: var(--preview-background);
+}
+
+.mockup-footer__brand {
+  font-family: var(--preview-font-heading), sans-serif;
+  font-weight: var(--preview-font-heading-weight);
+  font-size: 0.9375rem;
+}
+
+.mockup-footer__links {
+  display: flex;
+  gap: 16px;
+
+  a {
+    font-size: 0.8125rem;
+    color: var(--preview-background);
+    opacity: 0.75;
+    text-decoration: none;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+
+.mockup-footer__copy {
+  font-size: 0.75rem;
+  opacity: 0.6;
+}

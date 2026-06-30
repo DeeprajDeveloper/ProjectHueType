@@ -1,0 +1,96 @@
+@use '../../styles/mixins' as *;
+
+.combo-card {
+  @include card-base;
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  cursor: pointer;
+  transition: box-shadow var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
+
+  &:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+
+  &--selected {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent);
+  }
+}
+
+.combo-card__swatches {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  width: 24px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.combo-card__swatch {
+  flex: 1;
+  min-height: 12px;
+}
+
+.combo-card__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.combo-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.combo-card__name {
+  font-size: var(--text-body);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.combo-card__save {
+  @include button-reset;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-tertiary);
+  transition: color var(--transition-fast);
+
+  &:hover {
+    color: var(--danger);
+  }
+
+  &--saved {
+    color: var(--danger);
+  }
+}
+
+.combo-card__fonts {
+  margin-top: var(--space-1);
+  font-size: var(--text-caption);
+  color: var(--text-secondary);
+}
+
+.combo-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1);
+  margin-top: var(--space-2);
+}
+
+.combo-card__tag {
+  padding: 2px var(--space-2);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: var(--surface-sunken);
+  border-radius: var(--radius-full);
+}

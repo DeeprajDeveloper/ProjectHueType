@@ -1,0 +1,40 @@
+.contrast-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  font-size: var(--text-caption);
+  font-weight: 600;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+
+  &--pass {
+    color: var(--success);
+    background: var(--success-subtle);
+  }
+
+  &--warn {
+    color: var(--warning);
+    background: var(--warning-subtle);
+  }
+
+  &--fail {
+    color: var(--danger);
+    background: var(--danger-subtle);
+  }
+
+  &--compact {
+    padding: 1px 6px;
+    font-size: 11px;
+  }
+}
+
+.contrast-badge__icon {
+  display: inline-flex;
+  align-items: center;
+}
+
+.contrast-badge__ratio {
+  font-weight: 400;
+  opacity: 0.8;
+}

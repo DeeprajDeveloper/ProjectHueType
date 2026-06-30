@@ -1,0 +1,37 @@
+@use '../../styles/mixins' as *;
+
+.segment-control {
+  display: flex;
+  background: var(--surface-raised);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 2px;
+  gap: 2px;
+}
+
+.segment-control__btn {
+  @include button-reset;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  flex: 1;
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--text-caption);
+  font-weight: 500;
+  color: var(--text-secondary);
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+  transition: background var(--transition-fast), color var(--transition-fast);
+  border: 1px solid transparent;
+
+  &--active {
+    background: var(--accent);
+    color: var(--accent-contrast);
+  }
+
+  &:hover:not(&--active) {
+    color: var(--text-primary);
+    border-color: var(--accent);
+  }
+}

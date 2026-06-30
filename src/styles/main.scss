@@ -1,0 +1,11 @@
+@use 'variables';
+@use 'reset';
+@use 'buttons';
+
+body {
+  overflow-x: hidden;
+}
+
+#root {
+  min-height: 100vh;
+}

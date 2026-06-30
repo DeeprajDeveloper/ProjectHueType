@@ -1,0 +1,115 @@
+.mockup-navbar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  background: var(--preview-primary);
+  color: var(--preview-background);
+}
+
+.mockup-navbar__logo {
+  font-family: var(--preview-font-heading), sans-serif;
+  font-weight: var(--preview-font-heading-weight);
+  font-size: 1.125rem;
+}
+
+.mockup-navbar__links {
+  display: flex;
+  gap: 24px;
+}
+
+.mockup-navbar__link {
+  font-size: 0.875rem;
+  color: var(--preview-background);
+  opacity: 0.85;
+  text-decoration: none;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.mockup-navbar__cta {
+  padding: 8px 16px;
+  font-family: var(--preview-font-body), sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--preview-primary);
+  background: var(--preview-background);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.mockup-navbar__hamburger {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 32px;
+  height: 32px;
+  padding: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  span {
+    display: block;
+    height: 2px;
+    background: var(--preview-background);
+    border-radius: 1px;
+  }
+}
+
+.mockup-navbar__overlay {
+  position: absolute;
+  inset: 0;
+  top: 100%;
+  left: -100vw;
+  right: -100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 20;
+}
+
+.mockup-navbar__drawer {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 30;
+  width: 220px;
+  padding: 16px;
+  background: var(--preview-background);
+  border-radius: 0 0 4px 4px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.mockup-navbar__drawer-link {
+  display: block;
+  padding: 10px 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--preview-text);
+  text-decoration: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--preview-text) 10%, transparent);
+
+  &:last-of-type {
+    border-bottom: none;
+  }
+}
+
+.mockup-navbar__drawer-cta {
+  display: block;
+  width: 100%;
+  margin-top: 12px;
+  padding: 10px 16px;
+  font-family: var(--preview-font-body), sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--preview-background);
+  background: var(--preview-accent);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}

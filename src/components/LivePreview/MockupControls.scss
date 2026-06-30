@@ -1,0 +1,93 @@
+.mockup-controls {
+  padding: 32px 24px;
+  background: var(--preview-background);
+}
+
+.mockup-controls__label {
+  font-family: var(--preview-font-heading), sans-serif;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--preview-text);
+  opacity: 0.6;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 16px;
+}
+
+.mockup-controls__group {
+  margin-bottom: 20px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.mockup-controls__group-label {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--preview-text);
+  margin-bottom: 8px;
+}
+
+.mockup-controls__toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.mockup-controls__toggle-label {
+  font-size: 0.875rem;
+  color: var(--preview-text);
+}
+
+.mockup-controls__toggle {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  padding: 0;
+  background: color-mix(in srgb, var(--preview-text) 20%, var(--preview-secondary));
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 150ms ease;
+
+  &--on {
+    background: var(--preview-accent);
+  }
+}
+
+.mockup-controls__toggle-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  background: var(--preview-background);
+  border-radius: 4px;
+  transition: transform 150ms ease;
+
+  .mockup-controls__toggle--on & {
+    transform: translateX(20px);
+  }
+}
+
+.mockup-controls__checkbox-row,
+.mockup-controls__radio-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  font-size: 0.875rem;
+  color: var(--preview-text);
+  cursor: pointer;
+
+  input[type='checkbox'],
+  input[type='radio'] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--preview-accent);
+    cursor: pointer;
+  }
+}

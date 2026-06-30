@@ -1,0 +1,23 @@
+@use '../../styles/mixins' as *;
+
+.icon-button {
+  @include button-reset;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  font-size: 1.125rem;
+  color: var(--text-secondary);
+  transition: background var(--transition-fast), color var(--transition-fast);
+
+  &:hover {
+    background: var(--surface-sunken);
+    color: var(--text-primary);
+  }
+
+  &--active {
+    color: var(--danger);
+  }
+}

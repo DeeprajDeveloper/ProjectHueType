@@ -1,0 +1,219 @@
+import { useState } from 'react';
+import { COMBOS } from '../../data/combos';
+import {
+  useComboState,
+  useComboFilter,
+  useSavedCombos,
+  useTheme,
+  useToast,
+  useKeyboardShuffle,
+  useUiPreferences,
+} from '../../hooks';
+import { SidebarSimpleIcon } from '@phosphor-icons/react';
+import Icon from '../Icon/Icon';
+import { ICON_SIZE } from '../Icon/iconConfig';
+import './AppShell.scss';
+import PresetsPanel from '../PresetsPanel/PresetsPanel';
+import LivePreview from '../LivePreview/LivePreview';
+import CustomizePanel from '../CustomizePanel/CustomizePanel';
+import LockRandomizeControls from '../LockRandomizeControls/LockRandomizeControls';
+import ExportModal from '../ExportModal/ExportModal';
+import Toast from '../Toast/Toast';
+import SidebarRail from '../SidebarRail/SidebarRail';
+import SidebarToolbar from '../SidebarToolbar/SidebarToolbar';
+
+function AppShell() {
+  const [activeView, setActiveView] = useState('workspace');
+  const [exportOpen, setExportOpen] = useState(false);
+  const [previewMode, setPreviewMode] = useState('desktop');
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [originalCombo, setOriginalCombo] = useState(COMBOS[0]);
+
+  const { theme, toggleTheme } = useTheme();
+  const { toast, showToast } = useToast();
+  const { saved, isSaved, toggleSave } = useSavedCombos();
+  const { showColorScales, toggleColorScales } = useUiPreferences();
+
+  const {
+    combo,
+    locks,
+    fontsLoading,
+    contrastPairs,
+    contrastStatus,
+    selectCombo,
+    shuffle,
+    toggleLock,
+    setColor,
+    setFont,
+    resetRole,
+  } = useComboState(COMBOS[0]);
+
+  const filter = useComboFilter(activeView === 'saved' ? saved : COMBOS);
+
+  useKeyboardShuffle(() => {
+    shuffle();
+    showToast('Shuffled unlocked roles');
+  });
+
+  const handleSelectCombo = (selected) => {
+    setOriginalCombo(structuredClone(selected));
+    selectCombo(selected);
+  };
+
+  const handleShuffle = () => {
+    shuffle();
+    showToast('Shuffled unlocked roles');
+  };
+
+  const handleSave = () => {
+    const added = toggleSave(combo);
+    showToast(added ? 'Combo saved' : 'Combo removed from saved');
+  };
+
+  const handleShare = async () => {
+    const url = window.location.href;
+    try {
+      await navigator.clipboard.writeText(url);
+      showToast('Share link copied to clipboard');
+    } catch {
+      showToast('Could not copy link');
+    }
+  };
+
+  const handleExportCopy = () => {
+    showToast('Copied to clipboard');
+  };
+
+  return (
+    <div className="app-shell">
+      <a href="#main-content" className="app-shell__skip">
+        Skip to content
+      </a>
+
+      <div className={`app-shell__main ${!sidebarOpen ? 'app-shell__main--collapsed' : ''}`}>
+        <aside className={`app-shell__sidebar ${!sidebarOpen ? 'app-shell__sidebar--collapsed' : ''}`}>
+          <div className="app-shell__sidebar-brand">
+            <div className="app-shell__brand">
+              <span className="app-shell__logo" aria-hidden="true">H</span>
+              <span className="app-shell__brand-name">HueType</span>
+            </div>
+            {sidebarOpen && (
+              <button
+                type="button"
+                className="app-shell__sidebar-toggle"
+                aria-label="Collapse sidebar"
+                onClick={() => setSidebarOpen(false)}
+              >
+                <Icon icon={SidebarSimpleIcon} size={ICON_SIZE} />
+              </button>
+            )}
+          </div>
+
+          <SidebarRail
+            onExpand={() => setSidebarOpen(true)}
+            activeView={activeView}
+            onViewChange={setActiveView}
+            onShuffle={handleShuffle}
+            onToggleTheme={toggleTheme}
+            onShare={handleShare}
+            onSave={handleSave}
+            isSaved={isSaved(combo.id)}
+            onExport={() => setExportOpen(true)}
+            theme={theme}
+            hasActiveFilters={filter.hasActiveFilters}
+          />
+
+          <div className="app-shell__sidebar-panel">
+            <nav className="app-shell__sidebar-nav" aria-label="Library views">
+              <button
+                type="button"
+                className={`app-shell__sidebar-nav-btn ${activeView === 'workspace' ? 'app-shell__sidebar-nav-btn--active' : ''}`}
+                onClick={() => setActiveView('workspace')}
+              >
+                My Workspace
+              </button>
+              <button
+                type="button"
+                className={`app-shell__sidebar-nav-btn ${activeView === 'saved' ? 'app-shell__sidebar-nav-btn--active' : ''}`}
+                onClick={() => setActiveView('saved')}
+              >
+                My Presets {saved.length > 0 && `(${saved.length})`}
+              </button>
+            </nav>
+
+            <SidebarToolbar
+              theme={theme}
+              onToggleTheme={toggleTheme}
+              onShare={handleShare}
+              onSave={handleSave}
+              isSaved={isSaved(combo.id)}
+              onExport={() => setExportOpen(true)}
+            />
+
+            <PresetsPanel
+              search={filter.search}
+              onSearchChange={filter.setSearch}
+              moodFilter={filter.moodFilter}
+              industryFilter={filter.industryFilter}
+              modeFilter={filter.modeFilter}
+              onModeFilterChange={filter.setModeFilter}
+              onToggleMood={filter.toggleMood}
+              onToggleIndustry={filter.toggleIndustry}
+              onClearMood={filter.clearMoodFilter}
+              onClearIndustry={filter.clearIndustryFilter}
+              onClearFilters={filter.clearFilters}
+              hasActiveFilters={filter.hasActiveFilters}
+              isSavedView={activeView === 'saved'}
+              combos={filter.filtered}
+              selectedId={combo.id}
+              savedIds={saved.map((s) => s.id)}
+              onSelect={handleSelectCombo}
+              onSave={toggleSave}
+              onClearFiltersLibrary={filter.clearFilters}
+            />
+            <CustomizePanel
+              combo={combo}
+              originalCombo={originalCombo}
+              locks={locks}
+              showColorScales={showColorScales}
+              onToggleColorScales={toggleColorScales}
+              onColorChange={setColor}
+              onFontChange={setFont}
+              onToggleLock={toggleLock}
+              onResetRole={resetRole}
+              onCopyColor={(hex) => showToast(`Copied ${hex}`)}
+            />
+            <LockRandomizeControls locks={locks} onShuffle={handleShuffle} />
+
+            <p className="app-shell__sidebar-hint">
+              Press <kbd>Space</kbd> to shuffle unlocked roles
+            </p>
+          </div>
+        </aside>
+
+        <main id="main-content" className="app-shell__content">
+          <LivePreview
+            combo={combo}
+            contrastPairs={contrastPairs}
+            contrastStatus={contrastStatus}
+            fontsLoading={fontsLoading}
+            previewMode={previewMode}
+            onPreviewModeChange={setPreviewMode}
+          />
+        </main>
+      </div>
+
+      {exportOpen && (
+        <ExportModal
+          combo={combo}
+          onClose={() => setExportOpen(false)}
+          onCopy={handleExportCopy}
+        />
+      )}
+
+      {toast && <Toast message={toast.message} />}
+    </div>
+  );
+}
+
+export default AppShell;

@@ -1,0 +1,77 @@
+@use '../../styles/mixins' as *;
+
+.filter-bar {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--border-subtle);
+
+  &--embedded {
+    padding-top: 0;
+    border-bottom: none;
+  }
+}
+
+.filter-bar__search-label {
+  display: block;
+  margin-bottom: var(--space-3);
+}
+
+.filter-bar__search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.filter-bar__search-icon {
+  position: absolute;
+  left: var(--space-3);
+  color: var(--text-tertiary);
+  pointer-events: none;
+}
+
+.filter-bar__search {
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  padding-left: calc(var(--space-3) + 16px + var(--space-2));
+  font-size: var(--text-body);
+  background: var(--surface-sunken);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  transition: border-color var(--transition-fast);
+
+  &::placeholder {
+    color: var(--text-tertiary);
+  }
+
+  &:focus {
+    border-color: var(--accent);
+    outline: none;
+  }
+}
+
+.filter-bar__section {
+  margin-bottom: var(--space-3);
+}
+
+.filter-bar__label {
+  display: block;
+  margin-bottom: var(--space-2);
+  font-size: var(--text-micro);
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.filter-bar__clear {
+  @include button-reset;
+  font-size: var(--text-caption);
+  font-weight: 500;
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+
+  &:hover {
+    color: var(--accent-hover);
+  }
+}

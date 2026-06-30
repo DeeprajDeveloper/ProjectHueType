@@ -1,0 +1,114 @@
+@use '../../styles/mixins' as *;
+
+.multi-select {
+  margin-bottom: var(--space-3);
+}
+
+.multi-select__label {
+  display: block;
+  margin-bottom: var(--space-1);
+  font-size: var(--text-micro);
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.multi-select__wrapper {
+  position: relative;
+}
+
+.multi-select__trigger {
+  @include button-reset;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-body);
+  color: var(--text-primary);
+  background: var(--surface-sunken);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  transition: border-color var(--transition-fast);
+
+  &:hover {
+    border-color: var(--border-strong);
+  }
+
+  &--open {
+    border-color: var(--accent);
+  }
+}
+
+.multi-select__summary {
+  @include truncate;
+  text-align: left;
+}
+
+.multi-select__arrow {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  margin-left: var(--space-2);
+  color: var(--text-tertiary);
+  transition: transform var(--transition-fast);
+
+  &--open {
+    transform: rotate(180deg);
+  }
+}
+
+.multi-select__panel {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 50;
+  max-height: 220px;
+  overflow-y: auto;
+  background: var(--surface-raised);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+
+  @include scrollbar-thin;
+}
+
+.multi-select__clear {
+  @include button-reset;
+  display: block;
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-caption);
+  font-weight: 500;
+  color: var(--accent);
+  text-align: left;
+  border-bottom: 1px solid var(--border-subtle);
+
+  &:hover {
+    background: var(--surface-sunken);
+  }
+}
+
+.multi-select__option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-caption);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+
+  &:hover {
+    background: var(--surface-sunken);
+  }
+
+  input[type='checkbox'] {
+    width: 14px;
+    height: 14px;
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+}
