@@ -30,6 +30,7 @@ export const INDUSTRIES = [
   'Events',
   'B2B',
   'Tech',
+  'AI',
 ];
 
 export const COLOR_FAMILIES = [
@@ -331,6 +332,94 @@ export const COMBOS = [
     whyItWorks:
       'Soft charcoal base with vivid blue accent — easier on the eyes and more premium than pure black, intentional rather than harsh.',
   },
+  {
+    id: 'linear-dashboard',
+    name: 'Linear Dashboard',
+    inspiredBy: 'Linear',
+    mood: ['Dark', 'Minimal'],
+    industry: ['SaaS', 'Tech'],
+    colorFamily: 'Dark',
+    mode: 'dark',
+    colors: {
+      primary: '#5E6AD2',
+      secondary: '#18181B',
+      accent: '#7C86FF',
+      background: '#0A0A0B',
+      text: '#EDEDEF',
+    },
+    fonts: {
+      heading: { family: 'Inter', weight: '600', googleId: 'Inter' },
+      body: { family: 'Inter', weight: '400', googleId: 'Inter' },
+    },
+    whyItWorks:
+      'Neutral dark base with restrained desaturated blue — surfaces derived as tints, not flat gray. Humanist sans holds up at low contrast in long dashboard sessions.',
+  },
+  {
+    id: 'stripe-fintech-dashboard',
+    name: 'Stripe Fintech Dashboard',
+    inspiredBy: 'Stripe dashboard pattern',
+    mood: ['Trustworthy', 'Professional'],
+    industry: ['Fintech'],
+    colorFamily: 'Navy',
+    mode: 'light',
+    colors: {
+      primary: '#635BFF',
+      secondary: '#F6F9FC',
+      accent: '#0A2540',
+      background: '#FFFFFF',
+      text: '#0A2540',
+    },
+    fonts: {
+      heading: { family: 'Sora', weight: '400', googleId: 'Sora' },
+      body: { family: 'Inter', weight: '400', googleId: 'Inter' },
+    },
+    whyItWorks:
+      'Electric indigo on navy ink with a geometric sans — editorial premium feel for fintech marketing; tabular-friendly body sans for numeric dashboards.',
+  },
+  {
+    id: 'vercel-platform',
+    name: 'Vercel Platform',
+    inspiredBy: 'Vercel',
+    mood: ['Minimal', 'Corporate'],
+    industry: ['Tech', 'SaaS'],
+    colorFamily: 'Neutral',
+    mode: 'light',
+    colors: {
+      primary: '#000000',
+      secondary: '#F5F5F5',
+      accent: '#0070F3',
+      background: '#FAFAFA',
+      text: '#171717',
+    },
+    fonts: {
+      heading: { family: 'Space Grotesk', weight: '600', googleId: 'Space+Grotesk' },
+      body: { family: 'Inter', weight: '400', googleId: 'Inter' },
+    },
+    whyItWorks:
+      'Stark black on near-white with personality concentrated in one accent moment — a deliberately reduced palette that signals developer-first restraint.',
+  },
+  {
+    id: 'claude-warm-ai',
+    name: 'Claude Warm AI',
+    inspiredBy: 'Anthropic Claude',
+    mood: ['Warm', 'Elegant'],
+    industry: ['AI', 'Tech'],
+    colorFamily: 'Coral',
+    mode: 'light',
+    colors: {
+      primary: '#D97757',
+      secondary: '#F5F0E8',
+      accent: '#1E293B',
+      background: '#FAF7F2',
+      text: '#2D2A26',
+    },
+    fonts: {
+      heading: { family: 'Bitter', weight: '600', googleId: 'Bitter' },
+      body: { family: 'Source Sans 3', weight: '400', googleId: 'Source+Sans+3' },
+    },
+    whyItWorks:
+      'Warm cream and coral break cool-blue AI convention — slab-serif display with humanist sans reads editorial and human, not generic tech.',
+  },
 ];
 
 export const COLOR_ROLES = ['primary', 'secondary', 'accent', 'background', 'text'];
@@ -352,4 +441,5 @@ export const GOOGLE_FONTS = [
   'Quicksand',
   'Plus Jakarta Sans',
   'Space Grotesk',
+  'Bitter',
 ];

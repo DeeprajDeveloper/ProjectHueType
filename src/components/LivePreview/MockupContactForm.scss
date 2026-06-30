@@ -1,0 +1,191 @@
+.mockup-contact {
+  padding: 56px 32px;
+  background: var(--preview-secondary);
+}
+
+.mockup-contact__header {
+  text-align: center;
+  max-width: 480px;
+  margin: 0 auto 36px;
+}
+
+.mockup-contact__title {
+  font-family: var(--preview-font-heading), sans-serif;
+  font-weight: var(--preview-font-heading-weight);
+  font-size: 1.75rem;
+  color: var(--preview-text);
+  margin-bottom: 10px;
+}
+
+.mockup-contact__subtitle {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--preview-text);
+  opacity: 0.75;
+}
+
+.mockup-contact__form {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 32px;
+  background: var(--preview-background);
+  border-radius: 4px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+}
+
+.mockup-contact__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.mockup-contact__field {
+  margin-bottom: 18px;
+}
+
+.mockup-contact__label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--preview-text);
+  margin-bottom: 6px;
+}
+
+.mockup-contact__input,
+.mockup-contact__textarea {
+  width: 100%;
+  padding: 10px 14px;
+  font-family: var(--preview-font-body), sans-serif;
+  font-size: 0.875rem;
+  color: var(--preview-text);
+  background: var(--preview-background);
+  border: 1px solid color-mix(in srgb, var(--preview-primary) 35%, transparent);
+  border-radius: 4px;
+
+  &::placeholder {
+    color: var(--preview-text);
+    opacity: 0.4;
+  }
+
+  &:focus {
+    outline: 2px solid var(--preview-accent);
+    outline-offset: 1px;
+  }
+}
+
+.mockup-contact__textarea {
+  resize: vertical;
+  min-height: 96px;
+}
+
+.mockup-contact__fieldset {
+  margin: 0 0 18px;
+  padding: 0;
+  border: none;
+}
+
+.mockup-contact__radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.mockup-contact__radio,
+.mockup-contact__checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.875rem;
+  color: var(--preview-text);
+  cursor: pointer;
+
+  input {
+    flex-shrink: 0;
+    margin-top: 3px;
+    accent-color: var(--preview-accent);
+  }
+}
+
+.mockup-contact__checkboxes {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.mockup-contact__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.mockup-contact__submit {
+  padding: 12px 28px;
+  font-family: var(--preview-font-body), sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--preview-background);
+  background: var(--preview-accent);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.9;
+  }
+}
+
+.mockup-contact__reset {
+  padding: 12px 28px;
+  font-family: var(--preview-font-body), sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--preview-text);
+  background: transparent;
+  border: 1px solid var(--preview-primary);
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--preview-secondary);
+  }
+}
+
+@container preview-frame (max-width: 768px) {
+  .mockup-contact {
+    padding: 40px 24px;
+  }
+
+  .mockup-contact__form {
+    padding: 24px;
+  }
+}
+
+@container preview-frame (max-width: 480px) {
+  .mockup-contact {
+    padding: 40px 16px;
+  }
+
+  .mockup-contact__title {
+    font-size: 1.375rem;
+  }
+
+  .mockup-contact__form {
+    padding: 20px 16px;
+  }
+
+  .mockup-contact__row {
+    grid-template-columns: 1fr;
+  }
+
+  .mockup-contact__actions {
+    flex-direction: column;
+
+    .mockup-contact__submit,
+    .mockup-contact__reset {
+      width: 100%;
+      text-align: center;
+    }
+  }
+}

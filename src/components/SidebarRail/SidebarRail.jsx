@@ -1,29 +1,33 @@
 import {
-  SidebarSimple,
-  SquaresFour,
-  BookmarkSimple,
-  SlidersHorizontal,
-  Shuffle,
-  Sun,
-  Moon,
-  ShareNetwork,
-  Heart,
-  DownloadSimple,
+  SidebarSimpleIcon,
+  PaletteIcon,
+  BookmarkSimpleIcon,
+  SlidersHorizontalIcon,
+  ShuffleIcon,
+  SunIcon,
+  MoonIcon,
+  ShareNetworkIcon,
+  HeartIcon,
+  ExportIcon,
+  BooksIcon,
 } from '@phosphor-icons/react';
 import Icon from '../Icon/Icon';
 import { ICON_SIZE } from '../Icon/iconConfig';
 import './SidebarRail.scss';
 
-const RAIL_ITEMS = [
-  { id: 'expand', icon: SidebarSimple, label: 'Expand sidebar' },
-  { id: 'workspace', icon: SquaresFour, label: 'Workspace' },
-  { id: 'saved', icon: BookmarkSimple, label: 'Saved combos' },
-  { id: 'customize', icon: SlidersHorizontal, label: 'Customize panel' },
-  { id: 'shuffle', icon: Shuffle, label: 'Shuffle unlocked roles' },
+const WORKSPACE_ITEMS = [
+  { id: 'expand', icon: SidebarSimpleIcon, label: 'Expand sidebar' },
+  { id: 'workspace', icon: PaletteIcon, label: 'Workspace' },
+  { id: 'saved', icon: BookmarkSimpleIcon, label: 'Saved combos' },
+  { id: 'customize', icon: SlidersHorizontalIcon, label: 'Customize panel' },
+  { id: 'shuffle', icon: ShuffleIcon, label: 'Shuffle unlocked roles' },
+];
+
+const APP_ITEMS = [
   { id: 'theme', icon: null, label: 'Toggle theme' },
-  { id: 'share', icon: ShareNetwork, label: 'Share combo' },
-  { id: 'save', icon: Heart, label: 'Save combo' },
-  { id: 'export', icon: DownloadSimple, label: 'Export combo' },
+  { id: 'share', icon: ShareNetworkIcon, label: 'Share combo' },
+  { id: 'save', icon: HeartIcon, label: 'Save combo' },
+  { id: 'export', icon: ExportIcon, label: 'Export combo' },
 ];
 
 function SidebarRail({
@@ -36,6 +40,7 @@ function SidebarRail({
   onSave,
   isSaved,
   onExport,
+  onOpenDesignSystem,
   theme,
   hasActiveFilters,
 }) {
@@ -77,37 +82,57 @@ function SidebarRail({
 
   const renderIcon = (item) => {
     if (item.id === 'theme') {
-      return <Icon icon={theme === 'light' ? Sun : Moon} size={ICON_SIZE} />;
+      return <Icon icon={theme === 'light' ? SunIcon : MoonIcon} size={ICON_SIZE} />;
     }
     if (item.id === 'save') {
-      return <Icon icon={Heart} size={ICON_SIZE} weight={isSaved ? 'fill' : 'regular'} />;
+      return <Icon icon={HeartIcon} size={ICON_SIZE} weight={isSaved ? 'fill' : 'regular'} />;
     }
     return <Icon icon={item.icon} size={ICON_SIZE} />;
   };
 
+  const isActive = (item) => (
+    (item.id === 'workspace' && activeView === 'workspace') ||
+    (item.id === 'saved' && activeView === 'saved') ||
+    (item.id === 'save' && isSaved)
+  );
+
+  const renderButton = (item, group) => (
+    <button
+      key={item.id}
+      type="button"
+      className={`sidebar-rail__btn ${group === 'app' ? 'sidebar-rail__btn--app' : ''} ${isActive(item) ? 'sidebar-rail__btn--active' : ''}`}
+      aria-label={item.label}
+      onClick={() => handleClick(item.id)}
+    >
+      {renderIcon(item)}
+      <span className="sidebar-rail__tooltip" role="tooltip">{item.label}</span>
+      {item.id === 'workspace' && hasActiveFilters && (
+        <span className="sidebar-rail__dot" aria-label="Filters active" />
+      )}
+    </button>
+  );
+
   return (
     <nav className="sidebar-rail" aria-label="Sidebar shortcuts">
-      {RAIL_ITEMS.map((item) => (
+      <div className="sidebar-rail__group">
+        {WORKSPACE_ITEMS.map((item) => renderButton(item, 'workspace'))}
+      </div>
+
+      <div className="sidebar-rail__group sidebar-rail__group--app">
+        {APP_ITEMS.map((item) => renderButton(item, 'app'))}
+      </div>
+
+      <div className="sidebar-rail__footer">
         <button
-          key={item.id}
           type="button"
-          className={`sidebar-rail__btn ${
-            (item.id === 'workspace' && activeView === 'workspace') ||
-            (item.id === 'saved' && activeView === 'saved') ||
-            (item.id === 'save' && isSaved)
-              ? 'sidebar-rail__btn--active'
-              : ''
-          }`}
-          aria-label={item.label}
-          onClick={() => handleClick(item.id)}
+          className="sidebar-rail__btn sidebar-rail__btn--app"
+          aria-label="Design system catalog"
+          onClick={onOpenDesignSystem}
         >
-          {renderIcon(item)}
-          <span className="sidebar-rail__tooltip" role="tooltip">{item.label}</span>
-          {item.id === 'workspace' && hasActiveFilters && (
-            <span className="sidebar-rail__dot" aria-label="Filters active" />
-          )}
+          <Icon icon={BooksIcon} size={ICON_SIZE} />
+          <span className="sidebar-rail__tooltip" role="tooltip">Design system catalog</span>
         </button>
-      ))}
+      </div>
     </nav>
   );
 }

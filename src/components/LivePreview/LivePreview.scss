@@ -1,12 +1,18 @@
 @use '../../styles/mixins' as *;
 
 .live-preview {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  height: 100%;
   padding: var(--space-4) var(--space-5);
   background: var(--surface-base);
-  min-height: 100%;
+  overflow: hidden;
 }
 
 .live-preview__header {
+  flex-shrink: 0;
   margin-bottom: var(--space-4);
   background: var(--surface-raised);
   border: 1px solid var(--border-subtle);
@@ -15,6 +21,7 @@
 }
 
 .live-preview__controls {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -63,8 +70,21 @@
   border-left: 2px solid var(--border-strong);
 }
 
+.live-preview__frame-wrap {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  width: 100%;
+}
+
 .live-preview__frame {
   position: relative;
+  flex-shrink: 0;
+  min-height: 0;
+  height: 100%;
+  max-width: 100%;
   background: var(--preview-background);
   color: var(--preview-text);
   font-family: var(--preview-font-body), sans-serif;
@@ -72,16 +92,30 @@
   border-radius: var(--radius-md);
   border: 1px solid var(--border-subtle);
   box-shadow: var(--shadow-md);
-  overflow: hidden;
-  transition: max-width var(--transition-base);
+  overflow-x: hidden;
+  overflow-y: auto;
+  transform: translateZ(0);
+  container-type: inline-size;
+  container-name: preview-frame;
+  transition:
+    width 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    border-radius 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+
+  @include scrollbar-thin;
 
   &--mobile {
-    max-width: 375px;
-    margin: 0 auto;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
   }
 
   &--loading {
     opacity: 0.7;
+  }
+
+  &--scroll-locked {
+    overflow: hidden;
+    overscroll-behavior: none;
   }
 }
 
@@ -98,6 +132,27 @@
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-sm);
   box-shadow: var(--shadow-sm);
+}
+
+.live-preview__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: min(100%, 240px);
+  height: 100%;
+  padding: var(--space-6);
+  text-align: center;
+  font-family: var(--font-chrome);
+  font-size: var(--text-body);
+  color: var(--preview-text);
+  opacity: 0.65;
+}
+
+.live-preview__empty-hint {
+  margin-top: var(--space-2);
+  font-size: var(--text-caption);
+  opacity: 0.8;
 }
 
 [data-theme='dark'] {

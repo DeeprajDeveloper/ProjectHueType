@@ -1,14 +1,19 @@
 import { useState } from 'react';
 import './MockupNavbar.scss';
 
-function MockupNavbar({ isMobile = false }) {
+function MockupNavbar({ compactNav = false, onOpenAuth }) {
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const handleAuth = (mode) => {
+    setMenuOpen(false);
+    onOpenAuth?.(mode);
+  };
 
   return (
     <nav className="mockup-navbar" aria-label="Preview navigation">
-      <span className="mockup-navbar__logo">Brand</span>
+      <span className="mockup-navbar__logo">Acme Co.</span>
 
-      {isMobile ? (
+      {compactNav ? (
         <>
           <button
             type="button"
@@ -28,10 +33,18 @@ function MockupNavbar({ isMobile = false }) {
                 onClick={() => setMenuOpen(false)}
               />
               <div className="mockup-navbar__drawer">
-                <a href="#preview" className="mockup-navbar__drawer-link" onClick={() => setMenuOpen(false)}>Features</a>
+                <a href="#preview" className="mockup-navbar__drawer-link" onClick={() => setMenuOpen(false)}>Product</a>
                 <a href="#preview" className="mockup-navbar__drawer-link" onClick={() => setMenuOpen(false)}>Pricing</a>
                 <a href="#preview" className="mockup-navbar__drawer-link" onClick={() => setMenuOpen(false)}>About</a>
-                <button type="button" className="mockup-navbar__drawer-cta">Sign up</button>
+                <a href="#preview" className="mockup-navbar__drawer-link" onClick={() => setMenuOpen(false)}>Contact</a>
+                <div className="mockup-navbar__drawer-actions">
+                  <button type="button" className="mockup-navbar__login" onClick={() => handleAuth('login')}>
+                    Log in
+                  </button>
+                  <button type="button" className="mockup-navbar__cta" onClick={() => handleAuth('signup')}>
+                    Sign up
+                  </button>
+                </div>
               </div>
             </>
           )}
@@ -39,11 +52,19 @@ function MockupNavbar({ isMobile = false }) {
       ) : (
         <>
           <div className="mockup-navbar__links">
-            <a href="#preview" className="mockup-navbar__link">Features</a>
+            <a href="#preview" className="mockup-navbar__link">Product</a>
             <a href="#preview" className="mockup-navbar__link">Pricing</a>
             <a href="#preview" className="mockup-navbar__link">About</a>
+            <a href="#preview" className="mockup-navbar__link">Contact</a>
           </div>
-          <button type="button" className="mockup-navbar__cta">Sign up</button>
+          <div className="mockup-navbar__actions">
+            <button type="button" className="mockup-navbar__login" onClick={() => handleAuth('login')}>
+              Log in
+            </button>
+            <button type="button" className="mockup-navbar__cta" onClick={() => handleAuth('signup')}>
+              Sign up
+            </button>
+          </div>
         </>
       )}
     </nav>

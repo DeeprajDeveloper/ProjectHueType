@@ -1,11 +1,56 @@
+import { useEffect, useState } from 'react';
 import { Lock, LockOpen, ArrowCounterClockwise } from '@phosphor-icons/react';
 import { COLOR_ROLES, FONT_ROLES, GOOGLE_FONTS } from '../../data/combos';
+import { normalizeHexColor } from '../../utils/color';
 import Accordion from '../Accordion/Accordion';
 import ColorScaleStrip from '../ColorScaleStrip/ColorScaleStrip';
 import TypographyScale from '../TypographyScale/TypographyScale';
 import Icon from '../Icon/Icon';
 import { ICON_SIZE_SM } from '../Icon/iconConfig';
 import './CustomizePanel.scss';
+
+function HexColorInput({ value, onChange, role }) {
+  const [draft, setDraft] = useState(value);
+
+  useEffect(() => {
+    setDraft(value);
+  }, [value]);
+
+  const commit = (raw) => {
+    const normalized = normalizeHexColor(raw);
+    if (normalized) {
+      onChange(normalized);
+      setDraft(normalized);
+      return true;
+    }
+    return false;
+  };
+
+  return (
+    <input
+      type="text"
+      className="customize-panel__hex-input"
+      value={draft}
+      onChange={(e) => {
+        const next = e.target.value;
+        setDraft(next);
+        commit(next);
+      }}
+      onBlur={() => {
+        if (!commit(draft)) {
+          setDraft(value);
+        }
+      }}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter') {
+          e.currentTarget.blur();
+        }
+      }}
+      aria-label={`${role} hex value`}
+      spellCheck={false}
+    />
+  );
+}
 
 function CustomizePanel({
   combo,
@@ -54,18 +99,10 @@ function CustomizePanel({
                   onChange={(e) => onColorChange(role, e.target.value)}
                   aria-label={`${role} color`}
                 />
-                <input
-                  type="text"
-                  className="customize-panel__hex-input"
+                <HexColorInput
                   value={combo.colors[role]}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
-                      onColorChange(role, val);
-                    }
-                  }}
-                  aria-label={`${role} hex value`}
-                  spellCheck={false}
+                  onChange={(hex) => onColorChange(role, hex)}
+                  role={role}
                 />
                 <button
                   type="button"

@@ -1,0 +1,126 @@
+.mockup-ecommerce {
+  padding: 40px 32px 56px;
+  background: var(--preview-background);
+}
+
+.mockup-ecommerce__header {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.mockup-ecommerce__title {
+  font-family: var(--preview-font-heading), sans-serif;
+  font-weight: var(--preview-font-heading-weight);
+  font-size: 1.75rem;
+  color: var(--preview-text);
+  margin-bottom: 8px;
+}
+
+.mockup-ecommerce__subtitle {
+  font-size: 0.9375rem;
+  color: var(--preview-text);
+  opacity: 0.7;
+}
+
+.mockup-ecommerce__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.mockup-ecommerce__card {
+  display: flex;
+  flex-direction: column;
+  background: var(--preview-secondary);
+  border-radius: 4px;
+  overflow: hidden;
+  transition: transform 150ms ease;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+.mockup-ecommerce__image {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  background: linear-gradient(
+    135deg,
+    var(--preview-primary) 0%,
+    var(--preview-accent) 100%
+  );
+  opacity: 0.85;
+}
+
+.mockup-ecommerce__tag {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 4px 10px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--preview-background);
+  background: var(--preview-accent);
+  border-radius: 4px;
+}
+
+.mockup-ecommerce__body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 20px;
+}
+
+.mockup-ecommerce__name {
+  font-family: var(--preview-font-heading), sans-serif;
+  font-weight: var(--preview-font-heading-weight);
+  font-size: 1.0625rem;
+  color: var(--preview-text);
+  margin-bottom: 8px;
+}
+
+.mockup-ecommerce__price {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--preview-accent);
+  margin-bottom: 16px;
+}
+
+.mockup-ecommerce__cta {
+  margin-top: auto;
+  width: 100%;
+  padding: 10px 16px;
+  font-family: var(--preview-font-body), sans-serif;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--preview-background);
+  background: var(--preview-primary);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: opacity 150ms ease;
+
+  &:hover {
+    opacity: 0.9;
+  }
+}
+
+@container preview-frame (max-width: 768px) {
+  .mockup-ecommerce__grid {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: none;
+  }
+}
+
+@container preview-frame (max-width: 480px) {
+  .mockup-ecommerce__grid {
+    grid-template-columns: 1fr;
+    max-width: 320px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}

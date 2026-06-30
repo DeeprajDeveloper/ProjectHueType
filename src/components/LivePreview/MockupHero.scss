@@ -1,30 +1,52 @@
 .mockup-hero {
-  padding: 48px 32px;
+  padding: 72px 32px 64px;
   text-align: center;
   background: var(--preview-background);
+}
+
+.mockup-hero__eyebrow {
+  display: inline-block;
+  margin-bottom: 16px;
+  padding: 4px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--preview-accent);
+  background: var(--preview-secondary);
+  border-radius: 999px;
 }
 
 .mockup-hero__heading {
   font-family: var(--preview-font-heading), sans-serif;
   font-weight: var(--preview-font-heading-weight);
-  font-size: 2.25rem;
-  line-height: 1.2;
+  font-size: 2.75rem;
+  line-height: 1.15;
   color: var(--preview-text);
-  margin-bottom: 16px;
+  max-width: 640px;
+  margin: 0 auto 20px;
 }
 
 .mockup-hero__subtext {
-  font-size: 1rem;
-  line-height: 1.6;
+  font-size: 1.0625rem;
+  line-height: 1.65;
   color: var(--preview-text);
   opacity: 0.75;
-  max-width: 480px;
-  margin: 0 auto 24px;
+  max-width: 520px;
+  margin: 0 auto 32px;
+}
+
+.mockup-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
 }
 
 .mockup-hero__cta {
   display: inline-flex;
-  padding: 12px 28px;
+  padding: 14px 32px;
   font-family: var(--preview-font-body), sans-serif;
   font-weight: 600;
   font-size: 0.9375rem;
@@ -37,5 +59,58 @@
 
   &:hover {
     opacity: 0.9;
+  }
+}
+
+.mockup-hero__cta-secondary {
+  display: inline-flex;
+  padding: 14px 32px;
+  font-family: var(--preview-font-body), sans-serif;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: var(--preview-text);
+  background: transparent;
+  border: 1px solid var(--preview-primary);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 150ms ease;
+
+  &:hover {
+    background: var(--preview-secondary);
+  }
+}
+
+@container preview-frame (max-width: 768px) {
+  .mockup-hero {
+    padding: 56px 24px 48px;
+  }
+
+  .mockup-hero__heading {
+    font-size: 2rem;
+  }
+}
+
+@container preview-frame (max-width: 480px) {
+  .mockup-hero {
+    padding: 48px 20px 40px;
+  }
+
+  .mockup-hero__heading {
+    font-size: 1.625rem;
+  }
+
+  .mockup-hero__subtext {
+    font-size: 0.9375rem;
+  }
+
+  .mockup-hero__actions {
+    flex-direction: column;
+    width: 100%;
+
+    .mockup-hero__cta,
+    .mockup-hero__cta-secondary {
+      width: 100%;
+      justify-content: center;
+    }
   }
 }

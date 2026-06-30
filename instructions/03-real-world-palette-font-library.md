@@ -123,6 +123,49 @@ Each entry: hex codes by **role**, a font pairing (heading/body), and why it wor
 
 ---
 
+## 11. Developer Tool / SaaS Dashboard — Dark Mode "Linear style"
+
+**Inspired by: Linear**
+- Background: near-black `#0A0A0B` (not pure black) · Primary brand color: subtle desaturated blue · Text: off-white, darkened slightly from pure white for comfort · Borders/elevated surfaces: derived as tints of the brand/background color rather than flat gray
+- Heading: **Inter Display** · Body: **Inter** (Regular)
+- Why it works: Linear deliberately limited how much of its blue chrome color crept into the color-system calculations to keep the palette neutral and timeless, and darkened text/icons in light mode while lightening them in dark mode to improve contrast in both directions. Linear's own theming system proves the underlying logic: setting just background, text, and one accent color is enough to auto-generate the rest of the palette (borders, elevated surfaces) as derived tints — which is precisely the kind of role-based palette structure this app should support natively, not just flat fixed swatches.
+- Typography note: humanist sans-serifs with open shapes and balanced proportions (Inter, Roboto, SF Pro) hold up at low contrast better than unusual or thin-weight display faces, which is why almost every dark-mode dev tool converges on this family.
+- Best for: developer tools, issue trackers, technical SaaS dashboards, dark-mode-first products.
+
+## 12. Fintech / Financial Infrastructure — Stripe-Inspired Dashboard Pattern
+
+**Inspired by: Stripe (as interpreted in current shadcn/ui design-system catalogs)**
+- Background: deep navy ink (marketing surfaces) flipping to near-white surfaces for the dashboard/app interior · Primary: electric indigo · Decorative: atmospheric gradient mesh used sparingly in hero zones
+- Heading: a geometric sans at thin (300) weight with tight/negative letter-spacing for editorial-density display headlines (free alternative to Stripe's licensed Söhne: **Sora** or **Plus Jakarta Sans** at Light weight) · Body/numerics: a sans with **tabular figures** enabled wherever money or numbers appear
+- Why it works: this system pairs thin display weights with negative letter-spacing for an editorial, premium feel on marketing pages, then deliberately flips polarity to a familiar dark dashboard shell for the actual product — i.e. the *brand* palette (light, airy, navy/indigo) and the *product* palette (dark app shell) are intentionally different, not the same theme inverted. Tabular figures specifically matter here: financial dashboards need digits to align in columns, which most default body fonts don't guarantee.
+- Best for: fintech, payments, billing/invoicing dashboards, any product where numeric alignment matters.
+
+## 13. Developer Platform — Vercel-Inspired Stark Contrast Pattern
+
+**Inspired by: Vercel (as interpreted in current shadcn/ui design-system catalogs)**
+- Background: near-white canvas · Primary: stark black · Decorative: multi-color mesh gradient (cyan/blue/magenta/amber) used once, at hero scale, as the entire decorative system rather than scattered throughout
+- Heading: a custom geometric sans (free alternative: **Geist** itself is now open-source via Vercel, or **Space Grotesk**) · Technical labels/code: a monospace face (e.g. **JetBrains Mono** or **Geist Mono**)
+- Why it works: a stark black-and-ink duet on near-white canvas is a deliberately reduced palette — almost grayscale — with all the "personality" concentrated into one large gradient moment rather than spread thin across many UI elements; pairing that restraint with a monospace caption face for technical labels signals "built by and for developers" instantly.
+- Best for: developer platforms, hosting/infra products, technical marketing sites.
+
+## 14. AI Product — Warm Editorial Pattern (Counter-Example to Cool-Blue AI Branding)
+
+**Inspired by: Anthropic's Claude (as interpreted in current shadcn/ui design-system catalogs)**
+- Background: tinted cream canvas (not white) · Primary/CTA: warm coral · Product surfaces (code editor mockups, model cards): dark navy
+- Heading: a slab-serif display face (Anthropic's actual faces are Copernicus/Tiempos Headline; free alternative: **Fraunces** or **Bitter**) · Body: a humanist sans (**Source Sans 3** or **Karla**)
+- Why it works: this palette is deliberately warm and humanist where most AI-sector brands default to cool blue and slate, and the cream/coral pairing is exactly where the brand gets its visual distinctiveness from — proof that breaking a category's color convention (in this case, "AI products are blue") can be the differentiator itself, not a risk, as long as contrast and legibility are still respected.
+- Best for: AI/ML products that want to avoid the generic "cool blue tech" look, consumer-facing AI tools, editorial or writing-adjacent products.
+
+## 15. Theming System Reference — shadcn/ui Semantic Token Pattern
+
+Not a single palette, but a **structural pattern** worth encoding directly into this app's data model, since it's become the de facto standard across thousands of open-source dashboards.
+
+- Roles, not fixed colors: `background`, `foreground`, `card`, `popover`, `primary`, `secondary`, `muted`, `accent`, `destructive`, `border`, `input`, `ring` — each with a light-mode and dark-mode value defined together, swapped via a single class toggle.
+- Community-built generators in this ecosystem (TweakCN, Shadesigner, ShadCN Themer, ui.jln.dev) converge on two distinct workflows worth supporting: (1) derive the full role set from one primary color automatically, versus (2) let the user set each semantic role independently for full control — both are legitimate modes, not a single "right" approach.
+- Why this matters for the app: it confirms the **role-based palette structure already planned in the Design System doc** (Section 2.1) is the right model, not a nice-to-have — it's the pattern the entire current dashboard-building ecosystem has already standardized on. Exporting in this exact token shape (CSS variables matching `--background`, `--primary`, etc.) makes this app's output immediately drop-in compatible with any shadcn/ui-based project, which is a large and growing share of new dashboards/SaaS products.
+
+---
+
 ## Cross-Cutting Rules Extracted From the Research (use these as the app's matching logic)
 
 1. **60-30-10 ratio:** dominant/background color ~60%, secondary/surface ~30%, accent ~10% — applies regardless of mood category.
@@ -130,3 +173,6 @@ Each entry: hex codes by **role**, a font pairing (heading/body), and why it wor
 3. **Warm palettes pair with rounder, friendlier type** (Flowfest, Airbnb); **cool/neutral palettes pair with geometric or classical type** (Stripe, Webflow, Vogue) — this warmth-matching is the actual "why" the app should surface, not just a rule sitting in a doc.
 4. **Contrast first, mood second:** every example above keeps text-background contrast high even when the accent palette is playful or muted — accessibility and personality aren't in tension in any of these real examples.
 5. **Proprietary brand fonts almost always have a "geometric/humanist sans" or "classical serif" free equivalent** — Inter/Sora/Plus Jakarta Sans cover most geometric-sans needs; Libre Baskerville/Playfair Display cover most classical-serif needs; Quicksand/Baloo 2/Fredoka cover most "rounded/friendly" needs.
+6. **Dark mode is not light mode inverted.** Linear and the dark-mode typography research both confirm that text/icon contrast needs independent tuning per mode (darker in light mode, lighter in dark mode — not a flat invert), and thin/light font weights that look elegant in light mode often disappear in dark mode and need a weight bump. The app's per-combo dark variant (FR12) must regenerate contrast, not just flip background/text.
+7. **Brand palette and product/dashboard palette can legitimately differ.** Stripe's marketing pages and dashboard interior intentionally use different polarities (light airy brand vs. dark app shell); this is a deliberate pattern worth supporting as a feature (e.g. "generate a dashboard-dark companion for this marketing-light combo"), not an inconsistency to flag.
+8. **Semantic roles, not fixed swatches, are the standard data model.** The shadcn/ui ecosystem's token set (background, foreground, card, primary, secondary, muted, accent, destructive, border, input, ring) is what real dashboards are built on today — the app's palette structure and export format should map directly onto these roles so output is usable in shadcn/Tailwind-based projects without manual remapping.

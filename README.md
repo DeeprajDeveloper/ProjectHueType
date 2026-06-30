@@ -13,9 +13,9 @@ Open [http://localhost:5173](http://localhost:5173).
 
 ## MVP features
 
-- **Curated combo library** — 13 real-world-grounded palette + font pairings
+- **Curated combo library** — 17 real-world-grounded palette + font pairings
 - **Filter & search** — by mood, industry, and light/dark mode
-- **Live mockup preview** — hero, navbar, buttons, card, form, footer
+- **Live mockup preview** — five archetypes (marketing site, dashboard, pricing, blog, e-commerce) with toggleable sections and desktop / tablet / mobile frames
 - **WCAG contrast checks** — automatic pass/fail with fix suggestions
 - **Shuffle with locks** — regenerate unlocked roles (press Space)
 - **Manual override** — swap any color or font with live preview

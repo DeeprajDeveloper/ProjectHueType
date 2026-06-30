@@ -213,12 +213,56 @@ export function useKeyboardShuffle(onShuffle) {
   }, [onShuffle]);
 }
 
+import { getDefaultArchetypeParts } from '../components/PreviewComponentsPanel/previewArchetypes';
+
 export function useUiPreferences() {
   const COLOR_SCALES_KEY = 'huetype-show-color-scales';
+  const PREVIEW_ARCHETYPE_KEY = 'huetype-preview-archetype';
+  const PREVIEW_PARTS_KEY = 'huetype-preview-parts';
+  const COMPONENTS_SIDEBAR_KEY = 'huetype-components-sidebar-open';
+  const VALID_ARCHETYPES = new Set(['marketing', 'dashboard', 'pricing', 'blog', 'ecommerce']);
 
   const [showColorScales, setShowColorScales] = useState(() => {
     try {
       const stored = localStorage.getItem(COLOR_SCALES_KEY);
+      if (stored !== null) return stored === 'true';
+    } catch {
+      // ignore
+    }
+    return true;
+  });
+
+  const [previewArchetype, setPreviewArchetypeState] = useState(() => {
+    try {
+      const stored = localStorage.getItem(PREVIEW_ARCHETYPE_KEY);
+      if (stored && VALID_ARCHETYPES.has(stored)) return stored;
+    } catch {
+      // ignore
+    }
+    return 'marketing';
+  });
+
+  const [archetypeParts, setArchetypePartsState] = useState(() => {
+    const defaults = getDefaultArchetypeParts();
+    try {
+      const stored = JSON.parse(localStorage.getItem(PREVIEW_PARTS_KEY));
+      if (stored && typeof stored === 'object') {
+        return Object.fromEntries(
+          Object.entries(defaults).map(([archetype, parts]) => [
+            archetype,
+            { ...parts, ...(stored[archetype] || {}) },
+          ]),
+        );
+      }
+    } catch {
+      // ignore
+    }
+    return defaults;
+  });
+
+  const [componentsSidebarOpen, setComponentsSidebarOpenState] = useState(() => {
+    try {
+      const stored = localStorage.getItem(COMPONENTS_SIDEBAR_KEY);
       if (stored !== null) return stored === 'true';
     } catch {
       // ignore
@@ -247,5 +291,52 @@ export function useUiPreferences() {
     }
   }, []);
 
-  return { showColorScales, toggleColorScales, setColorScalesEnabled };
+  const setPreviewArchetype = useCallback((archetype) => {
+    if (!VALID_ARCHETYPES.has(archetype)) return;
+    setPreviewArchetypeState(archetype);
+    try {
+      localStorage.setItem(PREVIEW_ARCHETYPE_KEY, archetype);
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  const toggleArchetypePart = useCallback((archetype, partId) => {
+    setArchetypePartsState((prev) => {
+      const next = {
+        ...prev,
+        [archetype]: {
+          ...prev[archetype],
+          [partId]: !prev[archetype]?.[partId],
+        },
+      };
+      try {
+        localStorage.setItem(PREVIEW_PARTS_KEY, JSON.stringify(next));
+      } catch {
+        // ignore
+      }
+      return next;
+    });
+  }, []);
+
+  const setComponentsSidebarOpen = useCallback((open) => {
+    setComponentsSidebarOpenState(open);
+    try {
+      localStorage.setItem(COMPONENTS_SIDEBAR_KEY, String(open));
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  return {
+    showColorScales,
+    toggleColorScales,
+    setColorScalesEnabled,
+    previewArchetype,
+    setPreviewArchetype,
+    archetypeParts,
+    toggleArchetypePart,
+    componentsSidebarOpen,
+    setComponentsSidebarOpen,
+  };
 }

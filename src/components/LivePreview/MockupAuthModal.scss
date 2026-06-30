@@ -1,0 +1,163 @@
+.mockup-auth {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.mockup-auth__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.mockup-auth__panel {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  padding: 32px 28px 28px;
+  background: var(--preview-background);
+  border-radius: 4px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
+}
+
+.mockup-auth__close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--preview-text);
+  background: none;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  opacity: 0.6;
+
+  &:hover {
+    opacity: 1;
+    background: var(--preview-secondary);
+  }
+}
+
+.mockup-auth__title {
+  font-family: var(--preview-font-heading), sans-serif;
+  font-weight: var(--preview-font-heading-weight);
+  font-size: 1.375rem;
+  color: var(--preview-text);
+  margin-bottom: 8px;
+  padding-right: 24px;
+}
+
+.mockup-auth__subtitle {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--preview-text);
+  opacity: 0.7;
+  margin-bottom: 24px;
+}
+
+.mockup-auth__field {
+  margin-bottom: 16px;
+}
+
+.mockup-auth__label {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--preview-text);
+  margin-bottom: 6px;
+}
+
+.mockup-auth__input {
+  width: 100%;
+  padding: 10px 14px;
+  font-family: var(--preview-font-body), sans-serif;
+  font-size: 0.875rem;
+  color: var(--preview-text);
+  background: var(--preview-background);
+  border: 1px solid color-mix(in srgb, var(--preview-primary) 35%, transparent);
+  border-radius: 4px;
+
+  &::placeholder {
+    color: var(--preview-text);
+    opacity: 0.4;
+  }
+
+  &:focus {
+    outline: 2px solid var(--preview-accent);
+    outline-offset: 1px;
+  }
+}
+
+.mockup-auth__checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  font-size: 0.8125rem;
+  color: var(--preview-text);
+  cursor: pointer;
+
+  input {
+    accent-color: var(--preview-accent);
+  }
+}
+
+.mockup-auth__submit {
+  width: 100%;
+  padding: 12px 20px;
+  font-family: var(--preview-font-body), sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--preview-background);
+  background: var(--preview-accent);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.9;
+  }
+}
+
+.mockup-auth__switch {
+  margin-top: 20px;
+  font-size: 0.8125rem;
+  text-align: center;
+  color: var(--preview-text);
+  opacity: 0.75;
+}
+
+.mockup-auth__switch-btn {
+  padding: 0;
+  font-weight: 600;
+  color: var(--preview-accent);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+@container preview-frame (max-width: 480px) {
+  .mockup-auth {
+    padding: 16px;
+  }
+
+  .mockup-auth__panel {
+    padding: 24px 20px 20px;
+  }
+
+  .mockup-auth__title {
+    font-size: 1.25rem;
+  }
+}

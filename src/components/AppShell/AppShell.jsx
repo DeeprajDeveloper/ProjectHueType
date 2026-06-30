@@ -9,7 +9,7 @@ import {
   useKeyboardShuffle,
   useUiPreferences,
 } from '../../hooks';
-import { SidebarSimpleIcon } from '@phosphor-icons/react';
+import { SidebarSimpleIcon, BooksIcon } from '@phosphor-icons/react';
 import Icon from '../Icon/Icon';
 import { ICON_SIZE } from '../Icon/iconConfig';
 import './AppShell.scss';
@@ -18,13 +18,16 @@ import LivePreview from '../LivePreview/LivePreview';
 import CustomizePanel from '../CustomizePanel/CustomizePanel';
 import LockRandomizeControls from '../LockRandomizeControls/LockRandomizeControls';
 import ExportModal from '../ExportModal/ExportModal';
+import DesignSystemModal from '../DesignSystemModal/DesignSystemModal';
 import Toast from '../Toast/Toast';
 import SidebarRail from '../SidebarRail/SidebarRail';
 import SidebarToolbar from '../SidebarToolbar/SidebarToolbar';
+import PreviewComponentsPanel from '../PreviewComponentsPanel/PreviewComponentsPanel';
 
 function AppShell() {
   const [activeView, setActiveView] = useState('workspace');
   const [exportOpen, setExportOpen] = useState(false);
+  const [designSystemOpen, setDesignSystemOpen] = useState(false);
   const [previewMode, setPreviewMode] = useState('desktop');
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [originalCombo, setOriginalCombo] = useState(COMBOS[0]);
@@ -32,7 +35,16 @@ function AppShell() {
   const { theme, toggleTheme } = useTheme();
   const { toast, showToast } = useToast();
   const { saved, isSaved, toggleSave } = useSavedCombos();
-  const { showColorScales, toggleColorScales } = useUiPreferences();
+  const {
+    showColorScales,
+    toggleColorScales,
+    previewArchetype,
+    setPreviewArchetype,
+    archetypeParts,
+    toggleArchetypePart,
+    componentsSidebarOpen,
+    setComponentsSidebarOpen,
+  } = useUiPreferences();
 
   const {
     combo,
@@ -90,7 +102,7 @@ function AppShell() {
         Skip to content
       </a>
 
-      <div className={`app-shell__main ${!sidebarOpen ? 'app-shell__main--collapsed' : ''}`}>
+      <div className={`app-shell__main ${!sidebarOpen ? 'app-shell__main--collapsed' : ''} ${!componentsSidebarOpen ? 'app-shell__main--components-collapsed' : ''}`}>
         <aside className={`app-shell__sidebar ${!sidebarOpen ? 'app-shell__sidebar--collapsed' : ''}`}>
           <div className="app-shell__sidebar-brand">
             <div className="app-shell__brand">
@@ -119,6 +131,7 @@ function AppShell() {
             onSave={handleSave}
             isSaved={isSaved(combo.id)}
             onExport={() => setExportOpen(true)}
+            onOpenDesignSystem={() => setDesignSystemOpen(true)}
             theme={theme}
             hasActiveFilters={filter.hasActiveFilters}
           />
@@ -184,11 +197,26 @@ function AppShell() {
               onCopyColor={(hex) => showToast(`Copied ${hex}`)}
             />
             <LockRandomizeControls locks={locks} onShuffle={handleShuffle} />
-
-            <p className="app-shell__sidebar-hint">
-              Press <kbd>Space</kbd> to shuffle unlocked roles
-            </p>
           </div>
+
+          {sidebarOpen && (
+            <footer className="app-shell__sidebar-footer">
+              <button
+                type="button"
+                className="app-shell__design-system-link"
+                onClick={() => setDesignSystemOpen(true)}
+              >
+                <Icon icon={BooksIcon} size={ICON_SIZE} className="app-shell__design-system-icon" />
+                <span className="app-shell__design-system-text">
+                  <span className="app-shell__design-system-label">Design system</span>
+                  <span className="app-shell__design-system-desc">Built &amp; planned components</span>
+                </span>
+              </button>
+              <p className="app-shell__sidebar-hint">
+                Press <kbd>Space</kbd> to shuffle unlocked roles
+              </p>
+            </footer>
+          )}
         </aside>
 
         <main id="main-content" className="app-shell__content">
@@ -199,8 +227,21 @@ function AppShell() {
             fontsLoading={fontsLoading}
             previewMode={previewMode}
             onPreviewModeChange={setPreviewMode}
+            archetype={previewArchetype}
+            archetypeParts={archetypeParts}
           />
         </main>
+
+        <div className={`app-shell__components ${!componentsSidebarOpen ? 'app-shell__components--collapsed' : ''}`}>
+          <PreviewComponentsPanel
+            open={componentsSidebarOpen}
+            onToggleOpen={setComponentsSidebarOpen}
+            archetype={previewArchetype}
+            onArchetypeChange={setPreviewArchetype}
+            archetypeParts={archetypeParts}
+            onToggleArchetypePart={toggleArchetypePart}
+          />
+        </div>
       </div>
 
       {exportOpen && (
@@ -209,6 +250,10 @@ function AppShell() {
           onClose={() => setExportOpen(false)}
           onCopy={handleExportCopy}
         />
+      )}
+
+      {designSystemOpen && (
+        <DesignSystemModal onClose={() => setDesignSystemOpen(false)} />
       )}
 
       {toast && <Toast message={toast.message} />}
