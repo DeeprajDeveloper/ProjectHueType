@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { COMBOS } from '../../data/combos';
 import {
   useComboState,
@@ -8,6 +8,7 @@ import {
   useToast,
   useKeyboardShuffle,
   useUiPreferences,
+  useWalkthrough,
 } from '../../hooks';
 import { SidebarSimpleIcon, BooksIcon } from '@phosphor-icons/react';
 import Icon from '../Icon/Icon';
@@ -24,6 +25,7 @@ import Toast from '../Toast/Toast';
 import SidebarRail from '../SidebarRail/SidebarRail';
 import SidebarToolbar from '../SidebarToolbar/SidebarToolbar';
 import PreviewComponentsPanel from '../PreviewComponentsPanel/PreviewComponentsPanel';
+import Walkthrough from '../Walkthrough/Walkthrough';
 
 function AppShell() {
   const [activeView, setActiveView] = useState('workspace');
@@ -67,7 +69,22 @@ function AppShell() {
 
   const filter = useComboFilter(activeView === 'saved' ? saved : COMBOS);
 
+  const handleTourStepEnter = useCallback(
+    (step) => {
+      if (step.prepare === 'sidebar-workspace') {
+        setSidebarOpen(true);
+        setActiveView('workspace');
+      } else if (step.prepare === 'components-panel') {
+        setComponentsSidebarOpen(true);
+      }
+    },
+    [setComponentsSidebarOpen],
+  );
+
+  const tour = useWalkthrough({ onStepEnter: handleTourStepEnter });
+
   useKeyboardShuffle(() => {
+    if (tour.active) return;
     shuffle();
     showToast('Shuffled unlocked roles');
   });
@@ -137,6 +154,7 @@ function AppShell() {
             isSaved={isSaved(combo.id)}
             onExport={() => setExportOpen(true)}
             onOpenDesignSystem={() => setDesignSystemOpen(true)}
+            onStartTour={tour.start}
             theme={theme}
             hasActiveFilters={filter.hasActiveFilters}
           />
@@ -166,6 +184,7 @@ function AppShell() {
               onSave={handleSave}
               isSaved={isSaved(combo.id)}
               onExport={() => setExportOpen(true)}
+              dataTour="toolbar"
             />
 
             <AccordionStack className="app-shell__sidebar-accordions">
@@ -205,7 +224,7 @@ function AppShell() {
                 onCopyColor={(hex) => showToast(`Copied ${hex}`)}
               />
             </AccordionStack>
-            <LockRandomizeControls locks={locks} onShuffle={handleShuffle} />
+            <LockRandomizeControls locks={locks} onShuffle={handleShuffle} dataTour="shuffle" />
           </div>
 
           {sidebarOpen && (
@@ -243,7 +262,7 @@ function AppShell() {
           />
         </main>
 
-        <div className={`app-shell__components ${!componentsSidebarOpen ? 'app-shell__components--collapsed' : ''}`}>
+        <div className={`app-shell__components ${!componentsSidebarOpen ? 'app-shell__components--collapsed' : ''}`} data-tour="components-panel">
           <PreviewComponentsPanel
             open={componentsSidebarOpen}
             onToggleOpen={setComponentsSidebarOpen}
@@ -270,6 +289,19 @@ function AppShell() {
       )}
 
       {toast && <Toast message={toast.message} />}
+
+      {tour.active && (
+        <Walkthrough
+          step={tour.step}
+          stepIndex={tour.stepIndex}
+          stepCount={tour.stepCount}
+          onNext={tour.goNext}
+          onPrev={tour.goPrev}
+          onSkip={tour.skip}
+          isFirst={tour.isFirst}
+          isLast={tour.isLast}
+        />
+      )}
     </div>
   );
 }

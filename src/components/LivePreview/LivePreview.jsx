@@ -243,7 +243,7 @@ function LivePreview({
         </Accordion>
       </header>
 
-      <div className="live-preview__controls">
+      <div className="live-preview__controls" data-tour="preview-controls">
         <div className="live-preview__controls-heading">
           <h2 className="live-preview__label">{previewHeading}</h2>
           <p className="live-preview__dimensions" aria-live="polite">
@@ -276,7 +276,7 @@ function LivePreview({
         </div>
       </div>
 
-      <div className={frameWrapClassName} ref={frameWrapRef}>
+      <div className={frameWrapClassName} ref={frameWrapRef} data-tour="live-preview">
         <div
           ref={frameRef}
           className={frameClassName}

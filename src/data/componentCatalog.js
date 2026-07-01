@@ -151,7 +151,7 @@ export const FEATURE_COMPONENTS = [
     id: 'onboarding-tour',
     label: 'Onboarding tour',
     description: 'First-run walkthrough pointing at Shuffle, Lock, and Export.',
-    status: 'planned',
+    status: 'built',
   },
   {
     id: 'shortcuts-modal',

@@ -11,9 +11,10 @@ function SidebarToolbar({
   onSave,
   isSaved,
   onExport,
+  dataTour,
 }) {
   return (
-    <div className="sidebar-toolbar">
+    <div className="sidebar-toolbar" data-tour={dataTour}>
       <IconButton
         label={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
         onClick={onToggleTheme}

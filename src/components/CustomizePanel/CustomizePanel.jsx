@@ -71,7 +71,7 @@ function CustomizePanel({
 
   return (
     <div className="customize-panel">
-      <Accordion title="Colors" stackId="colors" defaultOpen persistKey="colors">
+      <Accordion title="Colors" stackId="colors" defaultOpen persistKey="colors" dataTour="customize">
         <div className="customize-panel__scales-toggle">
           <span className="customize-panel__scales-label">Color scales (100–900)</span>
           <button

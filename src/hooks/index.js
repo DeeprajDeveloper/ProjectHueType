@@ -387,3 +387,5 @@ export function useUiPreferences() {
     setPreviewLogoText,
   };
 }
+
+export { useWalkthrough } from './useWalkthrough';
