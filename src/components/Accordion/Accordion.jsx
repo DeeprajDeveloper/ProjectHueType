@@ -25,6 +25,7 @@ function Accordion({
   children,
   className = '',
   variant = 'default',
+  dataTour,
 }) {
   const stack = useAccordionStack();
   const storageKey = persistKey ? `huetype-accordion-${persistKey}` : null;
@@ -80,6 +81,7 @@ function Accordion({
   return (
     <div
       className={`accordion accordion--${variant} ${open ? 'accordion--open' : ''} ${isPrimary ? 'accordion--focused' : ''} ${className}`}
+      data-tour={dataTour}
     >
       <button
         type="button"

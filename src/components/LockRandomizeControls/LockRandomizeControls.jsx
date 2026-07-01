@@ -3,11 +3,11 @@ import Icon from '../Icon/Icon';
 import { ICON_SIZE } from '../Icon/iconConfig';
 import './LockRandomizeControls.scss';
 
-function LockRandomizeControls({ locks, onShuffle }) {
+function LockRandomizeControls({ locks, onShuffle, dataTour }) {
   const lockedCount = Object.values(locks).filter(Boolean).length;
 
   return (
-    <div className="lock-controls">
+    <div className="lock-controls" data-tour={dataTour}>
       <button type="button" className="lock-controls__shuffle btn btn--primary" onClick={onShuffle}>
         <Icon icon={Shuffle} size={ICON_SIZE} />
         Shuffle

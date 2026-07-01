@@ -10,6 +10,7 @@ import {
   HeartIcon,
   ExportIcon,
   BooksIcon,
+  QuestionIcon,
 } from '@phosphor-icons/react';
 import Icon from '../Icon/Icon';
 import { ICON_SIZE } from '../Icon/iconConfig';
@@ -41,6 +42,7 @@ function SidebarRail({
   isSaved,
   onExport,
   onOpenDesignSystem,
+  onStartTour,
   theme,
   hasActiveFilters,
 }) {
@@ -123,6 +125,15 @@ function SidebarRail({
       </div>
 
       <div className="sidebar-rail__footer">
+        <button
+          type="button"
+          className="sidebar-rail__btn sidebar-rail__btn--app"
+          aria-label="Restart product tour"
+          onClick={onStartTour}
+        >
+          <Icon icon={QuestionIcon} size={ICON_SIZE} />
+          <span className="sidebar-rail__tooltip" role="tooltip">Product tour</span>
+        </button>
         <button
           type="button"
           className="sidebar-rail__btn sidebar-rail__btn--app"
