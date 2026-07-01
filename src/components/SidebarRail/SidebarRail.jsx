@@ -19,13 +19,13 @@ import './SidebarRail.scss';
 const WORKSPACE_ITEMS = [
   { id: 'expand', icon: SidebarSimpleIcon, label: 'Expand sidebar' },
   { id: 'workspace', icon: PaletteIcon, label: 'Workspace' },
-  { id: 'saved', icon: BookmarkSimpleIcon, label: 'Saved combos' },
+  { id: 'saved', icon: BookmarkSimpleIcon, label: 'My Saved Presets' },
   { id: 'customize', icon: SlidersHorizontalIcon, label: 'Customize panel' },
-  { id: 'shuffle', icon: ShuffleIcon, label: 'Shuffle unlocked roles' },
+  { id: 'shuffle', icon: ShuffleIcon, label: 'Shuffle Presets' },
 ];
 
 const APP_ITEMS = [
-  { id: 'theme', icon: null, label: 'Toggle theme' },
+  { id: 'theme', icon: null, label: 'Switch Light/Dark Mode' },
   { id: 'share', icon: ShareNetworkIcon, label: 'Share combo' },
   { id: 'save', icon: HeartIcon, label: 'Save combo' },
   { id: 'export', icon: ExportIcon, label: 'Export combo' },
