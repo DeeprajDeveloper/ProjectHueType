@@ -40,6 +40,7 @@ function SidebarRail({
   exportActive = false,
   theme,
   hasActiveFilters,
+  isCompact = false,
 }) {
   const [openMenuId, setOpenMenuId] = useState(null);
   const menuRef = useRef(null);
@@ -214,15 +215,21 @@ function SidebarRail({
   return (
     <nav className="sidebar-rail" aria-label="Sidebar shortcuts">
       <div className="sidebar-rail__group">
-        <button
-          type="button"
-          className="sidebar-rail__btn"
-          aria-label="Expand sidebar"
-          onClick={() => handleClick('expand')}
-        >
-          <Icon icon={SidebarSimpleIcon} size={ICON_SIZE} />
-          <span className="sidebar-rail__tooltip" role="tooltip">Expand sidebar</span>
-        </button>
+        {isCompact ? (
+          <div className="sidebar-rail__logo" aria-hidden="true">
+            <img src="/logo_light.svg" alt="" />
+          </div>
+        ) : (
+          <button
+            type="button"
+            className="sidebar-rail__btn"
+            aria-label="Expand sidebar"
+            onClick={() => handleClick('expand')}
+          >
+            <Icon icon={SidebarSimpleIcon} size={ICON_SIZE} />
+            <span className="sidebar-rail__tooltip" role="tooltip">Expand sidebar</span>
+          </button>
+        )}
         {RAIL_NAV_ITEMS.map((item) => renderButton(item, 'workspace'))}
       </div>
 

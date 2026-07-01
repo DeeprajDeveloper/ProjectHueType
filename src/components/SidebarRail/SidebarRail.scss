@@ -13,6 +13,10 @@
       display: flex;
     }
   }
+
+  .app-shell__main--compact & {
+    display: flex;
+  }
 }
 
 .sidebar-rail__group {
@@ -157,6 +161,28 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
+}
+
+.sidebar-rail__logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  margin-bottom: var(--space-1);
+  flex-shrink: 0;
+
+  img {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+  }
+}
+
+@include below-desktop {
+  .sidebar-rail__popover {
+    max-width: min(240px, calc(100vw - var(--sidebar-width-collapsed) - var(--space-6)));
+  }
 }
 
 .sidebar-rail__popover-btn {

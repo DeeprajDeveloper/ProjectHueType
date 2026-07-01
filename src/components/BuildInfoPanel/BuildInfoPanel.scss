@@ -136,9 +136,45 @@
     line-height: 1.5;
   }
 
-  &--notes li {
+  &--notes li,
+  &--changelog li {
     font-size: var(--text-caption);
   }
+}
+
+.build-info-panel__changelog {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.build-info-panel__release {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--surface-sunken);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+}
+
+.build-info-panel__release-header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.build-info-panel__release-version {
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.build-info-panel__release-label {
+  font-size: var(--text-caption);
+  font-weight: 600;
+  color: var(--text-primary);
 }
 
 .build-info-panel__tour-btn {

@@ -475,3 +475,4 @@ export function useUiPreferences() {
 }
 
 export { useWalkthrough } from './useWalkthrough';
+export { useBreakpoint, useIsCompactLayout } from './useBreakpoint';

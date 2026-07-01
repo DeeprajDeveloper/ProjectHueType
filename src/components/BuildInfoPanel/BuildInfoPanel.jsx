@@ -1,6 +1,7 @@
 import { ArrowRightIcon, RocketLaunchIcon } from '@phosphor-icons/react';
 import {
   APP_VERSION,
+  BUILD_CHANGELOG,
   BUILD_FEATURES,
   BUILD_NOTES,
   BUILD_STACK,
@@ -40,6 +41,25 @@ function BuildInfoPanel({ onStartTour }) {
             <li key={feature}>{feature}</li>
           ))}
         </ul>
+      </section>
+
+      <section className="build-info-panel__section" aria-labelledby="build-info-changelog">
+        <h4 id="build-info-changelog" className="build-info-panel__section-title">Changelog</h4>
+        <div className="build-info-panel__changelog">
+          {BUILD_CHANGELOG.map((release) => (
+            <article key={release.version} className="build-info-panel__release">
+              <header className="build-info-panel__release-header">
+                <span className="build-info-panel__release-version">v{release.version}</span>
+                <span className="build-info-panel__release-label">{release.label}</span>
+              </header>
+              <ul className="build-info-panel__list build-info-panel__list--changelog">
+                {release.changes.map((change) => (
+                  <li key={change}>{change}</li>
+                ))}
+              </ul>
+            </article>
+          ))}
+        </div>
       </section>
 
       <section className="build-info-panel__section" aria-labelledby="build-info-notes">

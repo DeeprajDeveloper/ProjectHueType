@@ -340,3 +340,48 @@
     box-shadow: var(--shadow-lg);
   }
 }
+
+.live-preview--compact {
+  @include below-desktop {
+    padding: var(--space-3) var(--space-4);
+
+    .live-preview__controls {
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--space-2);
+    }
+
+    .live-preview__label {
+      white-space: normal;
+    }
+  }
+
+  @include respond-to(mobile) {
+    padding: var(--space-3);
+
+    .live-preview__label {
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .live-preview__dimensions {
+      font-size: 10px;
+    }
+
+    .live-preview__controls-actions {
+      width: 100%;
+      justify-content: space-between;
+    }
+
+    .live-preview__rotate span {
+      display: none;
+    }
+
+    .live-preview__shuffle-fab {
+      right: var(--space-3);
+      bottom: max(var(--space-3), env(safe-area-inset-bottom, 0px));
+      width: 48px;
+      height: 48px;
+    }
+  }
+}

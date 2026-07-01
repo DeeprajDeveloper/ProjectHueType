@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { COMBOS } from '../../data/combos';
 import {
   useComboState,
@@ -10,6 +10,8 @@ import {
   useKeyboardShortcuts,
   useUiPreferences,
   useWalkthrough,
+  useIsCompactLayout,
+  useBreakpoint,
 } from '../../hooks';
 import { SidebarSimpleIcon, BooksIcon, PackageIcon, QuestionIcon } from '@phosphor-icons/react';
 import Icon from '../Icon/Icon';
@@ -25,10 +27,17 @@ import SidebarNav from '../SidebarNav/SidebarNav';
 import OptionsPanel from '../OptionsPanel/OptionsPanel';
 import Walkthrough from '../Walkthrough/Walkthrough';
 
+function getInitialPreviewMode() {
+  if (typeof window !== 'undefined' && window.matchMedia('(max-width: 639px)').matches) {
+    return 'mobile';
+  }
+  return 'desktop';
+}
+
 function AppShell() {
   const [activePanel, setActivePanel] = useState('workspace');
   const [exportOpen, setExportOpen] = useState(false);
-  const [previewMode, setPreviewMode] = useState('desktop');
+  const [previewMode, setPreviewMode] = useState(getInitialPreviewMode);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [originalCombo, setOriginalCombo] = useState(COMBOS[0]);
 
@@ -148,6 +157,29 @@ function AppShell() {
   );
 
   const tour = useWalkthrough({ onStepEnter: handleTourStepEnter });
+  const isCompact = useIsCompactLayout();
+  const breakpoint = useBreakpoint();
+
+  useEffect(() => {
+    if (breakpoint === 'mobile') {
+      setPreviewMode((current) => (current === 'desktop' ? 'mobile' : current));
+    }
+  }, [breakpoint]);
+
+  useEffect(() => {
+    if (isCompact) {
+      setSidebarOpen(false);
+    }
+  }, [isCompact]);
+
+  useEffect(() => {
+    if (!isCompact || !componentsSidebarOpen) return undefined;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isCompact, componentsSidebarOpen]);
 
   useKeyboardShuffle(() => {
     if (tour.active) return;
@@ -218,7 +250,14 @@ function AppShell() {
         Skip to content
       </a>
 
-      <div className={`app-shell__main ${!sidebarOpen ? 'app-shell__main--collapsed' : ''} ${!componentsSidebarOpen ? 'app-shell__main--components-collapsed' : ''}`}>
+      <div
+        className={[
+          'app-shell__main',
+          !sidebarOpen ? 'app-shell__main--collapsed' : '',
+          !componentsSidebarOpen ? 'app-shell__main--components-collapsed' : '',
+          isCompact ? 'app-shell__main--compact' : '',
+        ].filter(Boolean).join(' ')}
+      >
         <aside className={`app-shell__sidebar ${!sidebarOpen ? 'app-shell__sidebar--collapsed' : ''}`}>
           <div className="app-shell__sidebar-brand">
             <div className="app-shell__brand">
@@ -254,6 +293,7 @@ function AppShell() {
             exportActive={exportOpen}
             theme={theme}
             hasActiveFilters={filter.hasActiveFilters}
+            isCompact={isCompact}
           />
 
           <div className="app-shell__sidebar-panel">
@@ -346,14 +386,25 @@ function AppShell() {
               infoActive={activePanel === 'info' && componentsSidebarOpen}
               onShuffle={handleShuffle}
               lockedCount={Object.values(locks).filter(Boolean).length}
+              isCompact={isCompact}
             />
           )}
         </main>
+
+        {isCompact && componentsSidebarOpen && (
+          <button
+            type="button"
+            className="app-shell__backdrop"
+            aria-label="Close panel"
+            onClick={() => setComponentsSidebarOpen(false)}
+          />
+        )}
 
         <div className={`app-shell__components ${!componentsSidebarOpen ? 'app-shell__components--collapsed' : ''}`}>
           <OptionsPanel
             open={componentsSidebarOpen}
             onToggleOpen={setComponentsSidebarOpen}
+            isCompact={isCompact}
             activePanel={activePanel}
             search={filter.search}
             onSearchChange={filter.setSearch}

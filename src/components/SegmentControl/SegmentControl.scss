@@ -9,6 +9,13 @@
   gap: 2px;
 }
 
+.segment-control--icons-only {
+  .segment-control__btn {
+    min-width: 36px;
+    padding: var(--space-2);
+  }
+}
+
 .segment-control__btn {
   @include button-reset;
   display: inline-flex;

@@ -89,7 +89,96 @@ export const ARCHETYPE_GROUPS = [
     label: 'Group 2 — Product essentials',
     description: 'Auth, chat, onboarding, settings, empty states, and notifications.',
   },
+  {
+    id: 'group-3',
+    label: 'Group 3 — Strong secondary',
+    description: 'Docs, kanban, analytics, profiles, billing, and search — wider audience coverage.',
+  },
+  {
+    id: 'group-4',
+    label: 'Group 4 — Niche & differentiated',
+    description: 'Email, mobile app, waitlist, errors, calendar, and media — specialized real-world surfaces.',
+  },
 ];
+
+export const PLANNED_PREVIEW_ARCHETYPES = [
+  {
+    id: 'docs',
+    label: 'Documentation / docs site',
+    description: 'Sidebar nav + markdown content area + in-page headings. Tests long-form technical reading with code blocks and smaller font sizes.',
+    group: 'group-3',
+  },
+  {
+    id: 'kanban',
+    label: 'Kanban / project board',
+    description: 'Column layout with cards and status colors. Tests multiple accent-color categories side by side (To Do / In Progress / Done).',
+    group: 'group-3',
+  },
+  {
+    id: 'analytics',
+    label: 'Analytics / reports page',
+    description: 'Charts, data tables, KPI cards, and date-range selectors. Tests palette on data-visualization surfaces where colors encode meaning.',
+    group: 'group-3',
+  },
+  {
+    id: 'profile',
+    label: 'Profile / user page',
+    description: 'Avatar, stats, activity grid, bio, and social links. Common in community and developer tools.',
+    group: 'group-3',
+  },
+  {
+    id: 'billing',
+    label: 'Billing / upgrade page',
+    description: 'Current plan summary, usage meters, and upgrade CTA. Tests danger, warning, and success semantic color roles.',
+    group: 'group-3',
+  },
+  {
+    id: 'search',
+    label: 'Search results / list view',
+    description: 'Filterable, sortable item list. Tests body copy legibility at high density and filter chips at real scale.',
+    group: 'group-3',
+  },
+  {
+    id: 'email',
+    label: 'Email template',
+    description: 'Constrained 600px layout without modern CSS grid. Tests how a palette renders in email clients vs. the web.',
+    group: 'group-4',
+  },
+  {
+    id: 'mobile-app',
+    label: 'Mobile app screen',
+    description: '390px-wide screen with bottom nav and stacked content cards. Tests contrast and spacing at phone scale.',
+    group: 'group-4',
+  },
+  {
+    id: 'waitlist',
+    label: 'Waitlist landing page',
+    description: 'Minimal headline, email input, and social proof. Tests whether a palette holds together with almost no content.',
+    group: 'group-4',
+  },
+  {
+    id: 'error404',
+    label: 'Error / 404 page',
+    description: 'Sparse reassuring layout — emotionally different from empty state. Tests palette with minimal promotional chrome.',
+    group: 'group-4',
+  },
+  {
+    id: 'calendar',
+    label: 'Calendar / scheduler',
+    description: 'Dense grid layout with today highlight and event color blocks. Another multi-accent-color stress test.',
+    group: 'group-4',
+  },
+  {
+    id: 'media-player',
+    label: 'Media player / audio UI',
+    description: 'Progress bar, album art, and playback controls. Tests accent color on a visual, interactive surface.',
+    group: 'group-4',
+  },
+];
+
+export function getArchetypeGroupLabel(groupId) {
+  return ARCHETYPE_GROUPS.find((group) => group.id === groupId)?.label ?? null;
+}
 
 export function getArchetypePreviewLabel(archetypeId) {
   return PREVIEW_ARCHETYPES.find((a) => a.id === archetypeId)?.previewLabel ?? 'Preview';

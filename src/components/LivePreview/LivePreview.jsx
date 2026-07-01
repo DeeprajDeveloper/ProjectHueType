@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useBreakpoint } from '../../hooks';
 import {
   DesktopIcon,
   DeviceTabletCameraIcon,
@@ -122,7 +123,10 @@ function LivePreview({
   infoActive = false,
   onShuffle,
   lockedCount = 0,
+  isCompact = false,
 }) {
+  const breakpoint = useBreakpoint();
+  const iconsOnly = breakpoint === 'mobile';
   const activeParts = resolveArchetypeParts(archetype, archetypeParts[archetype]);
   const previewEmpty = isArchetypePreviewEmpty(archetype, activeParts);
   const [frameScrollLocked, setFrameScrollLocked] = useState(false);
@@ -243,7 +247,7 @@ function LivePreview({
         : `${TABLET_SIZE[tabletOrientation].width} ✕ ${TABLET_SIZE[tabletOrientation].height}px`;
 
   return (
-    <div className="live-preview">
+    <div className={`live-preview ${isCompact ? 'live-preview--compact' : ''}`}>
       <div className="live-preview__controls" data-tour="preview-controls">
         <div className="live-preview__controls-heading">
           <h2 className="live-preview__label">
@@ -293,6 +297,7 @@ function LivePreview({
             value={previewMode}
             onChange={onPreviewModeChange}
             ariaLabel="Preview device width"
+            iconsOnly={iconsOnly}
           />
         </div>
       </div>

@@ -118,6 +118,7 @@ function ArchetypesContent({ archetype, onArchetypeChange }) {
 function OptionsPanel({
   open,
   onToggleOpen,
+  isCompact = false,
   activePanel,
   // Presets
   search,
@@ -174,6 +175,8 @@ function OptionsPanel({
   const title = PANEL_TITLES[panelId] || 'Options';
 
   if (!open) {
+    if (isCompact) return null;
+
     return (
       <aside className="options-panel options-panel--collapsed" aria-label="Options panel">
         <button
@@ -349,7 +352,11 @@ function OptionsPanel({
   };
 
   return (
-    <aside className="options-panel" aria-label="Options panel" data-tour="components-panel">
+    <aside
+      className={`options-panel ${isCompact ? 'options-panel--overlay' : ''}`}
+      aria-label="Options panel"
+      data-tour="components-panel"
+    >
       <header className="options-panel__header">
         <div className="options-panel__header-text">
           <h2 className="options-panel__title">{title}</h2>
