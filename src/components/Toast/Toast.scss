@@ -1,9 +1,10 @@
 .toast {
   position: fixed;
-  bottom: var(--space-5);
+  bottom: max(var(--space-5), env(safe-area-inset-bottom, 0px));
   left: 50%;
   transform: translateX(-50%);
   z-index: 300;
+  max-width: calc(100vw - var(--space-6));
   padding: var(--space-3) var(--space-5);
   font-size: var(--text-body);
   font-weight: 500;

@@ -5,56 +5,13 @@ import {
   MockupDoughnutChart,
   MockupAreaChart,
 } from './MockupDashboardCharts';
+import { MOCKUP_COPY, DEFAULT_PREVIEW_LOGO } from '../../data/mockupCopy';
 import './MockupDashboard.scss';
 
-const MAIN_NAV_ITEMS = [
-  { id: 'dashboard', label: 'Dashboard' },
-  { id: 'analytics', label: 'Analytics' },
-  { id: 'customers', label: 'Customers' },
-  { id: 'issues', label: 'Issues' },
-];
-
-const PROFILE_NAV = { id: 'profile', label: 'Profile' };
-
-const STATS = [
-  { label: 'Total revenue', value: '$48,290', change: '+12.5%' },
-  { label: 'Active users', value: '2,847', change: '+8.2%' },
-  { label: 'Conversion rate', value: '3.24%', change: '+0.4%' },
-];
-
-const TABLE_ROWS = [
-  { name: 'Acme Corp', plan: 'Pro', status: 'Active', amount: '$299' },
-  { name: 'Globex Inc', plan: 'Team', status: 'Active', amount: '$149' },
-  { name: 'Initech', plan: 'Starter', status: 'Trial', amount: '$49' },
-  { name: 'Umbrella Co', plan: 'Pro', status: 'Active', amount: '$299' },
-  { name: 'Stark Industries', plan: 'Enterprise', status: 'Active', amount: '$499' },
-  { name: 'Wayne Enterprises', plan: 'Pro', status: 'Active', amount: '$299' },
-];
-
-const ISSUES = [
-  { id: 'HT-104', title: 'Contrast fails on accent button', priority: 'High', status: 'Open' },
-  { id: 'HT-98', title: 'Font loading slow on mobile preview', priority: 'Medium', status: 'In progress' },
-  { id: 'HT-87', title: 'Export modal tab focus trap', priority: 'Low', status: 'Resolved' },
-  { id: 'HT-76', title: 'Saved combo sync delay', priority: 'Medium', status: 'Open' },
-];
-
-const NOTIFICATIONS = [
-  { id: 1, text: 'Acme Corp upgraded to Pro plan', time: '2m ago' },
-  { id: 2, text: 'New issue assigned: HT-104', time: '18m ago' },
-  { id: 3, text: 'Weekly analytics report ready', time: '1h ago' },
-];
-
-const PAGE_TITLES = {
-  dashboard: 'Overview',
-  analytics: 'Analytics',
-  customers: 'Customers',
-  issues: 'Issues tracker',
-  profile: 'Profile & settings',
-};
-
-function MockupDashboard({ parts = {}, logoText = 'Acme Co.', onFrameScrollLock }) {
+function MockupDashboard({ parts = {}, logoText = DEFAULT_PREVIEW_LOGO, onFrameScrollLock }) {
   const [activeNav, setActiveNav] = useState('dashboard');
   const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const copy = MOCKUP_COPY.dashboard;
   const show = (id) => parts[id] !== false;
   const hasSidebar = show('sidebarNav');
 
@@ -85,7 +42,7 @@ function MockupDashboard({ parts = {}, logoText = 'Acme Co.', onFrameScrollLock 
           <div className="mockup-dashboard__sidebar-top">
             <span className="mockup-dashboard__brand">{logoText}</span>
             <nav className="mockup-dashboard__nav">
-              {MAIN_NAV_ITEMS.map((item) => (
+              {copy.nav.items.map((item) => (
                 <button
                   key={item.id}
                   type="button"
@@ -100,11 +57,11 @@ function MockupDashboard({ parts = {}, logoText = 'Acme Co.', onFrameScrollLock 
           <nav className="mockup-dashboard__nav mockup-dashboard__nav--footer">
             <button
               type="button"
-              className={`mockup-dashboard__nav-link mockup-dashboard__nav-link--profile ${activeNav === PROFILE_NAV.id ? 'mockup-dashboard__nav-link--active' : ''}`}
-              onClick={() => setActiveNav(PROFILE_NAV.id)}
+              className={`mockup-dashboard__nav-link mockup-dashboard__nav-link--profile ${activeNav === copy.nav.profile.id ? 'mockup-dashboard__nav-link--active' : ''}`}
+              onClick={() => setActiveNav(copy.nav.profile.id)}
             >
-              <span className="mockup-dashboard__nav-avatar" aria-hidden="true">AR</span>
-              {PROFILE_NAV.label}
+              <span className="mockup-dashboard__nav-avatar" aria-hidden="true">{copy.profile.avatarInitials}</span>
+              {copy.nav.profile.label}
             </button>
           </nav>
         </aside>
@@ -116,7 +73,7 @@ function MockupDashboard({ parts = {}, logoText = 'Acme Co.', onFrameScrollLock 
             <input
               type="search"
               className="mockup-dashboard__search"
-              placeholder="Search accounts, issues, reports…"
+              placeholder={copy.topBar.searchPlaceholder}
               aria-label="Search dashboard"
             />
             <button
@@ -138,20 +95,16 @@ function MockupDashboard({ parts = {}, logoText = 'Acme Co.', onFrameScrollLock 
         <div className="mockup-dashboard__content">
           {showHeader && (
             <header className="mockup-dashboard__header">
-              <h1 className="mockup-dashboard__title">{PAGE_TITLES[activeNav]}</h1>
+              <h1 className="mockup-dashboard__title">{copy.pageTitles[activeNav]}</h1>
               <p className="mockup-dashboard__subtitle">
-                {activeNav === 'dashboard' && 'Your workspace at a glance — revenue, users, and open issues.'}
-                {activeNav === 'analytics' && 'Charts and trends across your product metrics.'}
-                {activeNav === 'customers' && 'Manage accounts, plans, and subscription status.'}
-                {activeNav === 'issues' && 'Track bugs, design tasks, and engineering work.'}
-                {activeNav === 'profile' && 'Account details and application preferences.'}
+                {copy.subtitles[activeNav]}
               </p>
             </header>
           )}
 
           {showStats && (
             <div className="mockup-dashboard__stats">
-              {STATS.map((stat) => (
+              {copy.stats.map((stat) => (
                 <article key={stat.label} className="mockup-dashboard__stat">
                   <span className="mockup-dashboard__stat-label">{stat.label}</span>
                   <span className="mockup-dashboard__stat-value">{stat.value}</span>
@@ -172,9 +125,9 @@ function MockupDashboard({ parts = {}, logoText = 'Acme Co.', onFrameScrollLock 
 
           {showIssues && (
             <section className="mockup-dashboard__issues">
-              <h2 className="mockup-dashboard__section-title">Open issues</h2>
+              <h2 className="mockup-dashboard__section-title">{copy.issues.sectionTitle}</h2>
               <ul className="mockup-dashboard__issue-list">
-                {ISSUES.map((issue) => (
+                {copy.issues.items.map((issue) => (
                   <li key={issue.id} className="mockup-dashboard__issue">
                     <div className="mockup-dashboard__issue-main">
                       <span className="mockup-dashboard__issue-id">{issue.id}</span>
@@ -196,18 +149,18 @@ function MockupDashboard({ parts = {}, logoText = 'Acme Co.', onFrameScrollLock 
 
           {showTable && (
             <section className="mockup-dashboard__table-section">
-              <h2 className="mockup-dashboard__section-title">Recent accounts</h2>
+              <h2 className="mockup-dashboard__section-title">{copy.table.sectionTitle}</h2>
               <table className="mockup-dashboard__table">
                 <thead>
                   <tr>
-                    <th scope="col">Account</th>
-                    <th scope="col">Plan</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">MRR</th>
+                    <th scope="col">{copy.table.columns.account}</th>
+                    <th scope="col">{copy.table.columns.plan}</th>
+                    <th scope="col">{copy.table.columns.status}</th>
+                    <th scope="col">{copy.table.columns.mrr}</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {TABLE_ROWS.map((row) => (
+                  {copy.table.rows.map((row) => (
                     <tr key={row.name}>
                       <td>{row.name}</td>
                       <td>{row.plan}</td>
@@ -228,43 +181,43 @@ function MockupDashboard({ parts = {}, logoText = 'Acme Co.', onFrameScrollLock 
             <section className="mockup-dashboard__profile">
               <div className="mockup-dashboard__profile-card">
                 <div className="mockup-dashboard__profile-header">
-                  <span className="mockup-dashboard__avatar" aria-hidden="true">AR</span>
+                  <span className="mockup-dashboard__avatar" aria-hidden="true">{copy.profile.avatarInitials}</span>
                   <div>
-                    <h2 className="mockup-dashboard__profile-name">Alex Rivera</h2>
-                    <p className="mockup-dashboard__profile-email">alex@acme.co</p>
+                    <h2 className="mockup-dashboard__profile-name">{copy.profile.name}</h2>
+                    <p className="mockup-dashboard__profile-email">{copy.profile.email}</p>
                   </div>
                 </div>
                 <form className="mockup-dashboard__settings" onSubmit={(e) => e.preventDefault()}>
-                  <h3 className="mockup-dashboard__settings-title">Preferences</h3>
+                  <h3 className="mockup-dashboard__settings-title">{copy.profile.preferences.title}</h3>
                   <label className="mockup-dashboard__setting">
-                    <span>Email notifications</span>
+                    <span>{copy.profile.preferences.emailNotifications}</span>
                     <input type="checkbox" defaultChecked />
                   </label>
                   <label className="mockup-dashboard__setting">
-                    <span>Weekly digest</span>
+                    <span>{copy.profile.preferences.weeklyDigest}</span>
                     <input type="checkbox" defaultChecked />
                   </label>
                   <label className="mockup-dashboard__setting">
-                    <span>Compact sidebar</span>
+                    <span>{copy.profile.preferences.compactSidebar}</span>
                     <input type="checkbox" />
                   </label>
                   <div className="mockup-dashboard__setting-field">
-                    <label htmlFor="mockup-dash-timezone">Timezone</label>
+                    <label htmlFor="mockup-dash-timezone">{copy.profile.fields.timezone.label}</label>
                     <select id="mockup-dash-timezone" className="mockup-dashboard__select">
-                      <option>Pacific Time (PT)</option>
-                      <option>Eastern Time (ET)</option>
-                      <option>UTC</option>
+                      {copy.profile.fields.timezone.options.map((option) => (
+                        <option key={option}>{option}</option>
+                      ))}
                     </select>
                   </div>
                   <div className="mockup-dashboard__setting-field">
-                    <label htmlFor="mockup-dash-export">Default export format</label>
+                    <label htmlFor="mockup-dash-export">{copy.profile.fields.exportFormat.label}</label>
                     <select id="mockup-dash-export" className="mockup-dashboard__select">
-                      <option>CSS variables</option>
-                      <option>Tailwind config</option>
-                      <option>JSON tokens</option>
+                      {copy.profile.fields.exportFormat.options.map((option) => (
+                        <option key={option}>{option}</option>
+                      ))}
                     </select>
                   </div>
-                  <button type="submit" className="mockup-dashboard__save">Save changes</button>
+                  <button type="submit" className="mockup-dashboard__save">{copy.profile.save}</button>
                 </form>
               </div>
             </section>
@@ -277,11 +230,11 @@ function MockupDashboard({ parts = {}, logoText = 'Acme Co.', onFrameScrollLock 
           <div className="mockup-dashboard__notifications-backdrop" onClick={closeNotifications} aria-hidden="true" />
           <div className="mockup-dashboard__notifications-panel">
             <header className="mockup-dashboard__notifications-header">
-              <h2>Notifications</h2>
+              <h2>{copy.notifications.title}</h2>
               <button type="button" onClick={closeNotifications} aria-label="Close notifications">×</button>
             </header>
             <ul className="mockup-dashboard__notifications-list">
-              {NOTIFICATIONS.map((n) => (
+              {copy.notifications.items.map((n) => (
                 <li key={n.id} className="mockup-dashboard__notification">
                   <p>{n.text}</p>
                   <span>{n.time}</span>

@@ -1,3 +1,40 @@
+import {
+  PLANNED_PREVIEW_ARCHETYPES,
+  PREVIEW_ARCHETYPES,
+} from '../components/PreviewComponentsPanel/previewArchetypes';
+
+const BUILT_ARCHETYPE_DESCRIPTIONS = {
+  marketing: 'Landing page with navbar, hero, feature cards, testimonials, contact form, footer, and in-preview auth modal (log in / sign up).',
+  dashboard: 'SaaS-style interior with sidebar nav, search bar, notification dot & panel, stat cards, charts, issues tracker, data table, and profile settings.',
+  pricing: 'Tier comparison layout with dense feature lists and CTAs.',
+  blog: 'Long-form headings and body copy for readability testing.',
+  ecommerce: 'Product cards with image placeholders, price, and buy buttons.',
+  auth: 'Login and signup forms with minimal chrome — typography and contrast at small scale.',
+  chat: 'Conversation bubbles, markdown responses, inline code, and a fixed input bar.',
+  onboarding: 'Step progress, focused forms, and illustration area for first-run setup.',
+  settings: 'Tabbed layout, dense form fields, toggles, and a destructive action zone.',
+  empty: 'Sparse layout with icon, headline, and single CTA — palette purity test.',
+  notifications: 'Stacked activity list with read/unread states, avatars, and timestamps.',
+};
+
+const BUILT_ARCHETYPE_CATALOG = PREVIEW_ARCHETYPES.map((archetype) => ({
+  id: `archetype-${archetype.id}`,
+  label: archetype.label,
+  description: BUILT_ARCHETYPE_DESCRIPTIONS[archetype.id] ?? archetype.description,
+  status: 'built',
+  usedIn: 'Live Preview',
+  group: archetype.group,
+}));
+
+const PLANNED_ARCHETYPE_CATALOG = PLANNED_PREVIEW_ARCHETYPES.map((archetype) => ({
+  id: `archetype-${archetype.id}`,
+  label: archetype.label,
+  description: archetype.description,
+  status: 'planned',
+  usedIn: 'Live Preview (roadmap)',
+  group: archetype.group,
+}));
+
 export const UTILITY_COMPONENTS = [
   {
     id: 'color-swatch',
@@ -65,7 +102,7 @@ export const UTILITY_COMPONENTS = [
     label: 'Modal / dialog wrapper',
     description: 'Generic dialog shell with backdrop, header, and close — used for app-level overlays.',
     status: 'built',
-    usedIn: 'Export panel, Feature catalog',
+    usedIn: 'Feature catalog, Walkthrough',
   },
   {
     id: 'accordion',
@@ -124,7 +161,7 @@ export const FEATURE_COMPONENTS = [
   {
     id: 'preview-components-panel',
     label: 'Preview components panel',
-    description: 'Right sidebar to switch live preview archetypes and toggle individual preview sections; collapses to an icon rail.',
+    description: 'Right sidebar to switch live preview archetypes and toggle individual preview sections; collapses to an icon rail. On tablet/mobile, opens as a slide-over panel.',
     status: 'built',
     usedIn: 'App shell',
   },
@@ -156,8 +193,9 @@ export const FEATURE_COMPONENTS = [
   {
     id: 'shortcuts-modal',
     label: 'Keyboard shortcuts cheat-sheet',
-    description: 'Discoverable reference for spacebar-shuffle and other shortcuts.',
-    status: 'planned',
+    description: 'Discoverable reference for panel navigation, preview devices, shuffle, and help shortcuts.',
+    status: 'built',
+    usedIn: 'Help panel (sidebar footer)',
   },
   {
     id: 'whats-new',
@@ -187,46 +225,13 @@ export const LIVE_PREVIEW_COMPONENTS = [
     status: 'built',
     usedIn: 'Live Preview toolbar',
   },
-  {
-    id: 'archetype-marketing',
-    label: 'Common Website Design',
-    description: 'Landing page with navbar, hero, feature cards, testimonials, contact form, footer, and in-preview auth modal (log in / sign up).',
-    status: 'built',
-    usedIn: 'Live Preview',
-  },
-  {
-    id: 'archetype-dashboard',
-    label: 'Corporate Dashboard',
-    description: 'SaaS-style interior with sidebar nav, search bar, notification dot & panel, stat cards, charts, issues tracker, data table, and profile settings.',
-    status: 'built',
-    usedIn: 'Live Preview',
-  },
-  {
-    id: 'archetype-pricing',
-    label: 'Pricing table',
-    description: 'Tier comparison layout with dense feature lists and CTAs.',
-    status: 'built',
-    usedIn: 'Live Preview',
-  },
-  {
-    id: 'archetype-blog',
-    label: 'Blog / article',
-    description: 'Long-form headings and body copy for readability testing.',
-    status: 'built',
-    usedIn: 'Live Preview',
-  },
-  {
-    id: 'archetype-ecommerce',
-    label: 'E-commerce product',
-    description: 'Product cards with image placeholders, price, and buy buttons.',
-    status: 'built',
-    usedIn: 'Live Preview',
-  },
+  ...BUILT_ARCHETYPE_CATALOG,
+  ...PLANNED_ARCHETYPE_CATALOG,
   {
     id: 'preview-parts-toggles',
     label: 'Preview parts toggles',
     description: 'Per-archetype section toggles (e.g. navbar, charts, pricing tiers) persisted in local storage.',
     status: 'built',
-    usedIn: 'Preview components panel',
+    usedIn: 'Prototypes → Preview settings',
   },
 ];

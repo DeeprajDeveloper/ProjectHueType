@@ -3,7 +3,10 @@
 .app-shell {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100dvh;
+  max-height: 100dvh;
+  min-height: 100dvh;
+  overflow: hidden;
   background: var(--surface-base);
 }
 
@@ -28,7 +31,9 @@
   display: grid;
   grid-template-columns: 1fr;
   min-height: 100vh;
+  min-height: 100dvh;
   height: 100vh;
+  height: 100dvh;
   transition: grid-template-columns var(--transition-base);
 
   @include respond-to(desktop) {
@@ -48,20 +53,94 @@
   }
 }
 
+.app-shell__backdrop {
+  @include button-reset;
+  position: fixed;
+  inset: 0;
+  z-index: 180;
+  background: rgb(0 0 0 / 45%);
+  cursor: default;
+  animation: app-shell-backdrop-in 200ms ease;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+@keyframes app-shell-backdrop-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.app-shell__main--compact {
+  grid-template-columns: var(--sidebar-width-collapsed) minmax(0, 1fr);
+  height: 100dvh;
+  min-height: 100dvh;
+  max-height: 100dvh;
+
+  .app-shell__sidebar {
+    width: var(--sidebar-width-collapsed);
+    max-height: 100dvh;
+    border-right: 1px solid var(--border-subtle);
+    border-bottom: none;
+    overflow: visible;
+    z-index: 210;
+  }
+
+  .app-shell__sidebar-brand,
+  .app-shell__sidebar-panel,
+  .app-shell__sidebar-footer {
+    display: none;
+  }
+
+  .sidebar-rail {
+    display: flex;
+  }
+
+  .app-shell__content {
+    max-height: 100dvh;
+    height: 100%;
+    min-height: 0;
+  }
+
+  .app-shell__components {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: var(--sidebar-width-collapsed);
+    width: auto;
+    max-height: 100dvh;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    z-index: 200;
+    transform: translateX(0);
+    transition: transform var(--transition-base), visibility var(--transition-base);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+
+    &--collapsed {
+      visibility: hidden;
+      pointer-events: none;
+      transform: translateX(100%);
+    }
+  }
+}
+
 .app-shell__sidebar {
   display: flex;
   flex-direction: column;
   border-right: 1px solid var(--border-subtle);
   background: var(--surface-raised);
   overflow: hidden;
-  max-height: 100vh;
+  max-height: 100dvh;
   transition: width var(--transition-base);
-
-  @include respond-to(mobile) {
-    max-height: none;
-    border-right: none;
-    border-bottom: 1px solid var(--border-subtle);
-  }
 
   &--collapsed {
     @include respond-to(desktop) {
@@ -111,37 +190,36 @@
   .sidebar-toolbar {
     flex-shrink: 0;
   }
-
-  .lock-controls {
-    flex-shrink: 0;
-    margin-top: auto;
-  }
-}
-
-.app-shell__brand-name {
-  white-space: nowrap;
 }
 
 .app-shell__brand {
   display: flex;
   align-items: center;
+  min-width: 0;
   gap: var(--space-2);
-  font-weight: 700;
-  font-size: var(--text-heading);
+}
+
+.app-shell__brand-name {
+  white-space: nowrap;
+  font-weight: 600;
+  font-size: var(--text-body);
   color: var(--text-primary);
 }
 
 .app-shell__logo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  background: var(--accent);
-  color: var(--accent-contrast);
-  border-radius: var(--radius-sm);
-  font-size: var(--text-caption);
-  font-weight: 700;
+  display: block;
+  height: 32px;
+  width: auto;
+  flex-shrink: 0;
+
+  .app-shell__sidebar--collapsed & {
+    @include respond-to(desktop) {
+      height: 28px;
+      width: 28px;
+      object-fit: cover;
+      object-position: top center;
+    }
+  }
 }
 
 .app-shell__sidebar-toggle {
@@ -288,26 +366,19 @@
   display: flex;
   flex-direction: column;
   min-height: 0;
-  max-height: 100vh;
+  max-height: 100dvh;
   height: 100%;
   overflow: hidden;
   background: var(--surface-base);
   min-width: 0;
-
-  @include respond-to(mobile) {
-    max-height: none;
-    height: auto;
-    min-height: 70vh;
-  }
 }
 
 .app-shell__components {
-  max-height: 100vh;
+  max-height: 100dvh;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
-
-  @include respond-to(mobile) {
-    max-height: none;
-  }
 
   &--collapsed {
     @include respond-to(desktop) {

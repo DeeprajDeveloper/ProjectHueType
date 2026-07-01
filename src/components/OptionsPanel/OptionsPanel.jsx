@@ -6,8 +6,9 @@ import CustomizePanel from '../CustomizePanel/CustomizePanel';
 import ComboInfoPanel from '../ComboInfoPanel/ComboInfoPanel';
 import BuildInfoPanel from '../BuildInfoPanel/BuildInfoPanel';
 import FeatureCatalogPanel from '../FeatureCatalogPanel/FeatureCatalogPanel';
+import HelpPanel from '../HelpPanel/HelpPanel';
 import ComponentToggle from '../PreviewComponentsPanel/ComponentToggle';
-import { ARCHETYPE_PARTS, PREVIEW_ARCHETYPES } from '../PreviewComponentsPanel/previewArchetypes';
+import { ARCHETYPE_PARTS, PREVIEW_ARCHETYPES, ARCHETYPE_GROUPS, getArchetypesForGroup, resolveArchetypeParts } from '../PreviewComponentsPanel/previewArchetypes';
 import './OptionsPanel.scss';
 
 const PANEL_TITLES = {
@@ -20,59 +21,37 @@ const PANEL_TITLES = {
   info: 'WCAG contrast',
   'build-info': 'Build Info',
   'feature-catalog': 'Feature Catalog',
+  help: 'Help',
 };
 
-function PreviewSettingsContent({ previewLogoText, onPreviewLogoTextChange }) {
-  return (
-    <label className="options-panel__field">
-      <span className="options-panel__field-label">Logo text</span>
-      <span className="options-panel__field-hint">
-        Updates brand names in navbars, sidebars, and store headers.
-      </span>
-      <input
-        type="text"
-        className="options-panel__input"
-        value={previewLogoText}
-        onChange={(e) => onPreviewLogoTextChange(e.target.value)}
-        placeholder="Acme Co."
-        maxLength={48}
-        aria-label="Preview logo text"
-      />
-    </label>
-  );
-}
-
-function ArchetypesContent({ archetype, onArchetypeChange, archetypeParts, onToggleArchetypePart }) {
+function PreviewSettingsContent({
+  previewLogoText,
+  onPreviewLogoTextChange,
+  archetype,
+  archetypeParts,
+  onToggleArchetypePart,
+}) {
   const currentParts = ARCHETYPE_PARTS[archetype] || [];
   const archetypeLabel = PREVIEW_ARCHETYPES.find((a) => a.id === archetype)?.label;
+  const resolvedParts = resolveArchetypeParts(archetype, archetypeParts[archetype]);
 
   return (
-    <div className="options-panel__archetypes-view">
-      <fieldset className="options-panel__archetypes">
-        <legend className="options-panel__legend">Prototype layout</legend>
-        {PREVIEW_ARCHETYPES.map((item) => {
-          const selected = archetype === item.id;
-          return (
-            <label
-              key={item.id}
-              className={`options-panel__option ${selected ? 'options-panel__option--selected' : ''}`}
-            >
-              <input
-                type="radio"
-                name="preview-archetype"
-                value={item.id}
-                checked={selected}
-                onChange={() => onArchetypeChange(item.id)}
-                className="options-panel__radio"
-              />
-              <span className="options-panel__option-body">
-                <span className="options-panel__option-label">{item.label}</span>
-                <span className="options-panel__option-desc">{item.description}</span>
-              </span>
-            </label>
-          );
-        })}
-      </fieldset>
+    <div className="options-panel__preview-settings">
+      <label className="options-panel__field">
+        <span className="options-panel__field-label">Logo text</span>
+        <span className="options-panel__field-hint">
+          Updates brand names in navbars, sidebars, and store headers.
+        </span>
+        <input
+          type="text"
+          className="options-panel__input"
+          value={previewLogoText}
+          onChange={(e) => onPreviewLogoTextChange(e.target.value)}
+          placeholder="Acme Co."
+          maxLength={48}
+          aria-label="Preview logo text"
+        />
+      </label>
 
       {currentParts.length > 0 && (
         <div className="options-panel__parts-group">
@@ -87,7 +66,7 @@ function ArchetypesContent({ archetype, onArchetypeChange, archetypeParts, onTog
               <ComponentToggle
                 key={part.id}
                 label={part.label}
-                checked={archetypeParts[archetype]?.[part.id] ?? true}
+                checked={resolvedParts[part.id]}
                 onChange={() => onToggleArchetypePart(archetype, part.id)}
               />
             ))}
@@ -98,9 +77,52 @@ function ArchetypesContent({ archetype, onArchetypeChange, archetypeParts, onTog
   );
 }
 
+function ArchetypesContent({ archetype, onArchetypeChange }) {
+  const availableGroups = ARCHETYPE_GROUPS.filter(
+    (group) => getArchetypesForGroup(group.id).length > 0,
+  );
+
+  return (
+    <div className="options-panel__archetypes-view">
+      {availableGroups.map((group) => (
+        <section key={group.id} className="options-panel__archetype-group">
+          <h4 className="options-panel__group-label">{group.label}</h4>
+          <p className="options-panel__group-desc">{group.description}</p>
+          <fieldset className="options-panel__archetypes">
+            <legend className="options-panel__legend">{group.label}</legend>
+          {getArchetypesForGroup(group.id).map((item) => {
+            const selected = archetype === item.id;
+            return (
+              <label
+                key={item.id}
+                className={`options-panel__option ${selected ? 'options-panel__option--selected' : ''}`}
+              >
+                <input
+                  type="radio"
+                  name="preview-archetype"
+                  value={item.id}
+                  checked={selected}
+                  onChange={() => onArchetypeChange(item.id)}
+                  className="options-panel__radio"
+                />
+                <span className="options-panel__option-body">
+                  <span className="options-panel__option-label">{item.label}</span>
+                  <span className="options-panel__option-desc">{item.description}</span>
+                </span>
+              </label>
+            );
+          })}
+          </fieldset>
+        </section>
+      ))}
+    </div>
+  );
+}
+
 function OptionsPanel({
   open,
   onToggleOpen,
+  isCompact = false,
   activePanel,
   // Presets
   search,
@@ -153,10 +175,12 @@ function OptionsPanel({
   onPreviewLogoTextChange,
   onStartTour,
 }) {
-  const panelId = activePanel === 'preview-parts' ? 'archetypes' : activePanel;
+  const panelId = activePanel === 'preview-parts' ? 'preview-settings' : activePanel;
   const title = PANEL_TITLES[panelId] || 'Options';
 
   if (!open) {
+    if (isCompact) return null;
+
     return (
       <aside className="options-panel options-panel--collapsed" aria-label="Options panel">
         <button
@@ -283,6 +307,9 @@ function OptionsPanel({
             <PreviewSettingsContent
               previewLogoText={previewLogoText}
               onPreviewLogoTextChange={onPreviewLogoTextChange}
+              archetype={archetype}
+              archetypeParts={archetypeParts}
+              onToggleArchetypePart={onToggleArchetypePart}
             />
           </div>
         );
@@ -293,8 +320,6 @@ function OptionsPanel({
             <ArchetypesContent
               archetype={archetype}
               onArchetypeChange={onArchetypeChange}
-              archetypeParts={archetypeParts}
-              onToggleArchetypePart={onToggleArchetypePart}
             />
           </div>
         );
@@ -320,13 +345,22 @@ function OptionsPanel({
           <FeatureCatalogPanel />
         );
 
+      case 'help':
+        return (
+          <HelpPanel />
+        );
+
       default:
         return null;
     }
   };
 
   return (
-    <aside className="options-panel" aria-label="Options panel" data-tour="components-panel">
+    <aside
+      className={`options-panel ${isCompact ? 'options-panel--overlay' : ''}`}
+      aria-label="Options panel"
+      data-tour="components-panel"
+    >
       <header className="options-panel__header">
         <div className="options-panel__header-text">
           <h2 className="options-panel__title">{title}</h2>

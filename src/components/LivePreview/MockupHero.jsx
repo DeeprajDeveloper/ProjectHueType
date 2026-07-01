@@ -1,22 +1,24 @@
+import { MOCKUP_COPY } from '../../data/mockupCopy';
 import './MockupHero.scss';
 
 function MockupHero({ onOpenAuth }) {
+  const copy = MOCKUP_COPY.marketing.hero;
+
   return (
     <section className="mockup-hero">
-      <p className="mockup-hero__eyebrow">Design better, ship faster</p>
+      <p className="mockup-hero__eyebrow">{copy.eyebrow}</p>
       <h1 className="mockup-hero__heading">
-        The modern way to build beautiful products
+        {copy.heading}
       </h1>
       <p className="mockup-hero__subtext">
-        See your palette and typography come alive on a real landing page — hero,
-        cards, forms, and navigation working together.
+        {copy.subtext}
       </p>
       <div className="mockup-hero__actions">
         <button type="button" className="mockup-hero__cta" onClick={onOpenAuth}>
-          Get started free
+          {copy.cta.primary}
         </button>
         <button type="button" className="mockup-hero__cta-secondary">
-          View demo
+          {copy.cta.secondary}
         </button>
       </div>
     </section>

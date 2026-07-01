@@ -1,0 +1,183 @@
+@use '../../styles/preview-type' as *;
+
+.mockup-onboarding {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  padding: 32px;
+  background: color-mix(in srgb, var(--preview-secondary) 35%, var(--preview-background));
+}
+
+.mockup-onboarding__shell {
+  width: 100%;
+  max-width: 640px;
+  padding: 32px;
+  background: var(--preview-background);
+  border: 1px solid var(--preview-secondary);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px color-mix(in srgb, var(--preview-text) 8%, transparent);
+}
+
+.mockup-onboarding__progress {
+  margin-bottom: 32px;
+}
+
+.mockup-onboarding__progress-track {
+  height: 6px;
+  background: var(--preview-secondary);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.mockup-onboarding__progress-fill {
+  height: 100%;
+  background: var(--preview-accent);
+  border-radius: 999px;
+  transition: width 0.25s ease;
+}
+
+.mockup-onboarding__progress-label {
+  font-size: preview-type-size(0.75rem);
+  font-weight: 500;
+  color: var(--preview-text);
+  opacity: 0.6;
+}
+
+.mockup-onboarding__body {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 32px;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.mockup-onboarding__illus {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mockup-onboarding__illus-card {
+  width: 160px;
+  padding: 24px;
+  background: color-mix(in srgb, var(--preview-primary) 10%, var(--preview-background));
+  border: 1px solid var(--preview-secondary);
+  border-radius: 12px;
+}
+
+.mockup-onboarding__illus-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  margin-bottom: 16px;
+  font-family: var(--preview-font-heading), sans-serif;
+  font-weight: 700;
+  font-size: preview-type-size(1.25rem);
+  color: var(--preview-background);
+  background: var(--preview-accent);
+  border-radius: 10px;
+}
+
+.mockup-onboarding__illus-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  span {
+    display: block;
+    height: 8px;
+    background: var(--preview-secondary);
+    border-radius: 4px;
+
+    &:nth-child(1) { width: 100%; }
+    &:nth-child(2) { width: 80%; }
+    &:nth-child(3) { width: 60%; }
+  }
+}
+
+.mockup-onboarding__title {
+  font-family: var(--preview-font-heading), sans-serif;
+  font-weight: var(--preview-font-heading-weight);
+  font-size: preview-type-size(1.5rem);
+  line-height: 1.25;
+  color: var(--preview-text);
+  margin-bottom: 12px;
+}
+
+.mockup-onboarding__copy {
+  font-size: preview-type-size(0.9375rem);
+  line-height: 1.55;
+  color: var(--preview-text);
+  opacity: 0.75;
+  margin-bottom: 20px;
+}
+
+.mockup-onboarding__choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.mockup-onboarding__chip {
+  padding: 8px 14px;
+  font-size: preview-type-size(0.8125rem);
+  font-weight: 500;
+  color: var(--preview-text);
+  background: var(--preview-secondary);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  cursor: pointer;
+
+  &:hover {
+    border-color: var(--preview-accent);
+  }
+}
+
+.mockup-onboarding__nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 24px;
+  border-top: 1px solid var(--preview-secondary);
+}
+
+.mockup-onboarding__back {
+  padding: 10px 18px;
+  font-size: preview-type-size(0.875rem);
+  font-weight: 500;
+  color: var(--preview-text);
+  background: none;
+  border: 1px solid color-mix(in srgb, var(--preview-text) 20%, transparent);
+  border-radius: 6px;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+.mockup-onboarding__next {
+  padding: 10px 22px;
+  font-size: preview-type-size(0.875rem);
+  font-weight: 600;
+  color: var(--preview-background);
+  background: var(--preview-accent);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+@container preview-frame (max-width: 640px) {
+  .mockup-onboarding__body {
+    grid-template-columns: 1fr;
+  }
+
+  .mockup-onboarding__illus {
+    order: -1;
+  }
+}

@@ -9,6 +9,13 @@
   gap: 2px;
 }
 
+.segment-control--icons-only {
+  .segment-control__btn {
+    min-width: 36px;
+    padding: var(--space-2);
+  }
+}
+
 .segment-control__btn {
   @include button-reset;
   display: inline-flex;
@@ -31,8 +38,24 @@
     font-weight: 600;
   }
 
-  &:hover:not(&--active) {
+  &:hover:not(&--active):not(&--disabled) {
     color: var(--text-primary);
     border-color: var(--accent);
+  }
+
+  &--disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+
+    &:hover {
+      color: var(--text-secondary);
+      border-color: transparent;
+    }
+
+    &.segment-control__btn--active {
+      background: var(--surface-sunken);
+      color: var(--text-tertiary);
+      font-weight: 500;
+    }
   }
 }

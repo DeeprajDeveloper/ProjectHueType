@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useBreakpoint } from '../../hooks';
 import {
   DesktopIcon,
   DeviceTabletCameraIcon,
@@ -6,17 +7,24 @@ import {
   DeviceRotateIcon,
   FlaskIcon,
   InfoIcon,
+  ShuffleIcon,
 } from '@phosphor-icons/react';
 import SegmentControl from '../SegmentControl/SegmentControl';
 import ContrastBadge from '../ContrastBadge/ContrastBadge';
 import Icon from '../Icon/Icon';
-import { ICON_SIZE_SM } from '../Icon/iconConfig';
+import { ICON_SIZE_XL, ICON_SIZE_SM } from '../Icon/iconConfig';
 import MockupMarketing from './MockupMarketing';
 import MockupDashboard from './MockupDashboard';
 import MockupPricing from './MockupPricing';
 import MockupBlog from './MockupBlog';
 import MockupEcommerce from './MockupEcommerce';
-import { isArchetypePreviewEmpty, getArchetypePreviewLabel } from '../PreviewComponentsPanel/previewArchetypes';
+import MockupAuth from './MockupAuth';
+import MockupChat from './MockupChat';
+import MockupOnboarding from './MockupOnboarding';
+import MockupSettings from './MockupSettings';
+import MockupEmptyState from './MockupEmptyState';
+import MockupNotifications from './MockupNotifications';
+import { isArchetypePreviewEmpty, getArchetypePreviewLabel, resolveArchetypeParts } from '../PreviewComponentsPanel/previewArchetypes';
 import { getPreviewTypeStyle } from '../../utils/typographyScale';
 import './LivePreview.scss';
 import './MockupMarketing.scss';
@@ -31,6 +39,12 @@ import './MockupDashboard.scss';
 import './MockupPricing.scss';
 import './MockupBlog.scss';
 import './MockupEcommerce.scss';
+import './MockupAuth.scss';
+import './MockupChat.scss';
+import './MockupOnboarding.scss';
+import './MockupSettings.scss';
+import './MockupEmptyState.scss';
+import './MockupNotifications.scss';
 
 const TABLET_ORIENTATION_KEY = 'huetype-tablet-orientation';
 
@@ -51,6 +65,11 @@ const DEVICE_LABELS = {
   mobile: 'Mobile',
 };
 
+const MOBILE_PREVIEW_DISABLED_MESSAGE =
+  'Desktop and tablet previews are unavailable on mobile view.';
+
+export { MOBILE_PREVIEW_DISABLED_MESSAGE };
+
 function renderArchetype(archetype, previewMode, parts, logoText, onFrameScrollLock) {
   const brand = logoText.trim() || 'Acme Co.';
   switch (archetype) {
@@ -62,6 +81,18 @@ function renderArchetype(archetype, previewMode, parts, logoText, onFrameScrollL
       return <MockupBlog parts={parts} logoText={brand} />;
     case 'ecommerce':
       return <MockupEcommerce parts={parts} logoText={brand} />;
+    case 'auth':
+      return <MockupAuth parts={parts} logoText={brand} />;
+    case 'chat':
+      return <MockupChat parts={parts} logoText={brand} />;
+    case 'onboarding':
+      return <MockupOnboarding parts={parts} logoText={brand} />;
+    case 'settings':
+      return <MockupSettings parts={parts} logoText={brand} />;
+    case 'empty':
+      return <MockupEmptyState parts={parts} />;
+    case 'notifications':
+      return <MockupNotifications parts={parts} />;
     case 'marketing':
     default:
       return (
@@ -95,8 +126,23 @@ function LivePreview({
   contrastStatus,
   onOpenInfo,
   infoActive = false,
+  onShuffle,
+  lockedCount = 0,
+  isCompact = false,
+  onShowToast,
 }) {
-  const activeParts = archetypeParts[archetype] || {};
+  const breakpoint = useBreakpoint();
+  const isMobileView = breakpoint === 'mobile';
+  const iconsOnly = isMobileView;
+
+  const handlePreviewModeChange = useCallback((mode) => {
+    if (isMobileView && mode !== 'mobile') {
+      onShowToast?.(MOBILE_PREVIEW_DISABLED_MESSAGE);
+      return;
+    }
+    onPreviewModeChange(mode);
+  }, [isMobileView, onPreviewModeChange, onShowToast]);
+  const activeParts = resolveArchetypeParts(archetype, archetypeParts[archetype]);
   const previewEmpty = isArchetypePreviewEmpty(archetype, activeParts);
   const [frameScrollLocked, setFrameScrollLocked] = useState(false);
   const frameWrapRef = useRef(null);
@@ -216,7 +262,7 @@ function LivePreview({
         : `${TABLET_SIZE[tabletOrientation].width} ✕ ${TABLET_SIZE[tabletOrientation].height}px`;
 
   return (
-    <div className="live-preview">
+    <div className={`live-preview ${isCompact ? 'live-preview--compact' : ''}`}>
       <div className="live-preview__controls" data-tour="preview-controls">
         <div className="live-preview__controls-heading">
           <h2 className="live-preview__label">
@@ -259,13 +305,26 @@ function LivePreview({
           )}
           <SegmentControl
             options={[
-              { value: 'desktop', label: 'Desktop', icon: DesktopIcon },
-              { value: 'tablet', label: 'Tablet', icon: DeviceTabletCameraIcon },
+              {
+                value: 'desktop',
+                label: 'Desktop',
+                icon: DesktopIcon,
+                disabled: isMobileView,
+                disabledTitle: MOBILE_PREVIEW_DISABLED_MESSAGE,
+              },
+              {
+                value: 'tablet',
+                label: 'Tablet',
+                icon: DeviceTabletCameraIcon,
+                disabled: isMobileView,
+                disabledTitle: MOBILE_PREVIEW_DISABLED_MESSAGE,
+              },
               { value: 'mobile', label: 'Mobile', icon: DeviceMobileCameraIcon },
             ]}
             value={previewMode}
-            onChange={onPreviewModeChange}
+            onChange={handlePreviewModeChange}
             ariaLabel="Preview device width"
+            iconsOnly={iconsOnly}
           />
         </div>
       </div>
@@ -282,13 +341,33 @@ function LivePreview({
           {previewEmpty ? (
             <div className="live-preview__empty">
               <p>All preview parts are hidden.</p>
-              <p className="live-preview__empty-hint">Turn sections on in the Options panel → Prototypes.</p>
+              <p className="live-preview__empty-hint">Turn sections on in Prototypes → Options.</p>
             </div>
           ) : (
             renderArchetype(archetype, previewMode, activeParts, previewLogoText, setFrameScrollLocked)
           )}
         </div>
       </div>
+
+      {onShuffle && (
+        <button
+          type="button"
+          className="live-preview__shuffle-fab"
+          onClick={onShuffle}
+          aria-label="Shuffle presets"
+          data-tour="shuffle"
+        >
+          <Icon icon={ShuffleIcon} size={ICON_SIZE_XL} />
+          {lockedCount > 0 && (
+            <span className="live-preview__shuffle-badge" aria-label={`${lockedCount} roles locked`}>
+              {lockedCount}
+            </span>
+          )}
+          <span className="live-preview__shuffle-tooltip" role="tooltip">
+            Shuffle presets (Space)
+          </span>
+        </button>
+      )}
     </div>
   );
 }

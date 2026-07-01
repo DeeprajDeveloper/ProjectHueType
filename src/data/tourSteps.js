@@ -39,9 +39,9 @@ export const TOUR_STEPS = [
     target: '[data-tour="shuffle"]',
     title: 'Shuffle unlocked roles',
     content:
-      'Happy with some choices but want fresh ideas? Shuffle randomizes every unlocked role. Press Space anytime for a quick shuffle.',
-    placement: 'right',
-    prepare: 'sidebar-workspace',
+      'Use the floating shuffle button on the live preview to switch presets. Lock roles in Colors or Fonts first, then shuffle the rest. Press Space anytime.',
+    placement: 'left',
+    prepare: 'close-panels',
   },
   {
     id: 'live-preview',
@@ -111,7 +111,7 @@ export const TOUR_STEPS = [
     target: null,
     title: "You're all set",
     content:
-      'Build Info and Feature Catalog live in the sidebar footer. Press Space to shuffle, and export your combo when you are ready to ship tokens to code.',
+      'Build Info and Feature Catalog live in the sidebar footer. Press ? for shortcuts, Space to shuffle, and export when you are ready to ship tokens.',
     placement: 'center',
     prepare: 'close-export',
   },

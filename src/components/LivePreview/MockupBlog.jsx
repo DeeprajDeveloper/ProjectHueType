@@ -10,6 +10,7 @@ import {
 } from '@phosphor-icons/react';
 import Icon from '../Icon/Icon';
 import { ICON_SIZE } from '../Icon/iconConfig';
+import { MOCKUP_COPY, DEFAULT_PREVIEW_LOGO } from '../../data/mockupCopy';
 
 const ACTION_ICONS = [
   { id: 'clap', label: 'Clap', icon: HandsClappingIcon },
@@ -20,7 +21,8 @@ const ACTION_ICONS = [
   { id: 'share', label: 'Share', icon: ShareIcon },
 ];
 
-function MockupBlog({ parts = {}, logoText = 'Acme Co.' }) {
+function MockupBlog({ parts = {}, logoText = DEFAULT_PREVIEW_LOGO }) {
+  const copy = MOCKUP_COPY.blog;
   const show = (id) => parts[id] !== false;
 
   return (
@@ -29,15 +31,15 @@ function MockupBlog({ parts = {}, logoText = 'Acme Co.' }) {
         <header className="mockup-blog__nav">
           <span className="mockup-blog__logo">{logoText}</span>
           <nav className="mockup-blog__nav-links" aria-label="Article navigation">
-            <button type="button">Our story</button>
-            <button type="button">Membership</button>
-            <button type="button">Write</button>
+            {copy.nav.links.map((link) => (
+              <button key={link} type="button">{link}</button>
+            ))}
           </nav>
           <div className="mockup-blog__nav-actions">
             <button type="button" className="mockup-blog__search" aria-label="Search">
               <Icon icon={MagnifyingGlassIcon} size={ICON_SIZE} />
             </button>
-            <button type="button" className="mockup-blog__nav-signin">Sign in</button>
+            <button type="button" className="mockup-blog__nav-signin">{copy.nav.signIn}</button>
           </div>
         </header>
       )}
@@ -46,9 +48,9 @@ function MockupBlog({ parts = {}, logoText = 'Acme Co.' }) {
         {show('authorRail') && (
           <aside className="mockup-blog__rail mockup-blog__rail--left" aria-label="Author">
             <div className="mockup-blog__author-sticky">
-              <div className="mockup-blog__author-avatar" aria-hidden="true">AR</div>
-              <span className="mockup-blog__author-name">Alex Rivera</span>
-              <button type="button" className="mockup-blog__follow">Follow</button>
+              <div className="mockup-blog__author-avatar" aria-hidden="true">{copy.author.initials}</div>
+              <span className="mockup-blog__author-name">{copy.author.name}</span>
+              <button type="button" className="mockup-blog__follow">{copy.author.follow}</button>
             </div>
           </aside>
         )}
@@ -56,12 +58,12 @@ function MockupBlog({ parts = {}, logoText = 'Acme Co.' }) {
         <article className="mockup-blog__article">
           {show('articleHeader') && (
             <header className="mockup-blog__header">
-              <span className="mockup-blog__category">Design systems</span>
+              <span className="mockup-blog__category">{copy.article.category}</span>
               <h1 className="mockup-blog__title">
-                Why typography and color should be chosen together
+                {copy.article.title}
               </h1>
               <p className="mockup-blog__meta">
-                8 min read · March 14, 2026
+                {copy.article.meta}
               </p>
             </header>
           )}
@@ -69,41 +71,29 @@ function MockupBlog({ parts = {}, logoText = 'Acme Co.' }) {
           {show('articleBody') && (
             <div className="mockup-blog__body">
               <p className="mockup-blog__lead">
-                Most teams pick a color palette first, then hunt for fonts that &ldquo;feel right.&rdquo;
-                The problem is that type and color interact in ways a swatch grid never reveals.
+                {copy.article.lead}
               </p>
 
               <p>
-                Contrast ratios shift with weight, size, and background, and a font that looks crisp on white can
-                feel muddy on a tinted surface. When evaluating a combo, test it against the kinds of pages you
-                actually ship: long articles, dense dashboards, pricing tables, and product cards all stress
-                different parts of the palette.
+                {copy.article.body.paragraph1}
               </p>
 
-              <h2>Start with real content, not placeholders</h2>
+              <h2>{copy.article.body.heading1}</h2>
               <p>
-                Short marketing headlines hide legibility issues that show up in paragraphs, captions,
-                and UI labels. Map every foreground/background pair you rely on — primary on secondary,
-                text on tinted panels, links on hover — and fix failures before they reach production.
+                {copy.article.body.paragraph2}
               </p>
 
               <blockquote>
-                &ldquo;The best palettes are the ones you never notice because everything just reads
-                effortlessly.&rdquo;
+                &ldquo;{copy.article.body.blockquote}&rdquo;
               </blockquote>
 
-              <h2>Contrast is a system, not a checkbox</h2>
+              <h2>{copy.article.body.heading2}</h2>
               <p>
-                Passing AA on body text against a white background does not guarantee your accent color
-                works on buttons, badges, or navigation. HueType exists to make that pairing process fast:
-                shuffle until something clicks, lock what you love, and preview the result on layouts that
-                mirror real products — not just hero sections.
+                {copy.article.body.paragraph3}
               </p>
 
               <p>
-                Long-form reading is where font and color pairings earn their keep. Line length, line height,
-                and paragraph rhythm all interact with background tint and text color in ways that short UI
-                copy never exposes. If your combo works here, it will work almost everywhere else.
+                {copy.article.body.paragraph4}
               </p>
             </div>
           )}

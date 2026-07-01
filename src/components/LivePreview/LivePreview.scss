@@ -9,6 +9,7 @@
   padding: var(--space-4) var(--space-5);
   background: var(--surface-base);
   overflow: hidden;
+  position: relative;
 }
 
 .live-preview__controls {
@@ -262,9 +263,125 @@
   opacity: 0.8;
 }
 
+.live-preview__shuffle-fab {
+  @include button-reset;
+  position: absolute;
+  right: var(--space-5);
+  bottom: var(--space-5);
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  color: var(--accent-contrast);
+  background: var(--accent);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-md);
+  transition:
+    background var(--transition-fast),
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
+
+  &:hover {
+    background: var(--accent-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+
+    .live-preview__shuffle-tooltip {
+      @include tooltip-show('left');
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+
+    .live-preview__shuffle-tooltip {
+      @include tooltip-show('left');
+    }
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.live-preview__shuffle-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-chrome);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--accent);
+  background: var(--surface-raised);
+  border: 2px solid var(--accent);
+  border-radius: var(--radius-full);
+}
+
+.live-preview__shuffle-tooltip {
+  @include tooltip-base;
+  @include tooltip-style('chrome');
+  @include tooltip-position('left');
+  white-space: nowrap;
+}
+
 [data-theme='dark'] {
   .live-preview__frame {
     border-color: var(--border-strong);
     box-shadow: var(--shadow-lg);
+  }
+}
+
+.live-preview--compact {
+  @include below-desktop {
+    padding: var(--space-3) var(--space-4);
+
+    .live-preview__controls {
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--space-2);
+    }
+
+    .live-preview__label {
+      white-space: normal;
+    }
+  }
+
+  @include respond-to(mobile) {
+    padding: var(--space-3);
+
+    .live-preview__label {
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .live-preview__dimensions {
+      font-size: 10px;
+    }
+
+    .live-preview__controls-actions {
+      width: 100%;
+      justify-content: space-between;
+    }
+
+    .live-preview__rotate span {
+      display: none;
+    }
+
+    .live-preview__shuffle-fab {
+      right: var(--space-3);
+      bottom: max(var(--space-3), env(safe-area-inset-bottom, 0px));
+      width: 48px;
+      height: 48px;
+    }
   }
 }

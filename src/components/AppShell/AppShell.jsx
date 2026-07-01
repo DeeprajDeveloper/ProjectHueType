@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { COMBOS } from '../../data/combos';
 import {
   useComboState,
@@ -7,16 +7,18 @@ import {
   useTheme,
   useToast,
   useKeyboardShuffle,
+  useKeyboardShortcuts,
   useUiPreferences,
   useWalkthrough,
+  useIsCompactLayout,
+  useBreakpoint,
 } from '../../hooks';
-import { SidebarSimpleIcon, BooksIcon, PackageIcon } from '@phosphor-icons/react';
+import { SidebarSimpleIcon, BooksIcon, PackageIcon, QuestionIcon } from '@phosphor-icons/react';
 import Icon from '../Icon/Icon';
 import { ICON_SIZE } from '../Icon/iconConfig';
 import { APP_VERSION } from '../../data/buildInfo';
 import './AppShell.scss';
-import LivePreview from '../LivePreview/LivePreview';
-import LockRandomizeControls from '../LockRandomizeControls/LockRandomizeControls';
+import LivePreview, { MOBILE_PREVIEW_DISABLED_MESSAGE } from '../LivePreview/LivePreview';
 import ExportPanel from '../ExportPanel/ExportPanel';
 import Toast from '../Toast/Toast';
 import SidebarRail from '../SidebarRail/SidebarRail';
@@ -24,11 +26,19 @@ import SidebarToolbar from '../SidebarToolbar/SidebarToolbar';
 import SidebarNav from '../SidebarNav/SidebarNav';
 import OptionsPanel from '../OptionsPanel/OptionsPanel';
 import Walkthrough from '../Walkthrough/Walkthrough';
+import { readStoredActivePanel, storeActivePanel } from '../../data/sidebarNavItems';
+
+function getInitialPreviewMode() {
+  if (typeof window !== 'undefined' && window.matchMedia('(max-width: 639px)').matches) {
+    return 'mobile';
+  }
+  return 'desktop';
+}
 
 function AppShell() {
-  const [activePanel, setActivePanel] = useState('workspace');
+  const [activePanel, setActivePanelState] = useState(readStoredActivePanel);
   const [exportOpen, setExportOpen] = useState(false);
-  const [previewMode, setPreviewMode] = useState('desktop');
+  const [previewMode, setPreviewMode] = useState(getInitialPreviewMode);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [originalCombo, setOriginalCombo] = useState(COMBOS[0]);
 
@@ -70,6 +80,11 @@ function AppShell() {
 
   const isSavedView = activePanel === 'saved';
   const filter = useComboFilter(isSavedView ? saved : COMBOS);
+
+  const setActivePanel = useCallback((panel) => {
+    setActivePanelState(panel);
+    storeActivePanel(panel);
+  }, []);
 
   const handlePanelToggle = useCallback((panel) => {
     if (activePanel === panel && componentsSidebarOpen) {
@@ -148,6 +163,44 @@ function AppShell() {
   );
 
   const tour = useWalkthrough({ onStepEnter: handleTourStepEnter });
+  const isCompact = useIsCompactLayout();
+  const breakpoint = useBreakpoint();
+
+  useEffect(() => {
+    if (breakpoint === 'mobile') {
+      setPreviewMode((current) => (current !== 'mobile' ? 'mobile' : current));
+    }
+  }, [breakpoint]);
+
+  const handlePreviewModeChange = useCallback((mode) => {
+    if (breakpoint === 'mobile' && mode !== 'mobile') {
+      showToast(MOBILE_PREVIEW_DISABLED_MESSAGE);
+      return;
+    }
+    setPreviewMode(mode);
+  }, [breakpoint, showToast]);
+
+  useEffect(() => {
+    if (isCompact) {
+      setSidebarOpen(false);
+    }
+  }, [isCompact]);
+
+  useEffect(() => {
+    if (!isCompact || !componentsSidebarOpen) return undefined;
+
+    const html = document.documentElement;
+    const previousHtmlOverflow = html.style.overflow;
+    const previousBodyOverflow = document.body.style.overflow;
+
+    html.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      html.style.overflow = previousHtmlOverflow;
+      document.body.style.overflow = previousBodyOverflow;
+    };
+  }, [isCompact, componentsSidebarOpen]);
 
   useKeyboardShuffle(() => {
     if (tour.active) return;
@@ -156,6 +209,13 @@ function AppShell() {
       setOriginalCombo(structuredClone(next));
     }
     showToast('Shuffled unlocked roles');
+  });
+
+  useKeyboardShortcuts({
+    enabled: !tour.active,
+    exportOpen,
+    onNavPanel: handlePanelToggle,
+    onPreviewModeChange: handlePreviewModeChange,
   });
 
   const handleSelectCombo = (selected) => {
@@ -211,11 +271,22 @@ function AppShell() {
         Skip to content
       </a>
 
-      <div className={`app-shell__main ${!sidebarOpen ? 'app-shell__main--collapsed' : ''} ${!componentsSidebarOpen ? 'app-shell__main--components-collapsed' : ''}`}>
+      <div
+        className={[
+          'app-shell__main',
+          !sidebarOpen ? 'app-shell__main--collapsed' : '',
+          !componentsSidebarOpen ? 'app-shell__main--components-collapsed' : '',
+          isCompact ? 'app-shell__main--compact' : '',
+        ].filter(Boolean).join(' ')}
+      >
         <aside className={`app-shell__sidebar ${!sidebarOpen ? 'app-shell__sidebar--collapsed' : ''}`}>
           <div className="app-shell__sidebar-brand">
             <div className="app-shell__brand">
-              <span className="app-shell__logo" aria-hidden="true">H</span>
+              <img
+                src='/logo_light.svg'
+                alt="HueType"
+                className="app-shell__logo"
+              />
               <span className="app-shell__brand-name">HueType</span>
             </div>
             {sidebarOpen && (
@@ -235,7 +306,6 @@ function AppShell() {
             activePanel={activePanel}
             panelOpen={componentsSidebarOpen}
             onPanelChange={handlePanelToggle}
-            onShuffle={handleShuffle}
             onToggleTheme={toggleTheme}
             onShare={handleShare}
             onSave={handleSave}
@@ -244,6 +314,7 @@ function AppShell() {
             exportActive={exportOpen}
             theme={theme}
             hasActiveFilters={filter.hasActiveFilters}
+            isCompact={isCompact}
           />
 
           <div className="app-shell__sidebar-panel">
@@ -265,12 +336,23 @@ function AppShell() {
               exportActive={exportOpen}
               dataTour="toolbar"
             />
-
-            <LockRandomizeControls locks={locks} onShuffle={handleShuffle} dataTour="shuffle" />
           </div>
 
           {sidebarOpen && (
             <footer className="app-shell__sidebar-footer">
+              <button
+                type="button"
+                className={`app-shell__sidebar-footer-link ${activePanel === 'help' && componentsSidebarOpen ? 'app-shell__sidebar-footer-link--active' : ''}`}
+                onClick={() => handlePanelToggle('help')}
+                aria-pressed={activePanel === 'help' && componentsSidebarOpen}
+                data-tour="help-footer"
+              >
+                <Icon icon={QuestionIcon} size={ICON_SIZE} className="app-shell__sidebar-footer-icon" />
+                <span className="app-shell__sidebar-footer-text">
+                  <span className="app-shell__sidebar-footer-label">Help</span>
+                  <span className="app-shell__sidebar-footer-desc">Keyboard shortcuts</span>
+                </span>
+              </button>
               <button
                 type="button"
                 className={`app-shell__sidebar-footer-link ${activePanel === 'build-info' && componentsSidebarOpen ? 'app-shell__sidebar-footer-link--active' : ''}`}
@@ -315,7 +397,7 @@ function AppShell() {
               fontsLoading={fontsLoading}
               contrastStatus={contrastStatus}
               previewMode={previewMode}
-              onPreviewModeChange={setPreviewMode}
+              onPreviewModeChange={handlePreviewModeChange}
               archetype={previewArchetype}
               archetypeParts={archetypeParts}
               previewLogoText={previewLogoText}
@@ -323,14 +405,28 @@ function AppShell() {
               typeScaleRatio={typeScaleRatio}
               onOpenInfo={() => handlePanelToggle('info')}
               infoActive={activePanel === 'info' && componentsSidebarOpen}
+              onShuffle={handleShuffle}
+              lockedCount={Object.values(locks).filter(Boolean).length}
+              isCompact={isCompact}
+              onShowToast={showToast}
             />
           )}
         </main>
+
+        {isCompact && componentsSidebarOpen && (
+          <button
+            type="button"
+            className="app-shell__backdrop"
+            aria-label="Close panel"
+            onClick={() => setComponentsSidebarOpen(false)}
+          />
+        )}
 
         <div className={`app-shell__components ${!componentsSidebarOpen ? 'app-shell__components--collapsed' : ''}`}>
           <OptionsPanel
             open={componentsSidebarOpen}
             onToggleOpen={setComponentsSidebarOpen}
+            isCompact={isCompact}
             activePanel={activePanel}
             search={filter.search}
             onSearchChange={filter.setSearch}

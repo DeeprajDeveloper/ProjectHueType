@@ -1,6 +1,6 @@
+import { MOCKUP_COPY } from '../../data/mockupCopy';
 import './MockupDashboardCharts.scss';
 
-const BAR_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const BAR_VALUES = [42, 68, 55, 82, 61, 74, 48];
 
 const LINE_POINTS = [
@@ -27,14 +27,16 @@ function toAreaPath(points, baseline = 80) {
 }
 
 function MockupBarChart() {
+  const copy = MOCKUP_COPY.dashboard.charts.bar;
+
   return (
     <div className="mockup-dash-chart mockup-dash-chart--bar">
-      <h3 className="mockup-dash-chart__title">Weekly revenue</h3>
+      <h3 className="mockup-dash-chart__title">{copy.title}</h3>
       <div className="mockup-dash-chart__canvas" aria-hidden="true">
         <div className="mockup-dash-chart__y-axis">
-          <span>$80k</span>
-          <span>$40k</span>
-          <span>$0</span>
+          {copy.yAxis.map((label) => (
+            <span key={label}>{label}</span>
+          ))}
         </div>
         <div className="mockup-dash-chart__plot">
           <div className="mockup-dash-chart__grid">
@@ -44,12 +46,12 @@ function MockupBarChart() {
           </div>
           <div className="mockup-dash-chart__bars">
             {BAR_VALUES.map((height, i) => (
-              <div key={BAR_LABELS[i]} className="mockup-dash-chart__bar-col">
+              <div key={copy.xAxis[i]} className="mockup-dash-chart__bar-col">
                 <div
                   className="mockup-dash-chart__bar"
                   style={{ '--bar-height': `${height}%`, '--bar-delay': `${i * 0.12}s` }}
                 />
-                <span className="mockup-dash-chart__x-label">{BAR_LABELS[i]}</span>
+                <span className="mockup-dash-chart__x-label">{copy.xAxis[i]}</span>
               </div>
             ))}
           </div>
@@ -60,12 +62,13 @@ function MockupBarChart() {
 }
 
 function MockupLineChart() {
+  const copy = MOCKUP_COPY.dashboard.charts.line;
   const line = toPolyline(LINE_POINTS);
   const area = toAreaPath(LINE_POINTS);
 
   return (
     <div className="mockup-dash-chart mockup-dash-chart--line">
-      <h3 className="mockup-dash-chart__title">Active users</h3>
+      <h3 className="mockup-dash-chart__title">{copy.title}</h3>
       <div className="mockup-dash-chart__canvas" aria-hidden="true">
         <svg className="mockup-dash-chart__svg" viewBox="0 0 200 80" preserveAspectRatio="none">
           <defs>
@@ -104,6 +107,7 @@ function MockupLineChart() {
 }
 
 function MockupDoughnutChart() {
+  const copy = MOCKUP_COPY.dashboard.charts.doughnut;
   const total = DOUGHNUT_SEGMENTS.reduce((sum, s) => sum + s.value, 0);
   let offset = 0;
   const radius = 36;
@@ -111,7 +115,7 @@ function MockupDoughnutChart() {
 
   return (
     <div className="mockup-dash-chart mockup-dash-chart--doughnut">
-      <h3 className="mockup-dash-chart__title">Plan distribution</h3>
+      <h3 className="mockup-dash-chart__title">{copy.title}</h3>
       <div className="mockup-dash-chart__doughnut-wrap">
         <svg className="mockup-dash-chart__doughnut" viewBox="0 0 96 96" aria-hidden="true">
           <g transform="translate(48, 48) rotate(-90)">
@@ -135,13 +139,13 @@ function MockupDoughnutChart() {
               );
             })}
           </g>
-          <text x="48" y="46" textAnchor="middle" className="mockup-dash-chart__doughnut-value">100%</text>
-          <text x="48" y="58" textAnchor="middle" className="mockup-dash-chart__doughnut-label">Accounts</text>
+          <text x="48" y="46" textAnchor="middle" className="mockup-dash-chart__doughnut-value">{copy.centerValue}</text>
+          <text x="48" y="58" textAnchor="middle" className="mockup-dash-chart__doughnut-label">{copy.centerLabel}</text>
         </svg>
         <ul className="mockup-dash-chart__legend">
-          <li><span style={{ background: DOUGHNUT_SEGMENTS[0].color }} />Pro (45%)</li>
-          <li><span style={{ background: DOUGHNUT_SEGMENTS[1].color }} />Team (30%)</li>
-          <li><span style={{ background: DOUGHNUT_SEGMENTS[2].color }} />Starter (25%)</li>
+          {copy.legend.map((label, i) => (
+            <li key={label}><span style={{ background: DOUGHNUT_SEGMENTS[i].color }} />{label}</li>
+          ))}
         </ul>
       </div>
     </div>
@@ -149,12 +153,13 @@ function MockupDoughnutChart() {
 }
 
 function MockupAreaChart() {
+  const copy = MOCKUP_COPY.dashboard.charts.area;
   const line = toPolyline(AREA_POINTS);
   const area = toAreaPath(AREA_POINTS);
 
   return (
     <div className="mockup-dash-chart mockup-dash-chart--area">
-      <h3 className="mockup-dash-chart__title">Conversion rate</h3>
+      <h3 className="mockup-dash-chart__title">{copy.title}</h3>
       <div className="mockup-dash-chart__canvas" aria-hidden="true">
         <svg className="mockup-dash-chart__svg" viewBox="0 0 200 80" preserveAspectRatio="none">
           <defs>
