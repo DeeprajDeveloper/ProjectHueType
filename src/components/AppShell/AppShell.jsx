@@ -11,13 +11,12 @@ import {
   useUiPreferences,
   useWalkthrough,
 } from '../../hooks';
-import { SidebarSimpleIcon, BooksIcon, PackageIcon } from '@phosphor-icons/react';
+import { SidebarSimpleIcon, BooksIcon, PackageIcon, QuestionIcon } from '@phosphor-icons/react';
 import Icon from '../Icon/Icon';
 import { ICON_SIZE } from '../Icon/iconConfig';
 import { APP_VERSION } from '../../data/buildInfo';
 import './AppShell.scss';
 import LivePreview from '../LivePreview/LivePreview';
-import LockRandomizeControls from '../LockRandomizeControls/LockRandomizeControls';
 import ExportPanel from '../ExportPanel/ExportPanel';
 import Toast from '../Toast/Toast';
 import SidebarRail from '../SidebarRail/SidebarRail';
@@ -247,7 +246,6 @@ function AppShell() {
             activePanel={activePanel}
             panelOpen={componentsSidebarOpen}
             onPanelChange={handlePanelToggle}
-            onShuffle={handleShuffle}
             onToggleTheme={toggleTheme}
             onShare={handleShare}
             onSave={handleSave}
@@ -277,12 +275,23 @@ function AppShell() {
               exportActive={exportOpen}
               dataTour="toolbar"
             />
-
-            <LockRandomizeControls locks={locks} onShuffle={handleShuffle} dataTour="shuffle" />
           </div>
 
           {sidebarOpen && (
             <footer className="app-shell__sidebar-footer">
+              <button
+                type="button"
+                className={`app-shell__sidebar-footer-link ${activePanel === 'help' && componentsSidebarOpen ? 'app-shell__sidebar-footer-link--active' : ''}`}
+                onClick={() => handlePanelToggle('help')}
+                aria-pressed={activePanel === 'help' && componentsSidebarOpen}
+                data-tour="help-footer"
+              >
+                <Icon icon={QuestionIcon} size={ICON_SIZE} className="app-shell__sidebar-footer-icon" />
+                <span className="app-shell__sidebar-footer-text">
+                  <span className="app-shell__sidebar-footer-label">Help</span>
+                  <span className="app-shell__sidebar-footer-desc">Keyboard shortcuts</span>
+                </span>
+              </button>
               <button
                 type="button"
                 className={`app-shell__sidebar-footer-link ${activePanel === 'build-info' && componentsSidebarOpen ? 'app-shell__sidebar-footer-link--active' : ''}`}
@@ -335,6 +344,8 @@ function AppShell() {
               typeScaleRatio={typeScaleRatio}
               onOpenInfo={() => handlePanelToggle('info')}
               infoActive={activePanel === 'info' && componentsSidebarOpen}
+              onShuffle={handleShuffle}
+              lockedCount={Object.values(locks).filter(Boolean).length}
             />
           )}
         </main>

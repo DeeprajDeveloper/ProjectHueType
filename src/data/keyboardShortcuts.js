@@ -3,6 +3,8 @@
  * Alt/Option avoids conflicts with typing and browser defaults.
  */
 
+import { formatShortcutLabel } from '../utils/keyboard';
+
 export const NAV_PANEL_SHORTCUTS = [
   { id: 'workspace', label: 'My Workspace', shortcut: { alt: true, code: 'Digit1' } },
   { id: 'saved', label: 'My Presets', shortcut: { alt: true, code: 'Digit2' } },
@@ -13,6 +15,7 @@ export const NAV_PANEL_SHORTCUTS = [
   { id: 'info', label: 'WCAG contrast', shortcut: { alt: true, code: 'Digit7' } },
   { id: 'build-info', label: 'Build Info', shortcut: { alt: true, code: 'Digit8' } },
   { id: 'feature-catalog', label: 'Feature Catalog', shortcut: { alt: true, code: 'Digit9' } },
+  { id: 'help', label: 'Help & shortcuts', shortcut: { key: '?' } },
 ];
 
 export const PREVIEW_DEVICE_SHORTCUTS = [
@@ -25,6 +28,34 @@ export const SHUFFLE_SHORTCUT = {
   label: 'Shuffle unlocked roles',
   shortcut: { code: 'Space' },
 };
+
+export const SHORTCUT_SECTIONS = [
+  {
+    id: 'actions',
+    title: 'Actions',
+    items: [SHUFFLE_SHORTCUT],
+  },
+  {
+    id: 'navigation',
+    title: 'Panels',
+    items: NAV_PANEL_SHORTCUTS,
+  },
+  {
+    id: 'devices',
+    title: 'Preview devices',
+    items: PREVIEW_DEVICE_SHORTCUTS,
+  },
+];
+
+export function getShortcutReference() {
+  return SHORTCUT_SECTIONS.flatMap((section) =>
+    section.items.map((item) => ({
+      section: section.title,
+      action: item.label,
+      keys: formatShortcutLabel(item.shortcut),
+    })),
+  );
+}
 
 export const NAV_SHORTCUT_BY_ID = Object.fromEntries(
   NAV_PANEL_SHORTCUTS.map((item) => [item.id, item]),

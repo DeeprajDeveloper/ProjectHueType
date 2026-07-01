@@ -6,6 +6,7 @@ import {
   DeviceRotateIcon,
   FlaskIcon,
   InfoIcon,
+  ShuffleIcon,
 } from '@phosphor-icons/react';
 import SegmentControl from '../SegmentControl/SegmentControl';
 import ContrastBadge from '../ContrastBadge/ContrastBadge';
@@ -119,6 +120,8 @@ function LivePreview({
   contrastStatus,
   onOpenInfo,
   infoActive = false,
+  onShuffle,
+  lockedCount = 0,
 }) {
   const activeParts = resolveArchetypeParts(archetype, archetypeParts[archetype]);
   const previewEmpty = isArchetypePreviewEmpty(archetype, activeParts);
@@ -313,6 +316,26 @@ function LivePreview({
           )}
         </div>
       </div>
+
+      {onShuffle && (
+        <button
+          type="button"
+          className="live-preview__shuffle-fab"
+          onClick={onShuffle}
+          aria-label="Shuffle presets"
+          data-tour="shuffle"
+        >
+          <Icon icon={ShuffleIcon} size={ICON_SIZE_SM} />
+          {lockedCount > 0 && (
+            <span className="live-preview__shuffle-badge" aria-label={`${lockedCount} roles locked`}>
+              {lockedCount}
+            </span>
+          )}
+          <span className="live-preview__shuffle-tooltip" role="tooltip">
+            Shuffle presets (Space)
+          </span>
+        </button>
+      )}
     </div>
   );
 }

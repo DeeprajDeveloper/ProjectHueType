@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import {
   SidebarSimpleIcon,
-  ShuffleIcon,
   SunIcon,
   MoonIcon,
   ShareNetworkIcon,
@@ -9,6 +8,7 @@ import {
   ExportIcon,
   BooksIcon,
   PackageIcon,
+  QuestionIcon,
 } from '@phosphor-icons/react';
 import {
   TOP_NAV_ITEMS,
@@ -32,7 +32,6 @@ function SidebarRail({
   activePanel,
   panelOpen,
   onPanelChange,
-  onShuffle,
   onToggleTheme,
   onShare,
   onSave,
@@ -75,9 +74,6 @@ function SidebarRail({
       case 'expand':
         onExpand();
         break;
-      case 'shuffle':
-        onShuffle();
-        break;
       case 'theme':
         onToggleTheme();
         break;
@@ -110,6 +106,9 @@ function SidebarRail({
     }
     if (item.id === 'feature-catalog') {
       return activePanel === 'feature-catalog' && panelOpen;
+    }
+    if (item.id === 'help') {
+      return activePanel === 'help' && panelOpen;
     }
     if (item.children) {
       return isGroupActive(item);
@@ -225,15 +224,6 @@ function SidebarRail({
           <span className="sidebar-rail__tooltip" role="tooltip">Expand sidebar</span>
         </button>
         {RAIL_NAV_ITEMS.map((item) => renderButton(item, 'workspace'))}
-        <button
-          type="button"
-          className="sidebar-rail__btn"
-          aria-label="Shuffle Presets"
-          onClick={() => handleClick('shuffle')}
-        >
-          <Icon icon={ShuffleIcon} size={ICON_SIZE} />
-          <span className="sidebar-rail__tooltip" role="tooltip">Shuffle Presets</span>
-        </button>
       </div>
 
       <div className="sidebar-rail__group sidebar-rail__group--app">
@@ -241,6 +231,16 @@ function SidebarRail({
       </div>
 
       <div className="sidebar-rail__footer">
+        <button
+          type="button"
+          className={`sidebar-rail__btn sidebar-rail__btn--app ${activePanel === 'help' && panelOpen ? 'sidebar-rail__btn--active' : ''}`}
+          aria-label="Help"
+          aria-pressed={activePanel === 'help' && panelOpen}
+          onClick={() => onPanelChange('help')}
+        >
+          <Icon icon={QuestionIcon} size={ICON_SIZE} />
+          <span className="sidebar-rail__tooltip" role="tooltip">Help</span>
+        </button>
         <button
           type="button"
           className={`sidebar-rail__btn sidebar-rail__btn--app ${activePanel === 'build-info' && panelOpen ? 'sidebar-rail__btn--active' : ''}`}

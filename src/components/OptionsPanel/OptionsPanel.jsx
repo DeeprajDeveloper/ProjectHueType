@@ -6,6 +6,7 @@ import CustomizePanel from '../CustomizePanel/CustomizePanel';
 import ComboInfoPanel from '../ComboInfoPanel/ComboInfoPanel';
 import BuildInfoPanel from '../BuildInfoPanel/BuildInfoPanel';
 import FeatureCatalogPanel from '../FeatureCatalogPanel/FeatureCatalogPanel';
+import HelpPanel from '../HelpPanel/HelpPanel';
 import ComponentToggle from '../PreviewComponentsPanel/ComponentToggle';
 import { ARCHETYPE_PARTS, PREVIEW_ARCHETYPES, ARCHETYPE_GROUPS, getArchetypesForGroup, resolveArchetypeParts } from '../PreviewComponentsPanel/previewArchetypes';
 import './OptionsPanel.scss';
@@ -20,6 +21,7 @@ const PANEL_TITLES = {
   info: 'WCAG contrast',
   'build-info': 'Build Info',
   'feature-catalog': 'Feature Catalog',
+  help: 'Help',
 };
 
 function PreviewSettingsContent({
@@ -334,6 +336,11 @@ function OptionsPanel({
       case 'feature-catalog':
         return (
           <FeatureCatalogPanel />
+        );
+
+      case 'help':
+        return (
+          <HelpPanel />
         );
 
       default:
