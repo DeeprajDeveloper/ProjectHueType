@@ -107,6 +107,10 @@
     top: calc(100% + #{$offset});
     left: 50%;
     transform: translateX(-50%);
+  } @else if $placement == 'top' {
+    bottom: calc(100% + #{$offset});
+    left: 50%;
+    transform: translateX(-50%);
   }
 }
 
@@ -119,6 +123,8 @@
   } @else if $placement == 'left' {
     transform: translateY(-50%);
   } @else if $placement == 'bottom' {
+    transform: translateX(-50%);
+  } @else if $placement == 'top' {
     transform: translateX(-50%);
   }
 }

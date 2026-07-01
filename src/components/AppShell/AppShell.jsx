@@ -13,10 +13,10 @@ import {
   useIsCompactLayout,
   useBreakpoint,
 } from '../../hooks';
-import { SidebarSimpleIcon, BooksIcon, PackageIcon, QuestionIcon } from '@phosphor-icons/react';
+import { SidebarSimpleIcon } from '@phosphor-icons/react';
 import Icon from '../Icon/Icon';
 import { ICON_SIZE } from '../Icon/iconConfig';
-import { APP_VERSION } from '../../data/buildInfo';
+import SidebarFooter from '../SidebarFooter/SidebarFooter';
 import './AppShell.scss';
 import LivePreview, { MOBILE_PREVIEW_DISABLED_MESSAGE } from '../LivePreview/LivePreview';
 import ExportPanel from '../ExportPanel/ExportPanel';
@@ -26,6 +26,8 @@ import SidebarToolbar from '../SidebarToolbar/SidebarToolbar';
 import SidebarNav from '../SidebarNav/SidebarNav';
 import OptionsPanel from '../OptionsPanel/OptionsPanel';
 import Walkthrough from '../Walkthrough/Walkthrough';
+import FeedbackModal from '../FeedbackModal/FeedbackModal';
+import { submitFeedback } from '../../utils/feedback';
 import { readStoredActivePanel, storeActivePanel } from '../../data/sidebarNavItems';
 
 function getInitialPreviewMode() {
@@ -40,6 +42,7 @@ function AppShell() {
   const [exportOpen, setExportOpen] = useState(false);
   const [previewMode, setPreviewMode] = useState(getInitialPreviewMode);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [originalCombo, setOriginalCombo] = useState(COMBOS[0]);
 
   const { theme, toggleTheme } = useTheme();
@@ -202,6 +205,32 @@ function AppShell() {
     };
   }, [isCompact, componentsSidebarOpen]);
 
+  useEffect(() => {
+    if (!feedbackOpen) return undefined;
+
+    const html = document.documentElement;
+    const previousHtmlOverflow = html.style.overflow;
+    const previousBodyOverflow = document.body.style.overflow;
+
+    html.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      html.style.overflow = previousHtmlOverflow;
+      document.body.style.overflow = previousBodyOverflow;
+    };
+  }, [feedbackOpen]);
+
+  const handleFeedbackOpen = useCallback(() => {
+    setFeedbackOpen(true);
+  }, []);
+
+  const handleFeedbackSubmit = useCallback((data) => {
+    submitFeedback(data);
+    setFeedbackOpen(false);
+    showToast('Opening your email app to send feedback to hello@huetype.dev');
+  }, [showToast]);
+
   useKeyboardShuffle(() => {
     if (tour.active) return;
     const next = shuffle();
@@ -315,6 +344,7 @@ function AppShell() {
             theme={theme}
             hasActiveFilters={filter.hasActiveFilters}
             isCompact={isCompact}
+            onFeedback={handleFeedbackOpen}
           />
 
           <div className="app-shell__sidebar-panel">
@@ -339,47 +369,12 @@ function AppShell() {
           </div>
 
           {sidebarOpen && (
-            <footer className="app-shell__sidebar-footer">
-              <button
-                type="button"
-                className={`app-shell__sidebar-footer-link ${activePanel === 'help' && componentsSidebarOpen ? 'app-shell__sidebar-footer-link--active' : ''}`}
-                onClick={() => handlePanelToggle('help')}
-                aria-pressed={activePanel === 'help' && componentsSidebarOpen}
-                data-tour="help-footer"
-              >
-                <Icon icon={QuestionIcon} size={ICON_SIZE} className="app-shell__sidebar-footer-icon" />
-                <span className="app-shell__sidebar-footer-text">
-                  <span className="app-shell__sidebar-footer-label">Help</span>
-                  <span className="app-shell__sidebar-footer-desc">Keyboard shortcuts</span>
-                </span>
-              </button>
-              <button
-                type="button"
-                className={`app-shell__sidebar-footer-link ${activePanel === 'build-info' && componentsSidebarOpen ? 'app-shell__sidebar-footer-link--active' : ''}`}
-                onClick={() => handlePanelToggle('build-info')}
-                aria-pressed={activePanel === 'build-info' && componentsSidebarOpen}
-                data-tour="build-info-footer"
-              >
-                <Icon icon={PackageIcon} size={ICON_SIZE} className="app-shell__sidebar-footer-icon" />
-                <span className="app-shell__sidebar-footer-text">
-                  <span className="app-shell__sidebar-footer-label">Build Info</span>
-                  <span className="app-shell__sidebar-footer-desc">v{APP_VERSION} · app overview</span>
-                </span>
-              </button>
-              <button
-                type="button"
-                className={`app-shell__sidebar-footer-link ${activePanel === 'feature-catalog' && componentsSidebarOpen ? 'app-shell__sidebar-footer-link--active' : ''}`}
-                onClick={() => handlePanelToggle('feature-catalog')}
-                aria-pressed={activePanel === 'feature-catalog' && componentsSidebarOpen}
-                data-tour="feature-catalog-footer"
-              >
-                <Icon icon={BooksIcon} size={ICON_SIZE} className="app-shell__sidebar-footer-icon" />
-                <span className="app-shell__sidebar-footer-text">
-                  <span className="app-shell__sidebar-footer-label">Feature Catalog</span>
-                  <span className="app-shell__sidebar-footer-desc">Built &amp; planned components</span>
-                </span>
-              </button>
-            </footer>
+            <SidebarFooter
+              activePanel={activePanel}
+              panelOpen={componentsSidebarOpen}
+              onPanelChange={handlePanelToggle}
+              onFeedback={handleFeedbackOpen}
+            />
           )}
         </aside>
 
@@ -490,6 +485,13 @@ function AppShell() {
           onSkip={tour.skip}
           isFirst={tour.isFirst}
           isLast={tour.isLast}
+        />
+      )}
+
+      {feedbackOpen && (
+        <FeedbackModal
+          onClose={() => setFeedbackOpen(false)}
+          onSubmit={handleFeedbackSubmit}
         />
       )}
     </div>

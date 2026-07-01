@@ -1,0 +1,112 @@
+@use '../../styles/mixins' as *;
+
+.sidebar-footer {
+  flex-shrink: 0;
+  margin-top: auto;
+  border-top: 1px solid var(--border-subtle);
+  background: var(--surface-sunken);
+}
+
+.sidebar-footer__list {
+  list-style: none;
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sidebar-footer__btn,
+.sidebar-footer__group-trigger {
+  @include button-reset;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-body);
+  font-weight: 500;
+  color: var(--text-secondary);
+  border-radius: var(--radius-sm);
+  text-align: left;
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast);
+
+  &:hover {
+    background: var(--surface-sunken);
+    color: var(--text-primary);
+
+    .sidebar-footer__tooltip {
+      @include tooltip-show('right');
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+
+    .sidebar-footer__tooltip {
+      @include tooltip-show('right');
+    }
+  }
+}
+
+.sidebar-footer__btn--active,
+.sidebar-footer__group-trigger--active {
+  background: var(--accent-subtle);
+  color: var(--text-primary);
+  font-weight: 600;
+  border: 1px solid var(--border-subtle);
+  border-right: 4px solid var(--accent);
+  border-radius: 0;
+}
+
+.sidebar-footer__btn--nested {
+  padding-left: calc(var(--space-3) + var(--space-2));
+  font-size: var(--text-small, 0.875rem);
+}
+
+.sidebar-footer__group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sidebar-footer__chevron {
+  flex-shrink: 0;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  color: var(--text-tertiary);
+  transition: transform var(--transition-fast);
+
+  &--open {
+    transform: rotate(180deg);
+  }
+}
+
+.sidebar-footer__sublist {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 var(--space-2);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sidebar-footer__label {
+  flex: 1;
+  min-width: 0;
+  line-height: 1.3;
+}
+
+.sidebar-footer__tooltip {
+  @include tooltip-base;
+  @include tooltip-style('chrome');
+  @include tooltip-position('right');
+  white-space: nowrap;
+  max-width: 220px;
+  white-space: normal;
+}

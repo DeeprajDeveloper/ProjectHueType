@@ -20,6 +20,8 @@
   gap: var(--space-3);
   margin-bottom: var(--space-4);
   overflow: visible;
+  position: relative;
+  z-index: 5;
 }
 
 .live-preview__status-tools {
@@ -110,6 +112,8 @@
   flex-wrap: wrap;
   justify-content: flex-end;
   overflow: visible;
+  position: relative;
+  z-index: 6;
 }
 
 .live-preview__rotate {
@@ -167,6 +171,8 @@
   justify-content: center;
   align-items: stretch;
   width: 100%;
+  position: relative;
+  z-index: 1;
 
   &--tablet {
     align-items: center;
@@ -263,42 +269,41 @@
   opacity: 0.8;
 }
 
-.live-preview__shuffle-fab {
+.live-preview__shuffle {
   @include button-reset;
-  position: absolute;
-  right: var(--space-5);
-  bottom: var(--space-5);
-  z-index: 30;
-  display: flex;
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 52px;
-  height: 52px;
+  width: 32px;
+  height: 32px;
   color: var(--accent-contrast);
   background: var(--accent);
-  border-radius: var(--radius-full);
-  box-shadow: var(--shadow-md);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
   transition:
     background var(--transition-fast),
-    transform var(--transition-fast),
-    box-shadow var(--transition-fast);
+    border-color var(--transition-fast),
+    transform var(--transition-fast);
 
   &:hover {
     background: var(--accent-hover);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
+    border-color: var(--accent-hover);
+    transform: translateY(-1px);
 
     .live-preview__shuffle-tooltip {
-      @include tooltip-show('left');
+      @include tooltip-show('top');
     }
   }
 
   &:focus-visible {
     outline: 2px solid var(--accent);
-    outline-offset: 3px;
+    outline-offset: 2px;
 
     .live-preview__shuffle-tooltip {
-      @include tooltip-show('left');
+      @include tooltip-show('top');
     }
   }
 
@@ -309,16 +314,16 @@
 
 .live-preview__shuffle-badge {
   position: absolute;
-  top: -2px;
-  right: -2px;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 4px;
+  top: -4px;
+  right: -4px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 3px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: var(--font-chrome);
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 700;
   line-height: 1;
   color: var(--accent);
@@ -330,7 +335,8 @@
 .live-preview__shuffle-tooltip {
   @include tooltip-base;
   @include tooltip-style('chrome');
-  @include tooltip-position('left');
+  @include tooltip-position('top');
+  z-index: 100;
   white-space: nowrap;
 }
 
@@ -375,13 +381,6 @@
 
     .live-preview__rotate span {
       display: none;
-    }
-
-    .live-preview__shuffle-fab {
-      right: var(--space-3);
-      bottom: max(var(--space-3), env(safe-area-inset-bottom, 0px));
-      width: 48px;
-      height: 48px;
     }
   }
 }

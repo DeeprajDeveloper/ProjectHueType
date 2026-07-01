@@ -7,12 +7,13 @@ import {
   HeartIcon,
   ExportIcon,
   BooksIcon,
-  PackageIcon,
   QuestionIcon,
+  ChatCircleDotsIcon,
 } from '@phosphor-icons/react';
 import {
   TOP_NAV_ITEMS,
   PROTOTYPE_GROUP,
+  SYSTEM_INFO_GROUP,
 } from '../../data/sidebarNavItems';
 import Icon from '../Icon/Icon';
 import { ICON_SIZE, ICON_SIZE_SM } from '../Icon/iconConfig';
@@ -41,6 +42,7 @@ function SidebarRail({
   theme,
   hasActiveFilters,
   isCompact = false,
+  onFeedback,
 }) {
   const [openMenuId, setOpenMenuId] = useState(null);
   const menuRef = useRef(null);
@@ -102,12 +104,6 @@ function SidebarRail({
     item.children?.some((child) => activePanel === child.id && panelOpen);
 
   const isActive = (item) => {
-    if (item.id === 'build-info') {
-      return activePanel === 'build-info' && panelOpen;
-    }
-    if (item.id === 'feature-catalog') {
-      return activePanel === 'feature-catalog' && panelOpen;
-    }
     if (item.id === 'help') {
       return activePanel === 'help' && panelOpen;
     }
@@ -240,6 +236,15 @@ function SidebarRail({
       <div className="sidebar-rail__footer">
         <button
           type="button"
+          className="sidebar-rail__btn sidebar-rail__btn--app"
+          aria-label="Feedback"
+          onClick={onFeedback}
+        >
+          <Icon icon={ChatCircleDotsIcon} size={ICON_SIZE} />
+          <span className="sidebar-rail__tooltip" role="tooltip">Feedback</span>
+        </button>
+        <button
+          type="button"
           className={`sidebar-rail__btn sidebar-rail__btn--app ${activePanel === 'help' && panelOpen ? 'sidebar-rail__btn--active' : ''}`}
           aria-label="Help"
           aria-pressed={activePanel === 'help' && panelOpen}
@@ -248,26 +253,7 @@ function SidebarRail({
           <Icon icon={QuestionIcon} size={ICON_SIZE} />
           <span className="sidebar-rail__tooltip" role="tooltip">Help</span>
         </button>
-        <button
-          type="button"
-          className={`sidebar-rail__btn sidebar-rail__btn--app ${activePanel === 'build-info' && panelOpen ? 'sidebar-rail__btn--active' : ''}`}
-          aria-label="Build Info"
-          aria-pressed={activePanel === 'build-info' && panelOpen}
-          onClick={() => onPanelChange('build-info')}
-        >
-          <Icon icon={PackageIcon} size={ICON_SIZE} />
-          <span className="sidebar-rail__tooltip" role="tooltip">Build Info</span>
-        </button>
-        <button
-          type="button"
-          className={`sidebar-rail__btn sidebar-rail__btn--app ${activePanel === 'feature-catalog' && panelOpen ? 'sidebar-rail__btn--active' : ''}`}
-          aria-label="Feature Catalog"
-          aria-pressed={activePanel === 'feature-catalog' && panelOpen}
-          onClick={() => onPanelChange('feature-catalog')}
-        >
-          <Icon icon={BooksIcon} size={ICON_SIZE} />
-          <span className="sidebar-rail__tooltip" role="tooltip">Feature Catalog</span>
-        </button>
+        {renderSubmenu(SYSTEM_INFO_GROUP)}
       </div>
     </nav>
   );

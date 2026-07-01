@@ -39,8 +39,8 @@ export const TOUR_STEPS = [
     target: '[data-tour="shuffle"]',
     title: 'Shuffle unlocked roles',
     content:
-      'Use the floating shuffle button on the live preview to switch presets. Lock roles in Colors or Fonts first, then shuffle the rest. Press Space anytime.',
-    placement: 'left',
+      'Use the shuffle button beside the device picker in the live preview toolbar. Lock roles in Colors or Fonts first, then shuffle the rest. Press Space anytime.',
+    placement: 'bottom',
     prepare: 'close-panels',
   },
   {

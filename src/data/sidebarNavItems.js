@@ -6,6 +6,9 @@ import {
   GearIcon,
   LayoutIcon,
   FlaskIcon,
+  InfoIcon,
+  PackageIcon,
+  BooksIcon,
 } from '@phosphor-icons/react';
 
 export const TOP_NAV_ITEMS = [
@@ -27,7 +30,20 @@ export const PROTOTYPE_GROUP = {
   children: PROTOTYPE_NAV_ITEMS,
 };
 
+export const SYSTEM_INFO_NAV_ITEMS = [
+  { id: 'build-info', label: 'Build Info', icon: PackageIcon },
+  { id: 'feature-catalog', label: 'Feature Catalog', icon: BooksIcon },
+];
+
+export const SYSTEM_INFO_GROUP = {
+  id: 'system-info',
+  label: 'System Information',
+  icon: InfoIcon,
+  children: SYSTEM_INFO_NAV_ITEMS,
+};
+
 export const PROTOTYPES_STORAGE_KEY = 'huetype-sidebar-prototypes-open';
+export const SYSTEM_INFO_STORAGE_KEY = 'huetype-sidebar-system-info-open';
 export const ACTIVE_PANEL_STORAGE_KEY = 'huetype-active-panel';
 
 export const NAV_PANEL_IDS = [
@@ -63,4 +79,8 @@ export function storeActivePanel(panelId) {
 
 export function isPrototypePanelActive(activePanel, panelOpen) {
   return panelOpen && PROTOTYPE_NAV_ITEMS.some((item) => item.id === activePanel);
+}
+
+export function isSystemInfoPanelActive(activePanel, panelOpen) {
+  return panelOpen && SYSTEM_INFO_NAV_ITEMS.some((item) => item.id === activePanel);
 }

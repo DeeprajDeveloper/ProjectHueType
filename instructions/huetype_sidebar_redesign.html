@@ -1,0 +1,544 @@
+
+<style>
+  .sidebar {
+    width: 200px;
+    height: 680px;
+    background: var(--surface-1);
+    border-right: 0.5px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    font-size: 13px;
+    overflow: hidden;
+    border-radius: 12px 0 0 12px;
+  }
+  .app-header {
+    padding: 14px 14px 10px;
+    border-bottom: 0.5px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .logo-mark {
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    border: 0.5px solid var(--border-strong);
+    background: var(--surface-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    overflow: hidden;
+    gap: 0;
+    flex-direction: row;
+  }
+  .logo-stripe {
+    width: 5px;
+    height: 100%;
+  }
+  .logo-divider {
+    width: 0.5px;
+    height: 100%;
+    background: var(--border);
+  }
+  .logo-letter {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+    flex: 1;
+    text-align: center;
+    font-family: Georgia, serif;
+  }
+  .app-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+    letter-spacing: -0.2px;
+  }
+  .nav-section {
+    padding: 10px 8px 4px;
+  }
+  .nav-group-label {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    padding: 0 6px;
+    margin-bottom: 2px;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: background 0.1s;
+    user-select: none;
+    position: relative;
+  }
+  .nav-item:hover {
+    background: var(--surface-2);
+    color: var(--text-primary);
+  }
+  .nav-item.active {
+    background: var(--surface-2);
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+  .nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 6px;
+    bottom: 6px;
+    width: 2px;
+    background: var(--fill-accent);
+    border-radius: 2px;
+  }
+  .nav-item i {
+    font-size: 15px;
+    flex-shrink: 0;
+    opacity: 0.7;
+  }
+  .nav-item.active i { opacity: 1; }
+  .nav-sub-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 8px 5px 28px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-size: 12px;
+    transition: background 0.1s;
+    user-select: none;
+  }
+  .nav-sub-item:hover {
+    background: var(--surface-2);
+    color: var(--text-primary);
+  }
+  .nav-sub-item.active {
+    color: var(--text-accent);
+    font-weight: 500;
+  }
+  .nav-sub-item i { font-size: 13px; opacity: 0.65; }
+  .nav-divider {
+    height: 0.5px;
+    background: var(--border);
+    margin: 6px 8px;
+  }
+  .nav-badge {
+    margin-left: auto;
+    font-size: 10px;
+    background: var(--bg-accent);
+    color: var(--text-accent);
+    padding: 1px 5px;
+    border-radius: 10px;
+    font-weight: 500;
+  }
+  .nav-count {
+    margin-left: auto;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+  .sidebar-footer {
+    margin-top: auto;
+    border-top: 0.5px solid var(--border);
+    padding: 8px;
+  }
+  .footer-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 8px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-size: 12px;
+    transition: background 0.1s;
+  }
+  .footer-item:hover { background: var(--surface-2); color: var(--text-primary); }
+  .footer-item i { font-size: 14px; opacity: 0.65; }
+  .export-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    padding: 7px 10px;
+    border-radius: var(--radius);
+    background: var(--fill-accent);
+    color: var(--on-accent);
+    border: none;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-bottom: 6px;
+    justify-content: center;
+  }
+  .export-btn i { font-size: 13px; }
+  .preview-frame {
+    flex: 1;
+    background: var(--surface-0);
+    border-radius: 0 12px 12px 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 0.5px solid var(--border);
+    border-left: none;
+    min-width: 0;
+  }
+  .preview-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    border-bottom: 0.5px solid var(--border);
+    background: var(--surface-1);
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .frame-toggle {
+    display: flex;
+    gap: 2px;
+    background: var(--surface-0);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2px;
+  }
+  .frame-btn {
+    padding: 3px 8px;
+    border-radius: 5px;
+    border: none;
+    background: transparent;
+    font-size: 11px;
+    cursor: pointer;
+    color: var(--text-secondary);
+  }
+  .frame-btn.active {
+    background: var(--surface-2);
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+  .wcag-pill {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--bg-success);
+    color: var(--text-success);
+    border: 0.5px solid var(--border-success);
+    border-radius: 20px;
+    padding: 3px 8px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+  .wcag-pill i { font-size: 12px; }
+  .preview-canvas {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: var(--surface-0);
+    font-size: 11px;
+    color: var(--text-muted);
+    flex-direction: column;
+    gap: 4px;
+  }
+  .preview-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+  .archetype-bar {
+    display: flex;
+    gap: 4px;
+    padding: 8px 12px;
+    border-bottom: 0.5px solid var(--border);
+    background: var(--surface-1);
+    overflow-x: auto;
+    flex-shrink: 0;
+  }
+  .archetype-chip {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 9px;
+    border-radius: 20px;
+    border: 0.5px solid var(--border);
+    background: var(--surface-2);
+    font-size: 11px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .archetype-chip.active {
+    border-color: var(--border-accent);
+    background: var(--bg-accent);
+    color: var(--text-accent);
+    font-weight: 500;
+  }
+  .archetype-chip i { font-size: 12px; }
+  .layout {
+    display: flex;
+    height: 680px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 0.5px solid var(--border);
+  }
+  .annotation {
+    position: absolute;
+    background: #534AB7;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 500;
+    padding: 2px 6px;
+    border-radius: 4px;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  .annotation::after {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 100%;
+    border: 4px solid transparent;
+    border-top-color: #534AB7;
+  }
+  .annotation-right::after {
+    left: auto;
+    right: 8px;
+  }
+  .rel { position: relative; }
+</style>
+
+<h2 class="sr-only">HueType sidebar redesign mockup with annotated navigation groups</h2>
+
+<div style="padding: 1rem 0;">
+  <div class="layout">
+    <div class="sidebar">
+      <div class="app-header">
+        <div class="logo-mark">
+          <div class="logo-stripe" style="background:#F0997B"></div>
+          <div class="logo-stripe" style="background:#D85A30"></div>
+          <div class="logo-divider"></div>
+          <span class="logo-letter">H</span>
+        </div>
+        <span class="app-name">HueType</span>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-group-label">Workspace</div>
+        <div class="nav-item active" onclick="setActive(this)">
+          <i class="ti ti-layout-grid" aria-hidden="true"></i>
+          Preset library
+          <span class="nav-count">24</span>
+        </div>
+        <div class="nav-item" onclick="setActive(this)">
+          <i class="ti ti-heart" aria-hidden="true"></i>
+          Saved presets
+          <span class="nav-count">3</span>
+        </div>
+        <div class="nav-item" onclick="setActive(this)">
+          <i class="ti ti-adjustments-horizontal" aria-hidden="true"></i>
+          My customizations
+        </div>
+      </div>
+
+      <div class="nav-divider"></div>
+
+      <div class="nav-section">
+        <div class="nav-group-label">Customize</div>
+        <div class="nav-item" onclick="setActive(this)">
+          <i class="ti ti-palette" aria-hidden="true"></i>
+          Colors
+        </div>
+        <div class="nav-item" onclick="setActive(this)">
+          <i class="ti ti-typography" aria-hidden="true"></i>
+          Fonts
+        </div>
+      </div>
+
+      <div class="nav-divider"></div>
+
+      <div class="nav-section">
+        <div class="nav-group-label">Preview</div>
+        <div class="nav-item" onclick="toggleExpand(this)" style="justify-content: space-between;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <i class="ti ti-layout-2" aria-hidden="true"></i>
+            Layouts
+          </div>
+          <i class="ti ti-chevron-down" id="layout-chevron" style="font-size:12px;opacity:0.5;transition:transform 0.2s" aria-hidden="true"></i>
+        </div>
+        <div id="layout-children">
+          <div class="nav-sub-item active" onclick="setSubActive(this)">
+            <i class="ti ti-building-store" aria-hidden="true"></i>
+            Landing page
+          </div>
+          <div class="nav-sub-item" onclick="setSubActive(this)">
+            <i class="ti ti-layout-dashboard" aria-hidden="true"></i>
+            Dashboard
+          </div>
+          <div class="nav-sub-item" onclick="setSubActive(this)">
+            <i class="ti ti-message-circle" aria-hidden="true"></i>
+            AI chat
+            <span class="nav-badge">New</span>
+          </div>
+          <div class="nav-sub-item" onclick="setSubActive(this)">
+            <i class="ti ti-file-text" aria-hidden="true"></i>
+            Blog / article
+          </div>
+          <div class="nav-sub-item" onclick="setSubActive(this)">
+            <i class="ti ti-shopping-bag" aria-hidden="true"></i>
+            E-commerce
+          </div>
+          <div class="nav-sub-item" onclick="setSubActive(this)">
+            <i class="ti ti-login" aria-hidden="true"></i>
+            Auth page
+          </div>
+        </div>
+        <div class="nav-item" onclick="setActive(this)" style="margin-top:2px">
+          <i class="ti ti-settings-2" aria-hidden="true"></i>
+          Options
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <button class="export-btn">
+          <i class="ti ti-download" aria-hidden="true"></i>
+          Export
+        </button>
+        <div class="footer-item">
+          <i class="ti ti-help-circle" aria-hidden="true"></i>
+          Help
+        </div>
+        <div class="footer-item">
+          <i class="ti ti-info-circle" aria-hidden="true"></i>
+          Build info · v0.2.0
+        </div>
+        <div class="footer-item">
+          <i class="ti ti-list-check" aria-hidden="true"></i>
+          Feature catalog
+        </div>
+      </div>
+    </div>
+
+    <div class="preview-frame">
+      <div class="preview-topbar">
+        <span style="font-size:12px;color:var(--text-secondary);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+          Live preview · <span style="color:var(--text-primary);font-weight:500">Landing page</span>
+        </span>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+          <div class="wcag-pill">
+            <i class="ti ti-circle-check" aria-hidden="true"></i>
+            WCAG AA
+          </div>
+          <div class="frame-toggle">
+            <button class="frame-btn active" onclick="setFrame(this)">Desktop</button>
+            <button class="frame-btn" onclick="setFrame(this)">Tablet</button>
+            <button class="frame-btn" onclick="setFrame(this)">Mobile</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="archetype-bar">
+        <div class="archetype-chip active" onclick="setArchetype(this)">
+          <i class="ti ti-building-store" aria-hidden="true"></i>
+          Landing page
+        </div>
+        <div class="archetype-chip" onclick="setArchetype(this)">
+          <i class="ti ti-layout-dashboard" aria-hidden="true"></i>
+          Dashboard
+        </div>
+        <div class="archetype-chip" onclick="setArchetype(this)">
+          <i class="ti ti-message-circle" aria-hidden="true"></i>
+          AI chat
+        </div>
+        <div class="archetype-chip" onclick="setArchetype(this)">
+          <i class="ti ti-file-text" aria-hidden="true"></i>
+          Blog
+        </div>
+        <div class="archetype-chip" onclick="setArchetype(this)">
+          <i class="ti ti-shopping-bag" aria-hidden="true"></i>
+          E-commerce
+        </div>
+        <div class="archetype-chip" onclick="setArchetype(this)">
+          <i class="ti ti-login" aria-hidden="true"></i>
+          Auth
+        </div>
+        <div class="archetype-chip" onclick="setArchetype(this)">
+          <i class="ti ti-plus" aria-hidden="true"></i>
+          More
+        </div>
+      </div>
+
+      <div class="preview-canvas">
+        <i class="ti ti-eye" style="font-size:28px;opacity:0.2" aria-hidden="true"></i>
+        <span class="preview-label">Live preview renders here</span>
+        <span style="font-size:11px;color:var(--text-muted)">Landing page · Desktop · 1242 × 848px</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+    <div style="background:var(--surface-1);border:0.5px solid var(--border);border-radius:10px;padding:12px 14px;">
+      <div style="font-size:11px;font-weight:500;color:var(--text-primary);margin-bottom:6px;">Changes from current sidebar</div>
+      <div style="display:flex;flex-direction:column;gap:5px;font-size:11px;color:var(--text-secondary);">
+        <div style="display:flex;gap:6px;align-items:flex-start"><i class="ti ti-arrow-right" style="font-size:12px;margin-top:1px;color:var(--text-success)" aria-hidden="true"></i>Colors + Fonts grouped under "Customize"</div>
+        <div style="display:flex;gap:6px;align-items:flex-start"><i class="ti ti-arrow-right" style="font-size:12px;margin-top:1px;color:var(--text-success)" aria-hidden="true"></i>Prototypes renamed to "Preview → Layouts"</div>
+        <div style="display:flex;gap:6px;align-items:flex-start"><i class="ti ti-arrow-right" style="font-size:12px;margin-top:1px;color:var(--text-success)" aria-hidden="true"></i>Archetype switcher now a persistent chip bar</div>
+        <div style="display:flex;gap:6px;align-items:flex-start"><i class="ti ti-arrow-right" style="font-size:12px;margin-top:1px;color:var(--text-success)" aria-hidden="true"></i>Desktop/Tablet/Mobile moved to top bar</div>
+        <div style="display:flex;gap:6px;align-items:flex-start"><i class="ti ti-arrow-right" style="font-size:12px;margin-top:1px;color:var(--text-success)" aria-hidden="true"></i>Export button promoted to sidebar footer</div>
+        <div style="display:flex;gap:6px;align-items:flex-start"><i class="ti ti-arrow-right" style="font-size:12px;margin-top:1px;color:var(--text-success)" aria-hidden="true"></i>Help, Build info, Feature catalog consolidated</div>
+      </div>
+    </div>
+    <div style="background:var(--surface-1);border:0.5px solid var(--border);border-radius:10px;padding:12px 14px;">
+      <div style="font-size:11px;font-weight:500;color:var(--text-primary);margin-bottom:6px;">Nav group logic</div>
+      <div style="display:flex;flex-direction:column;gap:6px;font-size:11px;color:var(--text-secondary);">
+        <div><span style="font-weight:500;color:var(--text-primary)">Workspace</span> — where you are (destinations)</div>
+        <div><span style="font-weight:500;color:var(--text-primary)">Customize</span> — what you edit (tools)</div>
+        <div><span style="font-weight:500;color:var(--text-primary)">Preview</span> — how you see it (views)</div>
+        <div style="margin-top:4px;padding-top:6px;border-top:0.5px solid var(--border)">Chip bar in preview = layouts always visible, no hunting through sidebar</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function setActive(el) {
+  el.closest('.nav-section').querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+}
+function setSubActive(el) {
+  el.closest('#layout-children').querySelectorAll('.nav-sub-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+  const label = el.textContent.trim().replace('New','').trim();
+  document.querySelector('.preview-canvas span.preview-label').textContent = 'Live preview renders here';
+  document.querySelector('.preview-canvas span:last-child').textContent = label + ' · Desktop · 1242 × 848px';
+  document.querySelectorAll('.archetype-chip').forEach(c => {
+    c.classList.toggle('active', c.textContent.trim() === label);
+  });
+}
+function setFrame(btn) {
+  btn.closest('.frame-toggle').querySelectorAll('.frame-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+function setArchetype(chip) {
+  document.querySelectorAll('.archetype-chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  const label = chip.textContent.trim();
+  document.querySelectorAll('#layout-children .nav-sub-item').forEach(s => {
+    s.classList.toggle('active', s.textContent.trim().replace('New','').trim() === label);
+  });
+}
+function toggleExpand(el) {
+  const children = document.getElementById('layout-children');
+  const chevron = document.getElementById('layout-chevron');
+  const isOpen = children.style.display !== 'none';
+  children.style.display = isOpen ? 'none' : 'block';
+  chevron.style.transform = isOpen ? 'rotate(-90deg)' : 'rotate(0deg)';
+}
+</script>

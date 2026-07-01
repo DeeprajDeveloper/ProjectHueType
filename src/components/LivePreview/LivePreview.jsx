@@ -12,7 +12,7 @@ import {
 import SegmentControl from '../SegmentControl/SegmentControl';
 import ContrastBadge from '../ContrastBadge/ContrastBadge';
 import Icon from '../Icon/Icon';
-import { ICON_SIZE_XL, ICON_SIZE_SM } from '../Icon/iconConfig';
+import { ICON_SIZE_SM } from '../Icon/iconConfig';
 import MockupMarketing from './MockupMarketing';
 import MockupDashboard from './MockupDashboard';
 import MockupPricing from './MockupPricing';
@@ -25,6 +25,7 @@ import MockupSettings from './MockupSettings';
 import MockupEmptyState from './MockupEmptyState';
 import MockupNotifications from './MockupNotifications';
 import { isArchetypePreviewEmpty, getArchetypePreviewLabel, resolveArchetypeParts } from '../PreviewComponentsPanel/previewArchetypes';
+import { getContrastStatusLabel } from '../../utils/contrast';
 import { getPreviewTypeStyle } from '../../utils/typographyScale';
 import './LivePreview.scss';
 import './MockupMarketing.scss';
@@ -107,10 +108,10 @@ function renderArchetype(archetype, previewMode, parts, logoText, onFrameScrollL
 }
 
 const WCAG_STATUS_LABELS = {
-  aaa: 'WCAG AAA',
-  aa: 'WCAG AA',
-  warn: 'WCAG AA large',
-  fail: 'WCAG Fail',
+  aaa: getContrastStatusLabel('aaa'),
+  aa: getContrastStatusLabel('aa'),
+  warn: getContrastStatusLabel('warn'),
+  fail: getContrastStatusLabel('fail'),
 };
 
 function LivePreview({
@@ -326,6 +327,25 @@ function LivePreview({
             ariaLabel="Preview device width"
             iconsOnly={iconsOnly}
           />
+          {onShuffle && (
+            <button
+              type="button"
+              className="live-preview__shuffle"
+              onClick={onShuffle}
+              aria-label="Shuffle presets"
+              data-tour="shuffle"
+            >
+              <Icon icon={ShuffleIcon} size={ICON_SIZE_SM} />
+              {lockedCount > 0 && (
+                <span className="live-preview__shuffle-badge" aria-label={`${lockedCount} roles locked`}>
+                  {lockedCount}
+                </span>
+              )}
+              <span className="live-preview__shuffle-tooltip" role="tooltip">
+                Shuffle presets (Space)
+              </span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -348,26 +368,6 @@ function LivePreview({
           )}
         </div>
       </div>
-
-      {onShuffle && (
-        <button
-          type="button"
-          className="live-preview__shuffle-fab"
-          onClick={onShuffle}
-          aria-label="Shuffle presets"
-          data-tour="shuffle"
-        >
-          <Icon icon={ShuffleIcon} size={ICON_SIZE_XL} />
-          {lockedCount > 0 && (
-            <span className="live-preview__shuffle-badge" aria-label={`${lockedCount} roles locked`}>
-              {lockedCount}
-            </span>
-          )}
-          <span className="live-preview__shuffle-tooltip" role="tooltip">
-            Shuffle presets (Space)
-          </span>
-        </button>
-      )}
     </div>
   );
 }

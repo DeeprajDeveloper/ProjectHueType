@@ -78,6 +78,21 @@
   margin-top: var(--space-1);
   font-size: var(--text-caption);
   color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+.combo-card__font {
+  display: inline;
+}
+
+.combo-card__font--heading {
+  color: var(--text-primary);
+}
+
+.combo-card__font-sep {
+  color: var(--text-tertiary);
+  font-family: var(--font-chrome);
+  font-weight: 500;
 }
 
 .combo-card__tags {
@@ -86,6 +101,10 @@
   align-items: center;
   gap: var(--space-1);
   margin-top: var(--space-2);
+
+  .contrast-badge--descriptive {
+    flex: 1 1 100%;
+  }
 }
 
 .combo-card__tag {
