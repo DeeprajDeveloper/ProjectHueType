@@ -1,7 +1,10 @@
+import { MOCKUP_COPY } from '../../data/mockupCopy';
 import './MockupAuthModal.scss';
 
 function MockupAuthModal({ mode, onClose, onSwitchMode }) {
   const isLogin = mode === 'login';
+  const copy = MOCKUP_COPY.marketing.authModal;
+  const modeCopy = isLogin ? copy.login : copy.signup;
 
   return (
     <div className="mockup-auth" role="dialog" aria-modal="true" aria-labelledby="mockup-auth-title">
@@ -12,51 +15,49 @@ function MockupAuthModal({ mode, onClose, onSwitchMode }) {
         </button>
 
         <h2 id="mockup-auth-title" className="mockup-auth__title">
-          {isLogin ? 'Welcome back' : 'Create your account'}
+          {modeCopy.title}
         </h2>
         <p className="mockup-auth__subtitle">
-          {isLogin
-            ? 'Log in to save combos and pick up where you left off.'
-            : 'Sign up free — no credit card required.'}
+          {modeCopy.subtitle}
         </p>
 
         <form className="mockup-auth__form" onSubmit={(e) => e.preventDefault()}>
           {!isLogin && (
             <div className="mockup-auth__field">
-              <label className="mockup-auth__label" htmlFor="mockup-auth-name">Full name</label>
-              <input id="mockup-auth-name" type="text" className="mockup-auth__input" placeholder="Alex Rivera" />
+              <label className="mockup-auth__label" htmlFor="mockup-auth-name">{copy.fields.fullName.label}</label>
+              <input id="mockup-auth-name" type="text" className="mockup-auth__input" placeholder={copy.fields.fullName.placeholder} />
             </div>
           )}
           <div className="mockup-auth__field">
-            <label className="mockup-auth__label" htmlFor="mockup-auth-email">Email</label>
-            <input id="mockup-auth-email" type="email" className="mockup-auth__input" placeholder="you@company.com" />
+            <label className="mockup-auth__label" htmlFor="mockup-auth-email">{copy.fields.email.label}</label>
+            <input id="mockup-auth-email" type="email" className="mockup-auth__input" placeholder={copy.fields.email.placeholder} />
           </div>
           <div className="mockup-auth__field">
-            <label className="mockup-auth__label" htmlFor="mockup-auth-password">Password</label>
-            <input id="mockup-auth-password" type="password" className="mockup-auth__input" placeholder="••••••••" />
+            <label className="mockup-auth__label" htmlFor="mockup-auth-password">{copy.fields.password.label}</label>
+            <input id="mockup-auth-password" type="password" className="mockup-auth__input" placeholder={copy.fields.password.placeholder} />
           </div>
 
           {isLogin && (
             <label className="mockup-auth__checkbox">
               <input type="checkbox" defaultChecked />
-              <span>Remember me</span>
+              <span>{copy.rememberMe}</span>
             </label>
           )}
 
           <button type="submit" className="mockup-auth__submit">
-            {isLogin ? 'Log in' : 'Create account'}
+            {isLogin ? copy.submit.login : copy.submit.signup}
           </button>
         </form>
 
         <p className="mockup-auth__switch">
-          {isLogin ? "Don't have an account?" : 'Already have an account?'}
+          {isLogin ? copy.switch.loginPrompt : copy.switch.signupPrompt}
           {' '}
           <button
             type="button"
             className="mockup-auth__switch-btn"
             onClick={() => onSwitchMode(isLogin ? 'signup' : 'login')}
           >
-            {isLogin ? 'Sign up' : 'Log in'}
+            {isLogin ? copy.switch.toSignup : copy.switch.toLogin}
           </button>
         </p>
       </div>

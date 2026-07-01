@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { MOCKUP_COPY, DEFAULT_PREVIEW_LOGO } from '../../data/mockupCopy';
 import './MockupNavbar.scss';
 
-function MockupNavbar({ compactNav = false, onOpenAuth, logoText = 'Acme Co.' }) {
+function MockupNavbar({ compactNav = false, onOpenAuth, logoText = DEFAULT_PREVIEW_LOGO }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const copy = MOCKUP_COPY.marketing.navbar;
 
   const handleAuth = (mode) => {
     setMenuOpen(false);
@@ -33,16 +35,22 @@ function MockupNavbar({ compactNav = false, onOpenAuth, logoText = 'Acme Co.' })
                 onClick={() => setMenuOpen(false)}
               />
               <div className="mockup-navbar__drawer">
-                <a href="#preview" className="mockup-navbar__drawer-link" onClick={() => setMenuOpen(false)}>Product</a>
-                <a href="#preview" className="mockup-navbar__drawer-link" onClick={() => setMenuOpen(false)}>Pricing</a>
-                <a href="#preview" className="mockup-navbar__drawer-link" onClick={() => setMenuOpen(false)}>About</a>
-                <a href="#preview" className="mockup-navbar__drawer-link" onClick={() => setMenuOpen(false)}>Contact</a>
+                {copy.links.map((link) => (
+                  <a
+                    key={link}
+                    href="#preview"
+                    className="mockup-navbar__drawer-link"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    {link}
+                  </a>
+                ))}
                 <div className="mockup-navbar__drawer-actions">
                   <button type="button" className="mockup-navbar__login" onClick={() => handleAuth('login')}>
-                    Log in
+                    {copy.login}
                   </button>
                   <button type="button" className="mockup-navbar__cta" onClick={() => handleAuth('signup')}>
-                    Sign up
+                    {copy.signup}
                   </button>
                 </div>
               </div>
@@ -52,17 +60,16 @@ function MockupNavbar({ compactNav = false, onOpenAuth, logoText = 'Acme Co.' })
       ) : (
         <>
           <div className="mockup-navbar__links">
-            <a href="#preview" className="mockup-navbar__link">Product</a>
-            <a href="#preview" className="mockup-navbar__link">Pricing</a>
-            <a href="#preview" className="mockup-navbar__link">About</a>
-            <a href="#preview" className="mockup-navbar__link">Contact</a>
+            {copy.links.map((link) => (
+              <a key={link} href="#preview" className="mockup-navbar__link">{link}</a>
+            ))}
           </div>
           <div className="mockup-navbar__actions">
             <button type="button" className="mockup-navbar__login" onClick={() => handleAuth('login')}>
-              Log in
+              {copy.login}
             </button>
             <button type="button" className="mockup-navbar__cta" onClick={() => handleAuth('signup')}>
-              Sign up
+              {copy.signup}
             </button>
           </div>
         </>

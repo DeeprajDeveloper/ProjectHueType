@@ -7,47 +7,10 @@ import {
 } from '@phosphor-icons/react';
 import Icon from '../Icon/Icon';
 import { ICON_SIZE } from '../Icon/iconConfig';
+import { MOCKUP_COPY, DEFAULT_PREVIEW_LOGO, formatMockupCopy } from '../../data/mockupCopy';
 
-const NAV_LINKS = ['New in', 'Furniture', 'Lighting', 'Decor', 'Sale'];
-
-const CATEGORIES = ['All', 'Best sellers', 'Under $100', 'Workspace', 'Home'];
-
-const PRODUCTS = [
-  {
-    name: 'Minimal Desk Lamp',
-    price: '$89',
-    compareAt: '$110',
-    rating: 4.8,
-    reviews: 124,
-    tag: 'Bestseller',
-  },
-  {
-    name: 'Ceramic Pour-Over Set',
-    price: '$54',
-    compareAt: null,
-    rating: 4.6,
-    reviews: 89,
-    tag: null,
-  },
-  {
-    name: 'Linen Throw Blanket',
-    price: '$128',
-    compareAt: '$149',
-    rating: 4.9,
-    reviews: 203,
-    tag: 'New',
-  },
-  {
-    name: 'Oak Monitor Stand',
-    price: '$72',
-    compareAt: null,
-    rating: 4.7,
-    reviews: 56,
-    tag: null,
-  },
-];
-
-function MockupEcommerce({ parts = {}, logoText = 'Acme Co.' }) {
+function MockupEcommerce({ parts = {}, logoText = DEFAULT_PREVIEW_LOGO }) {
+  const copy = MOCKUP_COPY.ecommerce;
   const show = (id) => parts[id] !== false;
 
   return (
@@ -57,7 +20,7 @@ function MockupEcommerce({ parts = {}, logoText = 'Acme Co.' }) {
           <div className="mockup-ecommerce__header-top">
             <span className="mockup-ecommerce__logo">{logoText}</span>
             <nav className="mockup-ecommerce__nav" aria-label="Store navigation">
-              {NAV_LINKS.map((link) => (
+              {copy.nav.links.map((link) => (
                 <button key={link} type="button">{link}</button>
               ))}
             </nav>
@@ -70,13 +33,13 @@ function MockupEcommerce({ parts = {}, logoText = 'Acme Co.' }) {
               </button>
               <button type="button" className="mockup-ecommerce__cart" aria-label="Cart">
                 <Icon icon={ShoppingCartIcon} size={ICON_SIZE} />
-                <span className="mockup-ecommerce__cart-text">Cart</span>
+                <span className="mockup-ecommerce__cart-text">{copy.nav.cart}</span>
               </button>
             </div>
           </div>
           {show('categoryNav') && (
             <div className="mockup-ecommerce__categories">
-              {CATEGORIES.map((cat, i) => (
+              {copy.categories.map((cat, i) => (
                 <button
                   key={cat}
                   type="button"
@@ -93,12 +56,12 @@ function MockupEcommerce({ parts = {}, logoText = 'Acme Co.' }) {
       {show('heroBanner') && (
         <section className="mockup-ecommerce__hero">
           <div className="mockup-ecommerce__hero-content">
-            <span className="mockup-ecommerce__hero-tag">Spring collection</span>
-            <h1 className="mockup-ecommerce__hero-title">Elevate your everyday spaces</h1>
+            <span className="mockup-ecommerce__hero-tag">{copy.hero.tag}</span>
+            <h1 className="mockup-ecommerce__hero-title">{copy.hero.title}</h1>
             <p className="mockup-ecommerce__hero-desc">
-              Curated furniture and home goods — free shipping on orders over $75.
+              {copy.hero.description}
             </p>
-            <button type="button" className="mockup-ecommerce__hero-cta">Shop the collection</button>
+            <button type="button" className="mockup-ecommerce__hero-cta">{copy.hero.cta}</button>
           </div>
         </section>
       )}
@@ -107,23 +70,22 @@ function MockupEcommerce({ parts = {}, logoText = 'Acme Co.' }) {
         {show('sectionHeader') && (
           <header className="mockup-ecommerce__section-header">
             <div>
-              <h2 className="mockup-ecommerce__title">Featured products</h2>
+              <h2 className="mockup-ecommerce__title">{copy.section.title}</h2>
               <p className="mockup-ecommerce__subtitle">
-                Curated picks for your workspace and home.
+                {copy.section.subtitle}
               </p>
             </div>
             <select className="mockup-ecommerce__sort" aria-label="Sort products">
-              <option>Featured</option>
-              <option>Price: low to high</option>
-              <option>Price: high to low</option>
-              <option>Best rated</option>
+              {copy.sort.options.map((option) => (
+                <option key={option}>{option}</option>
+              ))}
             </select>
           </header>
         )}
 
         {show('productCards') && (
           <div className="mockup-ecommerce__grid">
-            {PRODUCTS.map((product) => (
+            {copy.products.map((product) => (
               <article key={product.name} className="mockup-ecommerce__card">
                 <div className="mockup-ecommerce__image-wrap">
                   <div className="mockup-ecommerce__image" aria-hidden="true">
@@ -149,7 +111,7 @@ function MockupEcommerce({ parts = {}, logoText = 'Acme Co.' }) {
                     )}
                   </p>
                   <button type="button" className="mockup-ecommerce__cta">
-                    Add to cart
+                    {copy.productCta}
                   </button>
                 </div>
               </article>
@@ -163,33 +125,35 @@ function MockupEcommerce({ parts = {}, logoText = 'Acme Co.' }) {
           <div className="mockup-ecommerce__footer-grid">
             <div>
               <span className="mockup-ecommerce__footer-logo">{logoText}</span>
-              <p className="mockup-ecommerce__footer-desc">Thoughtful design for modern living.</p>
+              <p className="mockup-ecommerce__footer-desc">{copy.footer.tagline}</p>
             </div>
             <div>
-              <h3>Shop</h3>
+              <h3>{copy.footer.shop.title}</h3>
               <ul>
-                <li><button type="button">New arrivals</button></li>
-                <li><button type="button">Best sellers</button></li>
-                <li><button type="button">Sale</button></li>
+                {copy.footer.shop.links.map((link) => (
+                  <li key={link}><button type="button">{link}</button></li>
+                ))}
               </ul>
             </div>
             <div>
-              <h3>Help</h3>
+              <h3>{copy.footer.help.title}</h3>
               <ul>
-                <li><button type="button">Shipping</button></li>
-                <li><button type="button">Returns</button></li>
-                <li><button type="button">Contact</button></li>
+                {copy.footer.help.links.map((link) => (
+                  <li key={link}><button type="button">{link}</button></li>
+                ))}
               </ul>
             </div>
             <div>
-              <h3>Newsletter</h3>
+              <h3>{copy.footer.newsletter.title}</h3>
               <div className="mockup-ecommerce__newsletter">
-                <input type="email" placeholder="Your email" aria-label="Email for newsletter" />
-                <button type="button">Subscribe</button>
+                <input type="email" placeholder={copy.footer.newsletter.placeholder} aria-label="Email for newsletter" />
+                <button type="button">{copy.footer.newsletter.subscribe}</button>
               </div>
             </div>
           </div>
-          <p className="mockup-ecommerce__copyright">© 2026 {logoText}. All rights reserved.</p>
+          <p className="mockup-ecommerce__copyright">
+            {formatMockupCopy(copy.footer.copyright, { brand: logoText })}
+          </p>
         </footer>
       )}
     </div>

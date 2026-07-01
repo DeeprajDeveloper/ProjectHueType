@@ -7,6 +7,7 @@ import {
   useTheme,
   useToast,
   useKeyboardShuffle,
+  useKeyboardShortcuts,
   useUiPreferences,
   useWalkthrough,
 } from '../../hooks';
@@ -158,6 +159,13 @@ function AppShell() {
     showToast('Shuffled unlocked roles');
   });
 
+  useKeyboardShortcuts({
+    enabled: !tour.active,
+    exportOpen,
+    onNavPanel: handlePanelToggle,
+    onPreviewModeChange: setPreviewMode,
+  });
+
   const handleSelectCombo = (selected) => {
     setOriginalCombo(structuredClone(selected));
     selectCombo(selected);
@@ -215,7 +223,11 @@ function AppShell() {
         <aside className={`app-shell__sidebar ${!sidebarOpen ? 'app-shell__sidebar--collapsed' : ''}`}>
           <div className="app-shell__sidebar-brand">
             <div className="app-shell__brand">
-              <span className="app-shell__logo" aria-hidden="true">H</span>
+              <img
+                src='/logo_light.svg'
+                alt="HueType"
+                className="app-shell__logo"
+              />
               <span className="app-shell__brand-name">HueType</span>
             </div>
             {sidebarOpen && (

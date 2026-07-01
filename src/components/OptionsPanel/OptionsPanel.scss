@@ -134,6 +134,12 @@
   gap: var(--space-5);
 }
 
+.options-panel__preview-settings {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
 .options-panel__parts-group {
   padding-top: var(--space-4);
   border-top: 1px solid var(--border-subtle);
@@ -161,6 +167,27 @@
     color: var(--text-primary);
     font-weight: 600;
   }
+}
+
+.options-panel__archetype-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.options-panel__group-label {
+  font-size: var(--text-caption);
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.options-panel__group-desc {
+  font-size: var(--text-caption);
+  color: var(--text-tertiary);
+  line-height: 1.45;
+  margin: 0;
 }
 
 .options-panel__archetypes {

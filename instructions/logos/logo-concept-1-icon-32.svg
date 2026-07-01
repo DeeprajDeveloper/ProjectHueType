@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <defs>
+    <clipPath id="c1-32-letter-clip">
+      <text x="16" y="26" font-family="Georgia, 'Times New Roman', serif" font-size="32" font-weight="800" text-anchor="middle">H</text>
+    </clipPath>
+  </defs>
+  <rect width="32" height="32" rx="6" fill="var(--surface-1)" stroke="var(--border)" stroke-width="1"/>
+  <g clip-path="url(#c1-32-letter-clip)">
+    <rect x="-1" y="0" width="34" height="11" fill="#F0997B"/>
+    <rect x="-1" y="11" width="34" height="11" fill="#534AB7"/>
+    <rect x="-1" y="22" width="34" height="11" fill="#0C447C"/>
+  </g>
+  <text x="16" y="26" font-family="Georgia, 'Times New Roman', serif" font-size="32" font-weight="800" text-anchor="middle" fill="none" stroke="var(--border-strong)" stroke-width="0.5" opacity="0.2">H</text>
+</svg>

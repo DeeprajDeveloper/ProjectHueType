@@ -16,7 +16,13 @@ import MockupDashboard from './MockupDashboard';
 import MockupPricing from './MockupPricing';
 import MockupBlog from './MockupBlog';
 import MockupEcommerce from './MockupEcommerce';
-import { isArchetypePreviewEmpty, getArchetypePreviewLabel } from '../PreviewComponentsPanel/previewArchetypes';
+import MockupAuth from './MockupAuth';
+import MockupChat from './MockupChat';
+import MockupOnboarding from './MockupOnboarding';
+import MockupSettings from './MockupSettings';
+import MockupEmptyState from './MockupEmptyState';
+import MockupNotifications from './MockupNotifications';
+import { isArchetypePreviewEmpty, getArchetypePreviewLabel, resolveArchetypeParts } from '../PreviewComponentsPanel/previewArchetypes';
 import { getPreviewTypeStyle } from '../../utils/typographyScale';
 import './LivePreview.scss';
 import './MockupMarketing.scss';
@@ -31,6 +37,12 @@ import './MockupDashboard.scss';
 import './MockupPricing.scss';
 import './MockupBlog.scss';
 import './MockupEcommerce.scss';
+import './MockupAuth.scss';
+import './MockupChat.scss';
+import './MockupOnboarding.scss';
+import './MockupSettings.scss';
+import './MockupEmptyState.scss';
+import './MockupNotifications.scss';
 
 const TABLET_ORIENTATION_KEY = 'huetype-tablet-orientation';
 
@@ -62,6 +74,18 @@ function renderArchetype(archetype, previewMode, parts, logoText, onFrameScrollL
       return <MockupBlog parts={parts} logoText={brand} />;
     case 'ecommerce':
       return <MockupEcommerce parts={parts} logoText={brand} />;
+    case 'auth':
+      return <MockupAuth parts={parts} logoText={brand} />;
+    case 'chat':
+      return <MockupChat parts={parts} logoText={brand} />;
+    case 'onboarding':
+      return <MockupOnboarding parts={parts} logoText={brand} />;
+    case 'settings':
+      return <MockupSettings parts={parts} logoText={brand} />;
+    case 'empty':
+      return <MockupEmptyState parts={parts} />;
+    case 'notifications':
+      return <MockupNotifications parts={parts} />;
     case 'marketing':
     default:
       return (
@@ -96,7 +120,7 @@ function LivePreview({
   onOpenInfo,
   infoActive = false,
 }) {
-  const activeParts = archetypeParts[archetype] || {};
+  const activeParts = resolveArchetypeParts(archetype, archetypeParts[archetype]);
   const previewEmpty = isArchetypePreviewEmpty(archetype, activeParts);
   const [frameScrollLocked, setFrameScrollLocked] = useState(false);
   const frameWrapRef = useRef(null);
@@ -282,7 +306,7 @@ function LivePreview({
           {previewEmpty ? (
             <div className="live-preview__empty">
               <p>All preview parts are hidden.</p>
-              <p className="live-preview__empty-hint">Turn sections on in the Options panel → Prototypes.</p>
+              <p className="live-preview__empty-hint">Turn sections on in Prototypes → Options.</p>
             </div>
           ) : (
             renderArchetype(archetype, previewMode, activeParts, previewLogoText, setFrameScrollLocked)

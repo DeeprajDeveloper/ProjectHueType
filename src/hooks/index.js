@@ -1,15 +1,22 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { COMBOS } from '../data/combos';
 import { shuffleCombo, createDefaultLocks, updateComboColor, updateComboFont } from '../utils/shuffle';
 import { checkComboContrast, getOverallContrastStatus } from '../utils/contrast';
 import { loadComboFonts } from '../utils/fonts';
-import { syncUrlState, readUrlState } from '../utils/urlState';
+import { syncUrlState, readUrlState, isDefaultAppState } from '../utils/urlState';
+import { isEditableTarget, matchesShortcut } from '../utils/keyboard';
+import { NAV_PANEL_SHORTCUTS, PREVIEW_DEVICE_SHORTCUTS } from '../data/keyboardShortcuts';
+import { getDefaultArchetypeParts, PREVIEW_ARCHETYPES, mergeArchetypePartsState, resolveArchetypeParts } from '../components/PreviewComponentsPanel/previewArchetypes';
+import { TYPE_BASE_PX, clampTypeBasePx, DEFAULT_SCALE_RATIO, clampScaleRatio } from '../utils/typographyScale';
 
 export function useComboState(initialCombo) {
   const urlState = readUrlState();
-  const [combo, setCombo] = useState(urlState?.combo || initialCombo || COMBOS[0]);
-  const [locks, setLocks] = useState(urlState?.locks || createDefaultLocks());
+  const initialComboState = urlState?.combo || initialCombo || COMBOS[0];
+  const initialLocksState = urlState?.locks || createDefaultLocks();
+  const [combo, setCombo] = useState(initialComboState);
+  const [locks, setLocks] = useState(initialLocksState);
   const [fontsLoading, setFontsLoading] = useState(false);
+  const skipInitialUrlSync = useRef(!urlState && isDefaultAppState(initialComboState, initialLocksState));
 
   useEffect(() => {
     setFontsLoading(true);
@@ -17,6 +24,10 @@ export function useComboState(initialCombo) {
   }, [combo.fonts.heading.family, combo.fonts.body.family]);
 
   useEffect(() => {
+    if (skipInitialUrlSync.current) {
+      skipInitialUrlSync.current = false;
+      if (isDefaultAppState(combo, locks)) return;
+    }
     syncUrlState(combo, locks);
   }, [combo, locks]);
 
@@ -225,18 +236,51 @@ export function useToast() {
 export function useKeyboardShuffle(onShuffle) {
   useEffect(() => {
     const handler = (e) => {
-      if (e.code === 'Space' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) {
-        e.preventDefault();
-        onShuffle();
-      }
+      if (e.code !== 'Space' || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+      if (isEditableTarget(e.target)) return;
+      e.preventDefault();
+      onShuffle();
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
   }, [onShuffle]);
 }
 
-import { getDefaultArchetypeParts } from '../components/PreviewComponentsPanel/previewArchetypes';
-import { TYPE_BASE_PX, clampTypeBasePx, DEFAULT_SCALE_RATIO, clampScaleRatio } from '../utils/typographyScale';
+export function useKeyboardShortcuts({
+  enabled = true,
+  exportOpen = false,
+  onNavPanel,
+  onPreviewModeChange,
+}) {
+  useEffect(() => {
+    if (!enabled) return undefined;
+
+    const handler = (e) => {
+      if (isEditableTarget(e.target)) return;
+
+      for (const item of NAV_PANEL_SHORTCUTS) {
+        if (matchesShortcut(e, item.shortcut)) {
+          e.preventDefault();
+          onNavPanel(item.id);
+          return;
+        }
+      }
+
+      if (!exportOpen) {
+        for (const item of PREVIEW_DEVICE_SHORTCUTS) {
+          if (matchesShortcut(e, item.shortcut)) {
+            e.preventDefault();
+            onPreviewModeChange(item.id);
+            return;
+          }
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [enabled, exportOpen, onNavPanel, onPreviewModeChange]);
+}
 
 export function useUiPreferences() {
   const COLOR_SCALES_KEY = 'huetype-show-color-scales';
@@ -246,7 +290,7 @@ export function useUiPreferences() {
   const PREVIEW_PARTS_KEY = 'huetype-preview-parts';
   const COMPONENTS_SIDEBAR_KEY = 'huetype-components-sidebar-open';
   const PREVIEW_LOGO_KEY = 'huetype-preview-logo-text';
-  const VALID_ARCHETYPES = new Set(['marketing', 'dashboard', 'pricing', 'blog', 'ecommerce']);
+  const VALID_ARCHETYPES = new Set(PREVIEW_ARCHETYPES.map((archetype) => archetype.id));
   const DEFAULT_PREVIEW_LOGO = 'Acme Co.';
 
   const [showColorScales, setShowColorScales] = useState(() => {
@@ -290,22 +334,18 @@ export function useUiPreferences() {
   });
 
   const [archetypeParts, setArchetypePartsState] = useState(() => {
-    const defaults = getDefaultArchetypeParts();
     try {
       const stored = JSON.parse(localStorage.getItem(PREVIEW_PARTS_KEY));
-      if (stored && typeof stored === 'object') {
-        return Object.fromEntries(
-          Object.entries(defaults).map(([archetype, parts]) => [
-            archetype,
-            { ...parts, ...(stored[archetype] || {}) },
-          ]),
-        );
-      }
+      return mergeArchetypePartsState(stored);
     } catch {
       // ignore
     }
-    return defaults;
+    return getDefaultArchetypeParts();
   });
+
+  useEffect(() => {
+    setArchetypePartsState((prev) => mergeArchetypePartsState(prev));
+  }, []);
 
   const [componentsSidebarOpen, setComponentsSidebarOpenState] = useState(() => {
     try {
@@ -380,11 +420,12 @@ export function useUiPreferences() {
 
   const toggleArchetypePart = useCallback((archetype, partId) => {
     setArchetypePartsState((prev) => {
+      const current = resolveArchetypeParts(archetype, prev[archetype]);
       const next = {
         ...prev,
         [archetype]: {
-          ...prev[archetype],
-          [partId]: !prev[archetype]?.[partId],
+          ...current,
+          [partId]: !current[partId],
         },
       };
       try {

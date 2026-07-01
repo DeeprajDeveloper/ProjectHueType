@@ -3,6 +3,7 @@ import {
   APP_VERSION,
   BUILD_FEATURES,
   BUILD_NOTES,
+  BUILD_SHORTCUTS,
   BUILD_STACK,
 } from '../../data/buildInfo';
 import Icon from '../Icon/Icon';
@@ -40,6 +41,18 @@ function BuildInfoPanel({ onStartTour }) {
             <li key={feature}>{feature}</li>
           ))}
         </ul>
+      </section>
+
+      <section className="build-info-panel__section" aria-labelledby="build-info-shortcuts">
+        <h4 id="build-info-shortcuts" className="build-info-panel__section-title">Keyboard shortcuts</h4>
+        <dl className="build-info-panel__shortcuts">
+          {BUILD_SHORTCUTS.map((item) => (
+            <div key={`${item.action}-${item.keys}`} className="build-info-panel__shortcut-row">
+              <dt>{item.action}</dt>
+              <dd><kbd>{item.keys}</kbd></dd>
+            </div>
+          ))}
+        </dl>
       </section>
 
       <section className="build-info-panel__section" aria-labelledby="build-info-notes">

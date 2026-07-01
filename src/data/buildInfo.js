@@ -1,4 +1,11 @@
 /** App build metadata — shown in Build Info panel */
+import { formatShortcutLabel } from '../utils/keyboard';
+import {
+  NAV_PANEL_SHORTCUTS,
+  PREVIEW_DEVICE_SHORTCUTS,
+  SHUFFLE_SHORTCUT,
+} from './keyboardShortcuts';
+
 export const APP_VERSION = '0.1.0';
 
 export const BUILD_STACK = [
@@ -15,6 +22,7 @@ export const BUILD_FEATURES = [
   'Typography scale with adjustable base size and ratio',
   'WCAG contrast panel with grouped results, fix suggestions, and per-card reset',
   'Shuffle with role locks (Space bar shortcut)',
+  'Keyboard shortcuts for panels and preview devices',
   'Save favorites, export tokens, and shareable URLs',
   'Feature catalog with built / planned filters',
   'Light / dark app chrome',
@@ -24,4 +32,16 @@ export const BUILD_NOTES = [
   'Right-panel sections open from the left nav — click the same item again to close the panel.',
   'Use the info button on the live preview for WCAG contrast on the active combo.',
   'Restart the walkthrough from Build Info, or browse the Feature Catalog for the roadmap.',
+];
+
+export const BUILD_SHORTCUTS = [
+  { action: SHUFFLE_SHORTCUT.label, keys: formatShortcutLabel(SHUFFLE_SHORTCUT.shortcut) },
+  ...NAV_PANEL_SHORTCUTS.map((item) => ({
+    action: item.label,
+    keys: formatShortcutLabel(item.shortcut),
+  })),
+  ...PREVIEW_DEVICE_SHORTCUTS.map((item) => ({
+    action: item.label,
+    keys: formatShortcutLabel(item.shortcut),
+  })),
 ];

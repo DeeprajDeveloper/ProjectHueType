@@ -5,6 +5,7 @@ import {
   TextAaIcon,
   GearIcon,
   LayoutIcon,
+  FlaskIcon,
 } from '@phosphor-icons/react';
 
 export const TOP_NAV_ITEMS = [
@@ -22,7 +23,7 @@ export const PROTOTYPE_NAV_ITEMS = [
 export const PROTOTYPE_GROUP = {
   id: 'prototypes',
   label: 'Prototypes',
-  icon: LayoutIcon,
+  icon: FlaskIcon,
   children: PROTOTYPE_NAV_ITEMS,
 };
 
