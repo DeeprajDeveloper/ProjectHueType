@@ -1,7 +1,71 @@
+@use '../../styles/mixins' as *;
+
 .typography-scale {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+}
+
+.typography-scale__base {
+  padding: var(--space-3);
+  background: var(--surface-sunken);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.typography-scale__base-label {
+  display: block;
+  font-size: var(--text-caption);
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-2);
+}
+
+.typography-scale__base-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.typography-scale__base-input {
+  width: 64px;
+  padding: var(--space-1) var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  background: var(--surface-raised, var(--surface));
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+
+  &:focus {
+    border-color: var(--accent);
+    outline: none;
+  }
+}
+
+.typography-scale__base-unit {
+  font-size: var(--text-caption);
+  color: var(--text-tertiary);
+}
+
+.typography-scale__base-reset {
+  @include button-reset;
+  margin-left: auto;
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--text-caption);
+  color: var(--accent);
+  border-radius: var(--radius-sm);
+
+  &:hover {
+    background: var(--surface-raised, var(--surface));
+  }
+}
+
+.typography-scale__base-hint {
+  margin: var(--space-2) 0 0;
+  font-size: 11px;
+  color: var(--text-tertiary);
+  line-height: 1.4;
 }
 
 .typography-scale__row {

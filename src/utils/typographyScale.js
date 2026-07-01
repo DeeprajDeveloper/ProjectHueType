@@ -4,6 +4,8 @@
  */
 
 export const TYPE_BASE_PX = 14;
+export const TYPE_BASE_MIN_PX = 12;
+export const TYPE_BASE_MAX_PX = 24;
 
 export const TYPE_SCALE = [
   { id: 'h1', label: 'H1', ratio: 2.5, role: 'heading', sample: 'Display heading' },
@@ -17,12 +19,33 @@ export const TYPE_SCALE = [
   { id: 'caption', label: 'Caption', ratio: 0.75, role: 'body', sample: 'Metadata, labels, and fine print.' },
 ];
 
-export function getTypeSizePx(ratio) {
-  return Math.round(TYPE_BASE_PX * ratio * 10) / 10;
+export function getTypeSizePx(ratio, basePx = TYPE_BASE_PX) {
+  return Math.round(basePx * ratio * 10) / 10;
+}
+
+export function clampTypeBasePx(value) {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) return TYPE_BASE_PX;
+  return Math.min(TYPE_BASE_MAX_PX, Math.max(TYPE_BASE_MIN_PX, Math.round(parsed)));
 }
 
 export function formatRatio(ratio) {
   if (ratio === 1) return '1x';
   const formatted = Number.isInteger(ratio) ? ratio : ratio.toFixed(3).replace(/\.?0+$/, '');
   return `${formatted}x`;
+}
+
+/** CSS custom properties for the live preview frame */
+export function getPreviewTypeStyle(basePx = TYPE_BASE_PX) {
+  const scale = basePx / TYPE_BASE_PX;
+  const style = {
+    '--preview-type-scale': String(scale),
+    '--preview-type-base': `${basePx}px`,
+  };
+
+  TYPE_SCALE.forEach(({ id, ratio }) => {
+    style[`--preview-type-${id}`] = `${getTypeSizePx(ratio, basePx)}px`;
+  });
+
+  return style;
 }

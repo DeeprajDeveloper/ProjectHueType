@@ -1,3 +1,4 @@
+@use '../../styles/preview-type' as *;
 .mockup-buttons {
   padding: 32px 24px;
   background: var(--preview-secondary);
@@ -6,7 +7,7 @@
 .mockup-buttons__label {
   font-family: var(--preview-font-heading), sans-serif;
   font-weight: 600;
-  font-size: 0.875rem;
+  font-size: preview-type-size(0.875rem);
   color: var(--preview-text);
   opacity: 0.6;
   text-transform: uppercase;
@@ -23,7 +24,7 @@
 .mockup-buttons__btn {
   padding: 10px 20px;
   font-family: var(--preview-font-body), sans-serif;
-  font-size: 0.875rem;
+  font-size: preview-type-size(0.875rem);
   font-weight: 500;
   border-radius: 4px;
   cursor: pointer;

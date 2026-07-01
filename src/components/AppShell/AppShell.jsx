@@ -13,6 +13,7 @@ import { SidebarSimpleIcon, BooksIcon } from '@phosphor-icons/react';
 import Icon from '../Icon/Icon';
 import { ICON_SIZE } from '../Icon/iconConfig';
 import './AppShell.scss';
+import AccordionStack from '../Accordion/AccordionStack';
 import PresetsPanel from '../PresetsPanel/PresetsPanel';
 import LivePreview from '../LivePreview/LivePreview';
 import CustomizePanel from '../CustomizePanel/CustomizePanel';
@@ -38,12 +39,16 @@ function AppShell() {
   const {
     showColorScales,
     toggleColorScales,
+    typeBasePx,
+    setTypeBasePx,
     previewArchetype,
     setPreviewArchetype,
     archetypeParts,
     toggleArchetypePart,
     componentsSidebarOpen,
     setComponentsSidebarOpen,
+    previewLogoText,
+    setPreviewLogoText,
   } = useUiPreferences();
 
   const {
@@ -163,39 +168,43 @@ function AppShell() {
               onExport={() => setExportOpen(true)}
             />
 
-            <PresetsPanel
-              search={filter.search}
-              onSearchChange={filter.setSearch}
-              moodFilter={filter.moodFilter}
-              industryFilter={filter.industryFilter}
-              modeFilter={filter.modeFilter}
-              onModeFilterChange={filter.setModeFilter}
-              onToggleMood={filter.toggleMood}
-              onToggleIndustry={filter.toggleIndustry}
-              onClearMood={filter.clearMoodFilter}
-              onClearIndustry={filter.clearIndustryFilter}
-              onClearFilters={filter.clearFilters}
-              hasActiveFilters={filter.hasActiveFilters}
-              isSavedView={activeView === 'saved'}
-              combos={filter.filtered}
-              selectedId={combo.id}
-              savedIds={saved.map((s) => s.id)}
-              onSelect={handleSelectCombo}
-              onSave={toggleSave}
-              onClearFiltersLibrary={filter.clearFilters}
-            />
-            <CustomizePanel
-              combo={combo}
-              originalCombo={originalCombo}
-              locks={locks}
-              showColorScales={showColorScales}
-              onToggleColorScales={toggleColorScales}
-              onColorChange={setColor}
-              onFontChange={setFont}
-              onToggleLock={toggleLock}
-              onResetRole={resetRole}
-              onCopyColor={(hex) => showToast(`Copied ${hex}`)}
-            />
+            <AccordionStack className="app-shell__sidebar-accordions">
+              <PresetsPanel
+                search={filter.search}
+                onSearchChange={filter.setSearch}
+                moodFilter={filter.moodFilter}
+                industryFilter={filter.industryFilter}
+                modeFilter={filter.modeFilter}
+                onModeFilterChange={filter.setModeFilter}
+                onToggleMood={filter.toggleMood}
+                onToggleIndustry={filter.toggleIndustry}
+                onClearMood={filter.clearMoodFilter}
+                onClearIndustry={filter.clearIndustryFilter}
+                onClearFilters={filter.clearFilters}
+                hasActiveFilters={filter.hasActiveFilters}
+                isSavedView={activeView === 'saved'}
+                combos={filter.filtered}
+                selectedId={combo.id}
+                savedIds={saved.map((s) => s.id)}
+                onSelect={handleSelectCombo}
+                onSave={toggleSave}
+                onClearFiltersLibrary={filter.clearFilters}
+              />
+              <CustomizePanel
+                combo={combo}
+                originalCombo={originalCombo}
+                locks={locks}
+                showColorScales={showColorScales}
+                onToggleColorScales={toggleColorScales}
+                typeBasePx={typeBasePx}
+                onTypeBasePxChange={setTypeBasePx}
+                onColorChange={setColor}
+                onFontChange={setFont}
+                onToggleLock={toggleLock}
+                onResetRole={resetRole}
+                onCopyColor={(hex) => showToast(`Copied ${hex}`)}
+              />
+            </AccordionStack>
             <LockRandomizeControls locks={locks} onShuffle={handleShuffle} />
           </div>
 
@@ -229,6 +238,8 @@ function AppShell() {
             onPreviewModeChange={setPreviewMode}
             archetype={previewArchetype}
             archetypeParts={archetypeParts}
+            previewLogoText={previewLogoText}
+            typeBasePx={typeBasePx}
           />
         </main>
 
@@ -240,6 +251,8 @@ function AppShell() {
             onArchetypeChange={setPreviewArchetype}
             archetypeParts={archetypeParts}
             onToggleArchetypePart={toggleArchetypePart}
+            previewLogoText={previewLogoText}
+            onPreviewLogoTextChange={setPreviewLogoText}
           />
         </div>
       </div>

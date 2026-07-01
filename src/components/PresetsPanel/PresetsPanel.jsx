@@ -28,7 +28,7 @@ function PresetsPanel({
 
   return (
     <div className="presets-panel">
-      <Accordion title={title} defaultOpen persistKey={isSavedView ? 'saved-presets' : 'presets'}>
+      <Accordion title={title} stackId={isSavedView ? 'saved-presets' : 'presets'} defaultOpen persistKey={isSavedView ? 'saved-presets' : 'presets'}>
         {!isSavedView && (
           <FilterBar
             search={search}

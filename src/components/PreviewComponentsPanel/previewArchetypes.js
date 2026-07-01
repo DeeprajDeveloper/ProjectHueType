@@ -2,29 +2,38 @@ export const PREVIEW_ARCHETYPES = [
   {
     id: 'marketing',
     label: 'Common Website Design',
+    previewLabel: 'Website',
     description: 'Navbar, hero, feature cards, testimonials, contact form, and footer.',
   },
   {
     id: 'dashboard',
     label: 'Corporate Dashboard',
+    previewLabel: 'Dashboard',
     description: 'Sidebar nav, charts, issues tracker, data table, and profile settings.',
   },
   {
     id: 'pricing',
-    label: 'Pricing table',
+    label: 'Pricing catalog',
+    previewLabel: 'Pricing',
     description: 'Tier comparison layout with dense feature lists and CTAs.',
   },
   {
     id: 'blog',
-    label: 'Blog / article',
+    label: 'Blog post / article',
+    previewLabel: 'Blog',
     description: 'Long-form headings and body copy for readability testing.',
   },
   {
     id: 'ecommerce',
-    label: 'E-commerce product',
+    label: 'E-commerce product page',
+    previewLabel: 'E-commerce',
     description: 'Product cards with image placeholders, price, and buy buttons.',
   },
 ];
+
+export function getArchetypePreviewLabel(archetypeId) {
+  return PREVIEW_ARCHETYPES.find((a) => a.id === archetypeId)?.previewLabel ?? 'Preview';
+}
 
 export const ARCHETYPE_PARTS = {
   marketing: [
@@ -46,16 +55,25 @@ export const ARCHETYPE_PARTS = {
     { id: 'profileSettings', label: 'Profile & settings' },
   ],
   pricing: [
+    { id: 'topNav', label: 'Top navigation' },
     { id: 'pageHeader', label: 'Page header' },
     { id: 'pricingTiers', label: 'Pricing tiers' },
+    { id: 'featureComparison', label: 'Feature comparison' },
   ],
   blog: [
+    { id: 'topNav', label: 'Top navigation' },
+    { id: 'authorRail', label: 'Author profile rail' },
     { id: 'articleHeader', label: 'Article header' },
     { id: 'articleBody', label: 'Article body' },
+    { id: 'actionRail', label: 'Reading actions' },
   ],
   ecommerce: [
+    { id: 'topNav', label: 'Store navigation' },
+    { id: 'categoryNav', label: 'Category filters' },
+    { id: 'heroBanner', label: 'Hero banner' },
     { id: 'sectionHeader', label: 'Section header' },
     { id: 'productCards', label: 'Product cards' },
+    { id: 'footer', label: 'Footer' },
   ],
 };
 

@@ -2,6 +2,7 @@ import './MockupPricing.scss';
 
 const TIERS = [
   {
+    id: 'starter',
     name: 'Starter',
     price: '$19',
     description: 'For individuals getting started.',
@@ -9,6 +10,7 @@ const TIERS = [
     highlighted: false,
   },
   {
+    id: 'pro',
     name: 'Pro',
     price: '$49',
     description: 'For growing teams that need more.',
@@ -16,6 +18,7 @@ const TIERS = [
     highlighted: true,
   },
   {
+    id: 'enterprise',
     name: 'Enterprise',
     price: '$99',
     description: 'For organizations at scale.',
@@ -24,13 +27,46 @@ const TIERS = [
   },
 ];
 
-function MockupPricing({ parts = {} }) {
+const COMPARISON_ROWS = [
+  { feature: 'Projects', starter: '3', pro: 'Unlimited', enterprise: 'Unlimited' },
+  { feature: 'Team members', starter: '1', pro: '10', enterprise: 'Unlimited' },
+  { feature: 'Analytics', starter: 'Basic', pro: 'Advanced', enterprise: 'Advanced + exports' },
+  { feature: 'Custom domains', starter: false, pro: true, enterprise: true },
+  { feature: 'Priority support', starter: false, pro: true, enterprise: true },
+  { feature: 'SSO / SAML', starter: false, pro: false, enterprise: true },
+  { feature: 'Dedicated manager', starter: false, pro: false, enterprise: true },
+  { feature: 'SLA guarantee', starter: false, pro: false, enterprise: true },
+];
+
+function FeatureCell({ value }) {
+  if (value === true) {
+    return <span className="mockup-pricing__check" aria-label="Included">✓</span>;
+  }
+  if (value === false) {
+    return <span className="mockup-pricing__dash" aria-label="Not included">—</span>;
+  }
+  return <span>{value}</span>;
+}
+
+function MockupPricing({ parts = {}, logoText = 'Acme Co.' }) {
   const show = (id) => parts[id] !== false;
 
   return (
     <section className="mockup-pricing">
+      {show('topNav') && (
+        <header className="mockup-pricing__nav">
+          <span className="mockup-pricing__logo">{logoText}</span>
+          <nav className="mockup-pricing__nav-links" aria-label="Pricing navigation">
+            <a href="#plans">Plans</a>
+            <a href="#compare">Compare</a>
+            <a href="#faq">FAQ</a>
+          </nav>
+          <button type="button" className="mockup-pricing__nav-cta">Sign in</button>
+        </header>
+      )}
+
       {show('pageHeader') && (
-        <header className="mockup-pricing__header">
+        <header className="mockup-pricing__header" id="plans">
           <h1 className="mockup-pricing__title">Choose your plan</h1>
           <p className="mockup-pricing__subtitle">
             Simple, transparent pricing. Upgrade or downgrade at any time.
@@ -68,6 +104,37 @@ function MockupPricing({ parts = {} }) {
             </article>
           ))}
         </div>
+      )}
+
+      {show('featureComparison') && (
+        <section className="mockup-pricing__comparison" id="compare">
+          <h2 className="mockup-pricing__comparison-title">Compare plans</h2>
+          <p className="mockup-pricing__comparison-desc">
+            See exactly what each price tier unlocks across your workspace.
+          </p>
+          <div className="mockup-pricing__comparison-wrap">
+            <table className="mockup-pricing__comparison-table">
+              <thead>
+                <tr>
+                  <th scope="col">Feature</th>
+                  {TIERS.map((tier) => (
+                    <th key={tier.id} scope="col">{tier.name}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {COMPARISON_ROWS.map((row) => (
+                  <tr key={row.feature}>
+                    <th scope="row">{row.feature}</th>
+                    <td><FeatureCell value={row.starter} /></td>
+                    <td><FeatureCell value={row.pro} /></td>
+                    <td><FeatureCell value={row.enterprise} /></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
       )}
     </section>
   );

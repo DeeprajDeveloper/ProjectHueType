@@ -1,3 +1,4 @@
+@use '../../styles/preview-type' as *;
 .mockup-hero {
   padding: 72px 32px 64px;
   text-align: center;
@@ -8,7 +9,7 @@
   display: inline-block;
   margin-bottom: 16px;
   padding: 4px 12px;
-  font-size: 0.75rem;
+  font-size: preview-type-size(0.75rem);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -20,7 +21,7 @@
 .mockup-hero__heading {
   font-family: var(--preview-font-heading), sans-serif;
   font-weight: var(--preview-font-heading-weight);
-  font-size: 2.75rem;
+  font-size: preview-type-size(2.75rem);
   line-height: 1.15;
   color: var(--preview-text);
   max-width: 640px;
@@ -28,7 +29,7 @@
 }
 
 .mockup-hero__subtext {
-  font-size: 1.0625rem;
+  font-size: preview-type-size(1.0625rem);
   line-height: 1.65;
   color: var(--preview-text);
   opacity: 0.75;
@@ -49,7 +50,7 @@
   padding: 14px 32px;
   font-family: var(--preview-font-body), sans-serif;
   font-weight: 600;
-  font-size: 0.9375rem;
+  font-size: preview-type-size(0.9375rem);
   color: var(--preview-background);
   background: var(--preview-accent);
   border: none;
@@ -67,7 +68,7 @@
   padding: 14px 32px;
   font-family: var(--preview-font-body), sans-serif;
   font-weight: 600;
-  font-size: 0.9375rem;
+  font-size: preview-type-size(0.9375rem);
   color: var(--preview-text);
   background: transparent;
   border: 1px solid var(--preview-primary);
@@ -86,7 +87,7 @@
   }
 
   .mockup-hero__heading {
-    font-size: 2rem;
+    font-size: preview-type-size(2rem);
   }
 }
 
@@ -96,11 +97,11 @@
   }
 
   .mockup-hero__heading {
-    font-size: 1.625rem;
+    font-size: preview-type-size(1.625rem);
   }
 
   .mockup-hero__subtext {
-    font-size: 0.9375rem;
+    font-size: preview-type-size(0.9375rem);
   }
 
   .mockup-hero__actions {

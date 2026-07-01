@@ -1,7 +1,8 @@
-import { useState } from 'react';
-import { CaretDown } from '@phosphor-icons/react';
+import { useState, useEffect, useRef } from 'react';
+import { CaretDownIcon } from '@phosphor-icons/react';
 import Icon from '../Icon/Icon';
 import { ICON_SIZE_SM } from '../Icon/iconConfig';
+import { useAccordionStack } from './AccordionStack';
 import './Accordion.scss';
 
 function readStoredOpen(storageKey, defaultOpen) {
@@ -20,12 +21,42 @@ function Accordion({
   badge,
   defaultOpen = false,
   persistKey,
+  stackId,
   children,
   className = '',
   variant = 'default',
 }) {
+  const stack = useAccordionStack();
   const storageKey = persistKey ? `huetype-accordion-${persistKey}` : null;
   const [open, setOpen] = useState(() => readStoredOpen(storageKey, defaultOpen));
+  const registeredStackIdRef = useRef(null);
+
+  useEffect(() => {
+    if (!stack || !stackId || registeredStackIdRef.current === stackId) return;
+    registeredStackIdRef.current = stackId;
+
+    const initialOpen = readStoredOpen(storageKey, defaultOpen);
+    stack.register(stackId, initialOpen);
+  }, [stack, stackId, storageKey, defaultOpen]);
+
+  useEffect(() => {
+    if (!stack || !stackId) return;
+
+    const shouldOpen = stack.openId === stackId;
+    if (stack.openId === null && !shouldOpen) return;
+
+    setOpen((prev) => {
+      if (prev === shouldOpen) return prev;
+      if (storageKey) {
+        try {
+          localStorage.setItem(storageKey, String(shouldOpen));
+        } catch {
+          // ignore
+        }
+      }
+      return shouldOpen;
+    });
+  }, [stack, stackId, stack?.openId, storageKey]);
 
   const handleToggle = () => {
     setOpen((prev) => {
@@ -37,12 +68,19 @@ function Accordion({
           // ignore
         }
       }
+      if (stack && stackId) {
+        stack.setOpen(stackId, next);
+      }
       return next;
     });
   };
 
+  const isPrimary = stack && stackId ? stack.isPrimary(stackId) : false;
+
   return (
-    <div className={`accordion accordion--${variant} ${open ? 'accordion--open' : ''} ${className}`}>
+    <div
+      className={`accordion accordion--${variant} ${open ? 'accordion--open' : ''} ${isPrimary ? 'accordion--focused' : ''} ${className}`}
+    >
       <button
         type="button"
         className="accordion__trigger"
@@ -52,7 +90,7 @@ function Accordion({
         <span className="accordion__title">{title}</span>
         {badge && <span className="accordion__badge">{badge}</span>}
         <span className={`accordion__chevron ${open ? 'accordion__chevron--open' : ''}`} aria-hidden="true">
-          <Icon icon={CaretDown} size={ICON_SIZE_SM} />
+          <Icon icon={CaretDownIcon} size={ICON_SIZE_SM} />
         </span>
       </button>
       {open && (

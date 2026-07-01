@@ -98,14 +98,21 @@
 
 .app-shell__sidebar-panel {
   flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-
-  @include scrollbar-thin;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 
   @include respond-to(mobile) {
     display: block;
+    overflow-y: auto;
   }
+}
+
+.app-shell__sidebar-accordions {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .app-shell__brand-name {

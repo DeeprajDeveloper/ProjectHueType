@@ -2,6 +2,7 @@
 
 .accordion {
   border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
 
   &--chrome {
     border-bottom: none;
@@ -11,6 +12,22 @@
     border-bottom: none;
     background: var(--preview-secondary);
     border-bottom: 1px solid color-mix(in srgb, var(--preview-text) 12%, transparent);
+  }
+
+  &--focused {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    .accordion__content {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+
+      @include scrollbar-thin;
+    }
   }
 }
 
@@ -22,6 +39,7 @@
   width: 100%;
   padding: var(--space-3) var(--space-4);
   text-align: left;
+  flex-shrink: 0;
   transition: background var(--transition-fast);
 
   &:hover {
@@ -47,7 +65,7 @@
 .accordion__title {
   flex: 1;
   font-size: var(--text-body);
-  font-weight: 600;
+  font-weight: 500;
   color: var(--text-primary);
 
   .accordion--preview & {

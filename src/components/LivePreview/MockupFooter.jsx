@@ -15,12 +15,12 @@ const FOOTER_MENUS = [
   },
 ];
 
-function MockupFooter() {
+function MockupFooter({ logoText = 'Acme Co.' }) {
   return (
     <footer className="mockup-footer">
       <div className="mockup-footer__top">
         <div className="mockup-footer__brand-block">
-          <span className="mockup-footer__brand">Acme Co.</span>
+          <span className="mockup-footer__brand">{logoText}</span>
           <address className="mockup-footer__address">
             128 Market Street, Suite 400<br />
             San Francisco, CA 94105<br />

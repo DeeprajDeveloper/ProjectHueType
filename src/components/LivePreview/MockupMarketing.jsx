@@ -8,7 +8,7 @@ import MockupFooter from './MockupFooter';
 import MockupAuthModal from './MockupAuthModal';
 import './MockupMarketing.scss';
 
-function MockupMarketing({ previewMode = 'desktop', parts = {}, onFrameScrollLock }) {
+function MockupMarketing({ previewMode = 'desktop', parts = {}, logoText = 'Acme Co.', onFrameScrollLock }) {
   const [authOpen, setAuthOpen] = useState(false);
   const [authMode, setAuthMode] = useState('login');
   const show = (id) => parts[id] !== false;
@@ -27,7 +27,7 @@ function MockupMarketing({ previewMode = 'desktop', parts = {}, onFrameScrollLoc
   return (
     <div className="mockup-marketing">
       {show('navbar') && (
-        <MockupNavbar compactNav={previewMode === 'mobile'} onOpenAuth={openAuth} />
+        <MockupNavbar compactNav={previewMode === 'mobile'} onOpenAuth={openAuth} logoText={logoText} />
       )}
       {show('hero') && (
         <MockupHero onOpenAuth={() => openAuth('signup')} />
@@ -35,7 +35,7 @@ function MockupMarketing({ previewMode = 'desktop', parts = {}, onFrameScrollLoc
       {show('featureCards') && <MockupFeatureCards />}
       {show('testimonials') && <MockupTestimonials />}
       {show('contactForm') && <MockupContactForm />}
-      {show('footer') && <MockupFooter />}
+      {show('footer') && <MockupFooter logoText={logoText} />}
 
       {authOpen && (
         <MockupAuthModal

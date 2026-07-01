@@ -1,7 +1,7 @@
 @use '../../styles/mixins' as *;
 
 .customize-panel {
-  border-top: 1px solid var(--border-subtle);
+  display: contents;
 
   .accordion__content {
     padding-top: var(--space-2);
@@ -53,6 +53,50 @@
   background: var(--accent-contrast);
   border-radius: var(--radius-full);
   transition: transform var(--transition-fast);
+}
+
+.customize-panel__color-group {
+  margin-bottom: var(--space-3);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--surface-sunken);
+  overflow: hidden;
+}
+
+.customize-panel__color-selection {
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface-raised, var(--surface));
+  border-bottom: 1px solid var(--border-subtle);
+
+  .customize-panel__row {
+    margin-bottom: 0;
+  }
+}
+
+.customize-panel__color-scale {
+  padding: var(--space-2) var(--space-3) var(--space-3);
+}
+
+.customize-panel__color-scale-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.customize-panel__color-scale-label {
+  font-size: var(--text-micro);
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.customize-panel__color-scale-base {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-tertiary);
 }
 
 .customize-panel__color-block {

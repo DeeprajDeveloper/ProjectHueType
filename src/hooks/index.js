@@ -214,13 +214,17 @@ export function useKeyboardShuffle(onShuffle) {
 }
 
 import { getDefaultArchetypeParts } from '../components/PreviewComponentsPanel/previewArchetypes';
+import { TYPE_BASE_PX, clampTypeBasePx } from '../utils/typographyScale';
 
 export function useUiPreferences() {
   const COLOR_SCALES_KEY = 'huetype-show-color-scales';
+  const TYPE_BASE_KEY = 'huetype-type-base-px';
   const PREVIEW_ARCHETYPE_KEY = 'huetype-preview-archetype';
   const PREVIEW_PARTS_KEY = 'huetype-preview-parts';
   const COMPONENTS_SIDEBAR_KEY = 'huetype-components-sidebar-open';
+  const PREVIEW_LOGO_KEY = 'huetype-preview-logo-text';
   const VALID_ARCHETYPES = new Set(['marketing', 'dashboard', 'pricing', 'blog', 'ecommerce']);
+  const DEFAULT_PREVIEW_LOGO = 'Acme Co.';
 
   const [showColorScales, setShowColorScales] = useState(() => {
     try {
@@ -230,6 +234,16 @@ export function useUiPreferences() {
       // ignore
     }
     return true;
+  });
+
+  const [typeBasePx, setTypeBasePxState] = useState(() => {
+    try {
+      const stored = localStorage.getItem(TYPE_BASE_KEY);
+      if (stored !== null) return clampTypeBasePx(stored);
+    } catch {
+      // ignore
+    }
+    return TYPE_BASE_PX;
   });
 
   const [previewArchetype, setPreviewArchetypeState] = useState(() => {
@@ -270,6 +284,16 @@ export function useUiPreferences() {
     return true;
   });
 
+  const [previewLogoText, setPreviewLogoTextState] = useState(() => {
+    try {
+      const stored = localStorage.getItem(PREVIEW_LOGO_KEY);
+      if (stored && stored.trim()) return stored;
+    } catch {
+      // ignore
+    }
+    return DEFAULT_PREVIEW_LOGO;
+  });
+
   const toggleColorScales = useCallback(() => {
     setShowColorScales((prev) => {
       const next = !prev;
@@ -286,6 +310,16 @@ export function useUiPreferences() {
     setShowColorScales(enabled);
     try {
       localStorage.setItem(COLOR_SCALES_KEY, String(enabled));
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  const setTypeBasePx = useCallback((value) => {
+    const next = clampTypeBasePx(value);
+    setTypeBasePxState(next);
+    try {
+      localStorage.setItem(TYPE_BASE_KEY, String(next));
     } catch {
       // ignore
     }
@@ -328,15 +362,28 @@ export function useUiPreferences() {
     }
   }, []);
 
+  const setPreviewLogoText = useCallback((text) => {
+    setPreviewLogoTextState(text);
+    try {
+      localStorage.setItem(PREVIEW_LOGO_KEY, text);
+    } catch {
+      // ignore
+    }
+  }, []);
+
   return {
     showColorScales,
     toggleColorScales,
     setColorScalesEnabled,
+    typeBasePx,
+    setTypeBasePx,
     previewArchetype,
     setPreviewArchetype,
     archetypeParts,
     toggleArchetypePart,
     componentsSidebarOpen,
     setComponentsSidebarOpen,
+    previewLogoText,
+    setPreviewLogoText,
   };
 }

@@ -1,5 +1,8 @@
+@use '../../styles/preview-type' as *;
 .mockup-navbar {
-  position: relative;
+  position: sticky !important;
+  top: 0;
+  z-index: 20;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -12,7 +15,7 @@
 .mockup-navbar__logo {
   font-family: var(--preview-font-heading), sans-serif;
   font-weight: var(--preview-font-heading-weight);
-  font-size: 1.125rem;
+  font-size: preview-type-size(1.125rem);
   color: var(--preview-text);
 }
 
@@ -22,7 +25,7 @@
 }
 
 .mockup-navbar__link {
-  font-size: 0.875rem;
+  font-size: preview-type-size(0.875rem);
   font-weight: 500;
   color: var(--preview-text);
   opacity: 0.75;
@@ -43,7 +46,7 @@
 .mockup-navbar__login {
   padding: 8px 16px;
   font-family: var(--preview-font-body), sans-serif;
-  font-size: 0.8125rem;
+  font-size: preview-type-size(0.8125rem);
   font-weight: 600;
   color: var(--preview-text);
   background: transparent;
@@ -60,7 +63,7 @@
 .mockup-navbar__cta {
   padding: 8px 18px;
   font-family: var(--preview-font-body), sans-serif;
-  font-size: 0.8125rem;
+  font-size: preview-type-size(0.8125rem);
   font-weight: 600;
   color: var(--preview-background);
   background: var(--preview-accent);
@@ -120,7 +123,7 @@
 .mockup-navbar__drawer-link {
   display: block;
   padding: 10px 0;
-  font-size: 0.875rem;
+  font-size: preview-type-size(0.875rem);
   font-weight: 500;
   color: var(--preview-text);
   text-decoration: none;
@@ -154,7 +157,7 @@
   }
 
   .mockup-navbar__link {
-    font-size: 0.8125rem;
+    font-size: preview-type-size(0.8125rem);
   }
 }
 

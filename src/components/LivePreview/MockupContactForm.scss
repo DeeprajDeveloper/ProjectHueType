@@ -1,3 +1,4 @@
+@use '../../styles/preview-type' as *;
 .mockup-contact {
   padding: 56px 32px;
   background: var(--preview-secondary);
@@ -12,13 +13,13 @@
 .mockup-contact__title {
   font-family: var(--preview-font-heading), sans-serif;
   font-weight: var(--preview-font-heading-weight);
-  font-size: 1.75rem;
+  font-size: preview-type-size(1.75rem);
   color: var(--preview-text);
   margin-bottom: 10px;
 }
 
 .mockup-contact__subtitle {
-  font-size: 0.9375rem;
+  font-size: preview-type-size(0.9375rem);
   line-height: 1.6;
   color: var(--preview-text);
   opacity: 0.75;
@@ -45,7 +46,7 @@
 
 .mockup-contact__label {
   display: block;
-  font-size: 0.875rem;
+  font-size: preview-type-size(0.875rem);
   font-weight: 500;
   color: var(--preview-text);
   margin-bottom: 6px;
@@ -56,7 +57,7 @@
   width: 100%;
   padding: 10px 14px;
   font-family: var(--preview-font-body), sans-serif;
-  font-size: 0.875rem;
+  font-size: preview-type-size(0.875rem);
   color: var(--preview-text);
   background: var(--preview-background);
   border: 1px solid color-mix(in srgb, var(--preview-primary) 35%, transparent);
@@ -96,7 +97,7 @@
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  font-size: 0.875rem;
+  font-size: preview-type-size(0.875rem);
   color: var(--preview-text);
   cursor: pointer;
 
@@ -123,7 +124,7 @@
 .mockup-contact__submit {
   padding: 12px 28px;
   font-family: var(--preview-font-body), sans-serif;
-  font-size: 0.875rem;
+  font-size: preview-type-size(0.875rem);
   font-weight: 600;
   color: var(--preview-background);
   background: var(--preview-accent);
@@ -139,7 +140,7 @@
 .mockup-contact__reset {
   padding: 12px 28px;
   font-family: var(--preview-font-body), sans-serif;
-  font-size: 0.875rem;
+  font-size: preview-type-size(0.875rem);
   font-weight: 600;
   color: var(--preview-text);
   background: transparent;
@@ -168,7 +169,7 @@
   }
 
   .mockup-contact__title {
-    font-size: 1.375rem;
+    font-size: preview-type-size(1.375rem);
   }
 
   .mockup-contact__form {

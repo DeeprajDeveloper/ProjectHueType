@@ -1,4 +1,5 @@
 import { SidebarSimpleIcon, SquaresFourIcon } from '@phosphor-icons/react';
+import AccordionStack from '../Accordion/AccordionStack';
 import Accordion from '../Accordion/Accordion';
 import Icon from '../Icon/Icon';
 import { ICON_SIZE } from '../Icon/iconConfig';
@@ -13,6 +14,8 @@ function PreviewComponentsPanel({
   onArchetypeChange,
   archetypeParts,
   onToggleArchetypePart,
+  previewLogoText,
+  onPreviewLogoTextChange,
 }) {
   const currentParts = ARCHETYPE_PARTS[archetype] || [];
 
@@ -54,8 +57,33 @@ function PreviewComponentsPanel({
       </header>
 
       <div className="preview-components-panel__body">
+        <AccordionStack>
+          <Accordion
+            title="Preview settings"
+            stackId="preview-settings"
+            defaultOpen
+            persistKey="preview-settings"
+          >
+          <label className="preview-components-panel__field">
+            <span className="preview-components-panel__field-label">Logo text</span>
+            <span className="preview-components-panel__field-hint">
+              Updates brand names in navbars, sidebars, and store headers.
+            </span>
+            <input
+              type="text"
+              className="preview-components-panel__input"
+              value={previewLogoText}
+              onChange={(e) => onPreviewLogoTextChange(e.target.value)}
+              placeholder="Acme Co."
+              maxLength={48}
+              aria-label="Preview logo text"
+            />
+          </label>
+        </Accordion>
+
         <Accordion
           title="Live Preview archetypes"
+          stackId="preview-archetypes"
           defaultOpen
           persistKey="preview-archetypes"
         >
@@ -88,6 +116,7 @@ function PreviewComponentsPanel({
 
         <Accordion
           title="Preview parts"
+          stackId="preview-parts"
           defaultOpen
           persistKey="preview-parts"
         >
@@ -105,6 +134,7 @@ function PreviewComponentsPanel({
             ))}
           </div>
         </Accordion>
+        </AccordionStack>
       </div>
     </aside>
   );

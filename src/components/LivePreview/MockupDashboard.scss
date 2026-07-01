@@ -1,7 +1,9 @@
+@use '../../styles/preview-type' as *;
 .mockup-dashboard {
   position: relative;
   display: flex;
   min-height: 100%;
+  align-items: stretch;
   background: var(--preview-background);
 
   &--no-sidebar {
@@ -12,18 +14,31 @@
 }
 
 .mockup-dashboard__sidebar {
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   width: 220px;
+  min-height: 100%;
+  max-height: 100vh;
   padding: 24px 16px;
   background: var(--preview-primary);
   color: var(--preview-background);
+}
+
+.mockup-dashboard__sidebar-top {
+  flex: 1;
+  min-height: 0;
 }
 
 .mockup-dashboard__brand {
   display: block;
   font-family: var(--preview-font-heading), sans-serif;
   font-weight: var(--preview-font-heading-weight);
-  font-size: 1.125rem;
+  font-size: preview-type-size(1.125rem);
   margin-bottom: 28px;
 }
 
@@ -36,7 +51,7 @@
 .mockup-dashboard__nav-link {
   padding: 10px 12px;
   font-family: var(--preview-font-body), sans-serif;
-  font-size: 0.875rem;
+  font-size: preview-type-size(0.875rem);
   font-weight: 500;
   color: var(--preview-background);
   text-align: left;
@@ -58,26 +73,66 @@
     color: var(--preview-background);
     font-weight: 600;
   }
+
+  &--profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+}
+
+.mockup-dashboard__nav--footer {
+  flex-shrink: 0;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.mockup-dashboard__nav-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  font-size: preview-type-size(0.6875rem);
+  font-weight: 700;
+  color: var(--preview-background);
+  background: var(--preview-accent);
+  border-radius: 50%;
+  flex-shrink: 0;
+
+  .mockup-dashboard__nav-link--active & {
+    color: var(--preview-accent);
+    background: var(--preview-background);
+  }
 }
 
 .mockup-dashboard__main {
   flex: 1;
   min-width: 0;
-  padding: 20px 28px 32px;
 }
 
 .mockup-dashboard__topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 24px;
+  padding: 20px 28px 16px;
+  background: var(--preview-background);
+  border-bottom: 1px solid var(--preview-secondary);
+}
+
+.mockup-dashboard__content {
+  padding: 0 28px 32px;
 }
 
 .mockup-dashboard__search {
   flex: 1;
   padding: 10px 14px;
   font-family: var(--preview-font-body), sans-serif;
-  font-size: 0.875rem;
+  font-size: preview-type-size(0.875rem);
   color: var(--preview-text);
   background: var(--preview-secondary);
   border: 1px solid transparent;
@@ -132,18 +187,19 @@
 
 .mockup-dashboard__header {
   margin-bottom: 24px;
+  padding-top: 8px;
 }
 
 .mockup-dashboard__title {
   font-family: var(--preview-font-heading), sans-serif;
   font-weight: var(--preview-font-heading-weight);
-  font-size: 1.5rem;
+  font-size: preview-type-size(1.5rem);
   color: var(--preview-text);
   margin-bottom: 6px;
 }
 
 .mockup-dashboard__subtitle {
-  font-size: 0.875rem;
+  font-size: preview-type-size(0.875rem);
   line-height: 1.5;
   color: var(--preview-text);
   opacity: 0.65;
@@ -164,7 +220,7 @@
 
 .mockup-dashboard__stat-label {
   display: block;
-  font-size: 0.8125rem;
+  font-size: preview-type-size(0.8125rem);
   color: var(--preview-text);
   opacity: 0.65;
   margin-bottom: 8px;
@@ -174,13 +230,13 @@
   display: block;
   font-family: var(--preview-font-heading), sans-serif;
   font-weight: var(--preview-font-heading-weight);
-  font-size: 1.625rem;
+  font-size: preview-type-size(1.625rem);
   color: var(--preview-text);
   margin-bottom: 4px;
 }
 
 .mockup-dashboard__stat-change {
-  font-size: 0.8125rem;
+  font-size: preview-type-size(0.8125rem);
   font-weight: 600;
   color: var(--preview-accent);
 }
@@ -190,85 +246,6 @@
   grid-template-columns: repeat(2, 1fr);
   gap: 16px;
   margin-bottom: 28px;
-}
-
-.mockup-dashboard__chart {
-  padding: 18px;
-  background: var(--preview-secondary);
-  border-radius: 4px;
-}
-
-.mockup-dashboard__chart-title {
-  font-family: var(--preview-font-heading), sans-serif;
-  font-weight: 600;
-  font-size: 0.8125rem;
-  color: var(--preview-text);
-  margin-bottom: 16px;
-}
-
-.mockup-dashboard__bar-chart,
-.mockup-dashboard__histogram {
-  display: flex;
-  align-items: flex-end;
-  gap: 8px;
-  height: 120px;
-}
-
-.mockup-dashboard__bar,
-.mockup-dashboard__hist-bar {
-  flex: 1;
-  height: var(--bar-height);
-  min-height: 8px;
-  background: var(--preview-accent);
-  border-radius: 3px 3px 0 0;
-  opacity: 0.9;
-}
-
-.mockup-dashboard__hist-bar {
-  background: var(--preview-primary);
-  opacity: 0.75;
-}
-
-.mockup-dashboard__line-chart {
-  width: 100%;
-  height: 120px;
-}
-
-.mockup-dashboard__pie-wrap {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.mockup-dashboard__pie {
-  flex-shrink: 0;
-  width: 96px;
-  height: 96px;
-  border-radius: 50%;
-}
-
-.mockup-dashboard__pie-legend {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  font-size: 0.75rem;
-  color: var(--preview-text);
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-
-  li {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-}
-
-.mockup-dashboard__pie-swatch {
-  width: 10px;
-  height: 10px;
-  border-radius: 2px;
-  flex-shrink: 0;
 }
 
 .mockup-dashboard__issues {
@@ -308,13 +285,13 @@
 .mockup-dashboard__issue-id {
   flex-shrink: 0;
   font-family: var(--font-mono, monospace);
-  font-size: 0.75rem;
+  font-size: preview-type-size(0.75rem);
   font-weight: 600;
   color: var(--preview-accent);
 }
 
 .mockup-dashboard__issue-title {
-  font-size: 0.875rem;
+  font-size: preview-type-size(0.875rem);
   color: var(--preview-text);
 }
 
@@ -328,7 +305,7 @@
 .mockup-dashboard__priority,
 .mockup-dashboard__issue-status {
   padding: 2px 8px;
-  font-size: 0.6875rem;
+  font-size: preview-type-size(0.6875rem);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.03em;
@@ -370,7 +347,7 @@
 .mockup-dashboard__section-title {
   font-family: var(--preview-font-heading), sans-serif;
   font-weight: 600;
-  font-size: 1rem;
+  font-size: preview-type-size(1rem);
   color: var(--preview-text);
   margin-bottom: 12px;
 }
@@ -382,7 +359,7 @@
 .mockup-dashboard__table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.875rem;
+  font-size: preview-type-size(0.875rem);
 
   th,
   td {
@@ -394,7 +371,7 @@
   th {
     font-family: var(--preview-font-heading), sans-serif;
     font-weight: 600;
-    font-size: 0.75rem;
+    font-size: preview-type-size(0.75rem);
     text-transform: uppercase;
     letter-spacing: 0.04em;
     color: var(--preview-text);
@@ -414,7 +391,7 @@
 .mockup-dashboard__status {
   display: inline-block;
   padding: 2px 8px;
-  font-size: 0.75rem;
+  font-size: preview-type-size(0.75rem);
   font-weight: 600;
   border-radius: 999px;
 
@@ -453,7 +430,7 @@
   height: 56px;
   font-family: var(--preview-font-heading), sans-serif;
   font-weight: 700;
-  font-size: 1.125rem;
+  font-size: preview-type-size(1.125rem);
   color: var(--preview-background);
   background: var(--preview-accent);
   border-radius: 50%;
@@ -462,13 +439,13 @@
 .mockup-dashboard__profile-name {
   font-family: var(--preview-font-heading), sans-serif;
   font-weight: var(--preview-font-heading-weight);
-  font-size: 1.125rem;
+  font-size: preview-type-size(1.125rem);
   color: var(--preview-text);
   margin-bottom: 4px;
 }
 
 .mockup-dashboard__profile-email {
-  font-size: 0.875rem;
+  font-size: preview-type-size(0.875rem);
   color: var(--preview-text);
   opacity: 0.65;
 }
@@ -476,7 +453,7 @@
 .mockup-dashboard__settings-title {
   font-family: var(--preview-font-heading), sans-serif;
   font-weight: 600;
-  font-size: 0.875rem;
+  font-size: preview-type-size(0.875rem);
   color: var(--preview-text);
   margin-bottom: 16px;
 }
@@ -487,7 +464,7 @@
   justify-content: space-between;
   gap: 12px;
   padding: 10px 0;
-  font-size: 0.875rem;
+  font-size: preview-type-size(0.875rem);
   color: var(--preview-text);
   border-bottom: 1px solid color-mix(in srgb, var(--preview-text) 8%, transparent);
   cursor: pointer;
@@ -502,7 +479,7 @@
 
   label {
     display: block;
-    font-size: 0.8125rem;
+    font-size: preview-type-size(0.8125rem);
     font-weight: 500;
     color: var(--preview-text);
     margin-bottom: 6px;
@@ -513,7 +490,7 @@
   width: 100%;
   padding: 8px 12px;
   font-family: var(--preview-font-body), sans-serif;
-  font-size: 0.875rem;
+  font-size: preview-type-size(0.875rem);
   color: var(--preview-text);
   background: var(--preview-background);
   border: 1px solid color-mix(in srgb, var(--preview-primary) 25%, transparent);
@@ -524,7 +501,7 @@
   margin-top: 20px;
   padding: 10px 24px;
   font-family: var(--preview-font-body), sans-serif;
-  font-size: 0.875rem;
+  font-size: preview-type-size(0.875rem);
   font-weight: 600;
   color: var(--preview-background);
   background: var(--preview-accent);
@@ -575,14 +552,14 @@
   h2 {
     font-family: var(--preview-font-heading), sans-serif;
     font-weight: 600;
-    font-size: 0.9375rem;
+    font-size: preview-type-size(0.9375rem);
     color: var(--preview-text);
   }
 
   button {
     width: 28px;
     height: 28px;
-    font-size: 1.25rem;
+    font-size: preview-type-size(1.25rem);
     line-height: 1;
     color: var(--preview-text);
     background: none;
@@ -613,14 +590,14 @@
   }
 
   p {
-    font-size: 0.8125rem;
+    font-size: preview-type-size(0.8125rem);
     line-height: 1.45;
     color: var(--preview-text);
     margin-bottom: 4px;
   }
 
   span {
-    font-size: 0.6875rem;
+    font-size: preview-type-size(0.6875rem);
     color: var(--preview-text);
     opacity: 0.55;
   }
@@ -642,6 +619,8 @@
   }
 
   .mockup-dashboard__sidebar {
+    position: static;
+    max-height: none;
     width: 100%;
     padding: 16px;
   }
@@ -651,8 +630,18 @@
     flex-wrap: wrap;
   }
 
-  .mockup-dashboard__main {
+  .mockup-dashboard__nav--footer {
+    margin-top: 12px;
+    padding-top: 12px;
+    width: 100%;
+  }
+
+  .mockup-dashboard__topbar {
     padding: 16px;
+  }
+
+  .mockup-dashboard__content {
+    padding: 0 16px 16px;
   }
 
   .mockup-dashboard__stats {

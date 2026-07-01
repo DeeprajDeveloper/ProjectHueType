@@ -58,6 +58,8 @@ function CustomizePanel({
   locks,
   showColorScales,
   onToggleColorScales,
+  typeBasePx,
+  onTypeBasePxChange,
   onColorChange,
   onFontChange,
   onToggleLock,
@@ -69,7 +71,7 @@ function CustomizePanel({
 
   return (
     <div className="customize-panel">
-      <Accordion title="Colors" defaultOpen persistKey="colors">
+      <Accordion title="Colors" stackId="colors" defaultOpen persistKey="colors">
         <div className="customize-panel__scales-toggle">
           <span className="customize-panel__scales-label">Color scales (100–900)</span>
           <button
@@ -85,62 +87,71 @@ function CustomizePanel({
         </div>
 
         {COLOR_ROLES.map((role) => (
-          <div key={role} className="customize-panel__color-block">
-            <div className="customize-panel__row">
-              <label className="customize-panel__label" htmlFor={`color-${role}`}>
-                {role.charAt(0).toUpperCase() + role.slice(1)}
-              </label>
-              <div className="customize-panel__controls">
-                <input
-                  id={`color-${role}`}
-                  type="color"
-                  className="customize-panel__color-input"
-                  value={combo.colors[role]}
-                  onChange={(e) => onColorChange(role, e.target.value)}
-                  aria-label={`${role} color`}
-                />
-                <HexColorInput
-                  value={combo.colors[role]}
-                  onChange={(hex) => onColorChange(role, hex)}
-                  role={role}
-                />
-                <button
-                  type="button"
-                  className={`customize-panel__lock ${locks[`color-${role}`] ? 'customize-panel__lock--locked' : ''}`}
-                  aria-label={locks[`color-${role}`] ? `Unlock ${role} color` : `Lock ${role} color`}
-                  aria-pressed={locks[`color-${role}`]}
-                  onClick={() => onToggleLock(`color-${role}`)}
-                >
-                  <Icon
-                    icon={locks[`color-${role}`] ? Lock : LockOpen}
-                    size={ICON_SIZE_SM}
-                    weight={locks[`color-${role}`] ? 'fill' : 'regular'}
+          <div key={role} className="customize-panel__color-group">
+            <div className="customize-panel__color-selection">
+              <div className="customize-panel__row">
+                <label className="customize-panel__label" htmlFor={`color-${role}`}>
+                  {role.charAt(0).toUpperCase() + role.slice(1)}
+                </label>
+                <div className="customize-panel__controls">
+                  <input
+                    id={`color-${role}`}
+                    type="color"
+                    className="customize-panel__color-input"
+                    value={combo.colors[role]}
+                    onChange={(e) => onColorChange(role, e.target.value)}
+                    aria-label={`${role} color`}
                   />
-                </button>
-                {isColorChanged(role) && (
+                  <HexColorInput
+                    value={combo.colors[role]}
+                    onChange={(hex) => onColorChange(role, hex)}
+                    role={role}
+                  />
                   <button
                     type="button"
-                    className="customize-panel__reset"
-                    onClick={() => onResetRole('color', role, originalCombo)}
-                    aria-label={`Reset ${role} color`}
+                    className={`customize-panel__lock ${locks[`color-${role}`] ? 'customize-panel__lock--locked' : ''}`}
+                    aria-label={locks[`color-${role}`] ? `Unlock ${role} color` : `Lock ${role} color`}
+                    aria-pressed={locks[`color-${role}`]}
+                    onClick={() => onToggleLock(`color-${role}`)}
                   >
-                    <Icon icon={ArrowCounterClockwise} size={ICON_SIZE_SM} />
+                    <Icon
+                      icon={locks[`color-${role}`] ? Lock : LockOpen}
+                      size={ICON_SIZE_SM}
+                      weight={locks[`color-${role}`] ? 'fill' : 'regular'}
+                    />
                   </button>
-                )}
+                  {isColorChanged(role) && (
+                    <button
+                      type="button"
+                      className="customize-panel__reset"
+                      onClick={() => onResetRole('color', role, originalCombo)}
+                      aria-label={`Reset ${role} color`}
+                    >
+                      <Icon icon={ArrowCounterClockwise} size={ICON_SIZE_SM} />
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
+
             {showColorScales && (
-              <ColorScaleStrip
-                baseHex={combo.colors[role]}
-                roleLabel={role}
-                onCopy={onCopyColor}
-              />
+              <div className="customize-panel__color-scale">
+                <div className="customize-panel__color-scale-header">
+                  <span className="customize-panel__color-scale-label">Scale</span>
+                  <span className="customize-panel__color-scale-base">{combo.colors[role]}</span>
+                </div>
+                <ColorScaleStrip
+                  baseHex={combo.colors[role]}
+                  roleLabel={role}
+                  onCopy={onCopyColor}
+                />
+              </div>
             )}
           </div>
         ))}
       </Accordion>
 
-      <Accordion title="Fonts" defaultOpen persistKey="fonts">
+      <Accordion title="Fonts" stackId="fonts" defaultOpen persistKey="fonts">
         {FONT_ROLES.map((role) => (
           <div key={role} className="customize-panel__font-block">
             <div className="customize-panel__row">
@@ -191,7 +202,11 @@ function CustomizePanel({
 
         <div className="customize-panel__type-scale">
           <h4 className="customize-panel__type-scale-title">Type scale</h4>
-          <TypographyScale fonts={combo.fonts} />
+          <TypographyScale
+            fonts={combo.fonts}
+            basePx={typeBasePx}
+            onBasePxChange={onTypeBasePxChange}
+          />
         </div>
       </Accordion>
     </div>

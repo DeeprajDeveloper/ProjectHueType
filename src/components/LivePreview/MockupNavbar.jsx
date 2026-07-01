@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import './MockupNavbar.scss';
 
-function MockupNavbar({ compactNav = false, onOpenAuth }) {
+function MockupNavbar({ compactNav = false, onOpenAuth, logoText = 'Acme Co.' }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const handleAuth = (mode) => {
@@ -11,7 +11,7 @@ function MockupNavbar({ compactNav = false, onOpenAuth }) {
 
   return (
     <nav className="mockup-navbar" aria-label="Preview navigation">
-      <span className="mockup-navbar__logo">Acme Co.</span>
+      <span className="mockup-navbar__logo">{logoText}</span>
 
       {compactNav ? (
         <>

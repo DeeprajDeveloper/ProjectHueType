@@ -1,0 +1,4 @@
+// Scales mockup typography relative to the customize-panel type base (default 14px body).
+@function preview-type-size($size) {
+  @return calc(#{$size} * var(--preview-type-scale, 1));
+}
