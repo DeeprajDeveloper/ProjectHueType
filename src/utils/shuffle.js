@@ -2,7 +2,7 @@
  * Constrained shuffle with per-role locks (FR5)
  */
 
-import { COMBOS, GOOGLE_FONTS } from '../data/combos';
+import { COMBOS } from '../data/combos';
 
 function pickRandom(arr, exclude) {
   const filtered = exclude ? arr.filter((item) => item !== exclude) : arr;
@@ -15,31 +15,21 @@ function randomHex() {
 
 export function shuffleCombo(currentCombo, locks = {}) {
   const randomCombo = pickRandom(COMBOS, currentCombo.id);
-  const result = structuredClone(currentCombo);
+  const result = structuredClone(randomCombo);
 
   const colorRoles = ['primary', 'secondary', 'accent', 'background', 'text'];
   colorRoles.forEach((role) => {
-    if (!locks[`color-${role}`]) {
-      result.colors[role] = randomCombo.colors[role];
+    if (locks[`color-${role}`]) {
+      result.colors[role] = currentCombo.colors[role];
     }
   });
 
-  if (!locks['font-heading']) {
-    const font = pickRandom(GOOGLE_FONTS, result.fonts.heading.family);
-    result.fonts.heading = {
-      ...result.fonts.heading,
-      family: font,
-      googleId: font.replace(/ /g, '+'),
-    };
+  if (locks['font-heading']) {
+    result.fonts.heading = structuredClone(currentCombo.fonts.heading);
   }
 
-  if (!locks['font-body']) {
-    const font = pickRandom(GOOGLE_FONTS, result.fonts.body.family);
-    result.fonts.body = {
-      ...result.fonts.body,
-      family: font,
-      googleId: font.replace(/ /g, '+'),
-    };
+  if (locks['font-body']) {
+    result.fonts.body = structuredClone(currentCombo.fonts.body);
   }
 
   return result;

@@ -178,6 +178,9 @@
   &--selected {
     border-color: var(--accent);
     background: var(--accent-subtle);
+    .preview-components-panel__option-label {
+      font-weight: 600;
+    }
   }
 }
 
@@ -196,13 +199,13 @@
 
 .preview-components-panel__option-label {
   font-size: var(--text-body);
-  font-weight: 600;
+  font-weight: 400;
   color: var(--text-primary);
   line-height: 1.3;
 }
 
 .preview-components-panel__option-desc {
-  font-size: var(--text-caption);
+  font-size: var(--text-micro);
   color: var(--text-secondary);
   line-height: 1.45;
 }

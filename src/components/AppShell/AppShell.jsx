@@ -85,7 +85,8 @@ function AppShell() {
 
   useKeyboardShuffle(() => {
     if (tour.active) return;
-    shuffle();
+    const next = shuffle();
+    setOriginalCombo(structuredClone(next));
     showToast('Shuffled unlocked roles');
   });
 
@@ -95,7 +96,8 @@ function AppShell() {
   };
 
   const handleShuffle = () => {
-    shuffle();
+    const next = shuffle();
+    setOriginalCombo(structuredClone(next));
     showToast('Shuffled unlocked roles');
   };
 
@@ -240,9 +242,6 @@ function AppShell() {
                   <span className="app-shell__design-system-desc">Built &amp; planned components</span>
                 </span>
               </button>
-              <p className="app-shell__sidebar-hint">
-                Press <kbd>Space</kbd> to shuffle unlocked roles
-              </p>
             </footer>
           )}
         </aside>

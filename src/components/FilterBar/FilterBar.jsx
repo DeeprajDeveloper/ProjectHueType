@@ -56,21 +56,23 @@ function FilterBar({
         />
       </div>
 
-      <MultiSelectDropdown
-        label="Mood"
-        options={MOODS}
-        selected={moodFilter}
-        onToggle={onToggleMood}
-        onClear={onClearMood}
-      />
+      <div className="filter-bar__dropdown-row">
+        <MultiSelectDropdown
+          label="Mood"
+          options={MOODS}
+          selected={moodFilter}
+          onToggle={onToggleMood}
+          onClear={onClearMood}
+        />
 
-      <MultiSelectDropdown
-        label="Industry"
-        options={INDUSTRIES}
-        selected={industryFilter}
-        onToggle={onToggleIndustry}
-        onClear={onClearIndustry}
-      />
+        <MultiSelectDropdown
+          label="Industry"
+          options={INDUSTRIES}
+          selected={industryFilter}
+          onToggle={onToggleIndustry}
+          onClear={onClearIndustry}
+        />
+      </div>
 
       {hasActiveFilters && (
         <button type="button" className="filter-bar__clear" onClick={onClearFilters}>

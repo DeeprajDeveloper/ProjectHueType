@@ -53,6 +53,18 @@
   margin-bottom: var(--space-3);
 }
 
+.filter-bar__dropdown-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+
+  .multi-select {
+    margin-bottom: 0;
+    min-width: 0;
+  }
+}
+
 .filter-bar__label {
   display: block;
   margin-bottom: var(--space-2);

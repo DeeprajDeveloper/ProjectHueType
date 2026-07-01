@@ -28,7 +28,12 @@ export function useComboState(initialCombo) {
   }, []);
 
   const shuffle = useCallback(() => {
-    setCombo((prev) => shuffleCombo(prev, locks));
+    let nextCombo;
+    setCombo((prev) => {
+      nextCombo = shuffleCombo(prev, locks);
+      return nextCombo;
+    });
+    return nextCombo;
   }, [locks]);
 
   const toggleLock = useCallback((key) => {

@@ -4,6 +4,7 @@ import {
   DeviceTabletCameraIcon,
   DeviceMobileCameraIcon,
   DeviceRotateIcon,
+  FlaskIcon,
 } from '@phosphor-icons/react';
 import ContrastBadge from '../ContrastBadge/ContrastBadge';
 import { suggestFix } from '../../utils/contrast';
@@ -194,17 +195,17 @@ function LivePreview({
 
   const archetypeLabel = getArchetypePreviewLabel(archetype);
   const deviceLabel = isTablet
-    ? `${DEVICE_LABELS.tablet} · ${tabletOrientation === 'landscape' ? 'Landscape' : 'Portrait'}`
+    ? `${DEVICE_LABELS.tablet} (${tabletOrientation === 'landscape' ? 'Landscape' : 'Portrait'})`
     : DEVICE_LABELS[previewMode] ?? DEVICE_LABELS.desktop;
-  const previewHeading = `Live Preview | ${archetypeLabel} | ${deviceLabel}`;
+  const previewHeading = `Live preview of '${archetypeLabel}' on ${deviceLabel}`;
 
   const dimensionsLabel = frameSize.width > 0 && frameSize.height > 0
-    ? `${frameSize.width} × ${frameSize.height}px`
+    ? `${frameSize.width} ✕ ${frameSize.height}px`
     : previewMode === 'desktop'
       ? 'Sizing to available width'
       : previewMode === 'mobile'
         ? '375px target width'
-        : `${TABLET_SIZE[tabletOrientation].width} × ${TABLET_SIZE[tabletOrientation].height}px target`;
+        : `${TABLET_SIZE[tabletOrientation].width} ✕ ${TABLET_SIZE[tabletOrientation].height}px`;
 
   return (
     <div className="live-preview">
@@ -245,7 +246,10 @@ function LivePreview({
 
       <div className="live-preview__controls" data-tour="preview-controls">
         <div className="live-preview__controls-heading">
-          <h2 className="live-preview__label">{previewHeading}</h2>
+          <h2 className="live-preview__label">
+            <Icon icon={FlaskIcon} size={ICON_SIZE_SM} />
+            {previewHeading}
+          </h2>
           <p className="live-preview__dimensions" aria-live="polite">
             Frame: {dimensionsLabel}
           </p>

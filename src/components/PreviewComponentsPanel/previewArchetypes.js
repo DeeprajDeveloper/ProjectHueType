@@ -2,31 +2,31 @@ export const PREVIEW_ARCHETYPES = [
   {
     id: 'marketing',
     label: 'Common Website Design',
-    previewLabel: 'Website',
+    previewLabel: 'Common Website Design',
     description: 'Navbar, hero, feature cards, testimonials, contact form, and footer.',
   },
   {
     id: 'dashboard',
     label: 'Corporate Dashboard',
-    previewLabel: 'Dashboard',
+    previewLabel: 'Corporate Dashboard',
     description: 'Sidebar nav, charts, issues tracker, data table, and profile settings.',
   },
   {
     id: 'pricing',
     label: 'Pricing catalog',
-    previewLabel: 'Pricing',
+    previewLabel: 'Pricing catalog',
     description: 'Tier comparison layout with dense feature lists and CTAs.',
   },
   {
     id: 'blog',
     label: 'Blog post / article',
-    previewLabel: 'Blog',
+    previewLabel: 'Blog post / article',
     description: 'Long-form headings and body copy for readability testing.',
   },
   {
     id: 'ecommerce',
     label: 'E-commerce product page',
-    previewLabel: 'E-commerce',
+    previewLabel: 'E-commerce product page',
     description: 'Product cards with image placeholders, price, and buy buttons.',
   },
 ];
