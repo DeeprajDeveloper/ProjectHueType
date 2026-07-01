@@ -281,12 +281,87 @@ export function toFigmaTokens(combo) {
 }
 
 export const EXPORT_FORMATS = [
-  { id: 'css', label: 'CSS Variables', fn: toCssVariables },
-  { id: 'scss', label: 'SCSS', fn: toScssVariables },
-  { id: 'tailwind', label: 'Tailwind', fn: toTailwindConfig },
-  { id: 'json', label: 'JSON', fn: toJson },
-  { id: 'tokens', label: 'Design Tokens', fn: toDesignTokens },
-  { id: 'style-dictionary', label: 'Style Dictionary', fn: toStyleDictionary },
-  { id: 'css-modules', label: 'CSS Modules', fn: toCssModules },
-  { id: 'figma', label: 'Figma Tokens', fn: toFigmaTokens },
+  {
+    id: 'css',
+    label: 'CSS Variables',
+    description: 'Drop-in :root custom properties with full color scales.',
+    extension: 'css',
+    mimeType: 'text/css',
+    fn: toCssVariables,
+  },
+  {
+    id: 'scss',
+    label: 'SCSS',
+    description: 'Sass variables and scale maps for build pipelines.',
+    extension: 'scss',
+    mimeType: 'text/plain',
+    fn: toScssVariables,
+  },
+  {
+    id: 'tailwind',
+    label: 'Tailwind',
+    description: 'theme.extend snippet for tailwind.config.js.',
+    extension: 'js',
+    mimeType: 'text/javascript',
+    fn: toTailwindConfig,
+  },
+  {
+    id: 'json',
+    label: 'JSON',
+    description: 'Structured combo data with scales and metadata.',
+    extension: 'json',
+    mimeType: 'application/json',
+    fn: toJson,
+  },
+  {
+    id: 'tokens',
+    label: 'Design Tokens',
+    description: 'W3C design token format for token tools.',
+    extension: 'json',
+    mimeType: 'application/json',
+    fn: toDesignTokens,
+  },
+  {
+    id: 'style-dictionary',
+    label: 'Style Dictionary',
+    description: 'Amazon Style Dictionary token JSON.',
+    extension: 'json',
+    mimeType: 'application/json',
+    fn: toStyleDictionary,
+  },
+  {
+    id: 'css-modules',
+    label: 'CSS Modules',
+    description: 'Named JS exports for CSS Modules projects.',
+    extension: 'js',
+    mimeType: 'text/javascript',
+    fn: toCssModules,
+  },
+  {
+    id: 'figma',
+    label: 'Figma Tokens',
+    description: 'Collections JSON for Tokens Studio / Figma.',
+    extension: 'json',
+    mimeType: 'application/json',
+    fn: toFigmaTokens,
+  },
 ];
+
+function slugifyComboName(name) {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'combo';
+}
+
+export function getExportFilename(combo, format) {
+  const slug = slugifyComboName(combo.name);
+  return `${slug}.${format.extension}`;
+}
+
+export function downloadExportFile(content, filename, mimeType = 'text/plain') {
+  const blob = new Blob([content], { type: `${mimeType};charset=utf-8` });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(url);
+}

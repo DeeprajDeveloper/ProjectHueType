@@ -1,8 +1,9 @@
 /**
- * Generate 100–900 color scales from a base hex color.
- * 500 is always the exact base; lighter/darker steps interpolate from it
- * so the scale stays monotonic (100 lightest → 900 darkest).
+ * Generate 50–950 color scales from a base hex color.
+ * 500 is always the exact base; steps use perceptually uniform lightness interpolation.
  */
+
+export const SCALE_STEPS = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950];
 
 function hexToRgb(hex) {
   const cleaned = hex.replace('#', '');
@@ -17,7 +18,7 @@ function rgbToHex(r, g, b) {
   return `#${[r, g, b].map((c) => Math.round(Math.min(255, Math.max(0, c))).toString(16).padStart(2, '0')).join('')}`;
 }
 
-function rgbToHsl(r, g, b) {
+export function rgbToHsl(r, g, b) {
   r /= 255; g /= 255; b /= 255;
   const max = Math.max(r, g, b);
   const min = Math.min(r, g, b);
@@ -75,20 +76,20 @@ function normalizeHex(hex) {
 const LIGHT_CAP = 97;
 const DARK_FLOOR = 6;
 
-/** How far toward LIGHT_CAP each lighter step goes (100 = fullest) */
 const LIGHTER_BLEND = {
-  100: 1,
+  50: 1,
+  100: 0.88,
   200: 0.72,
   300: 0.44,
   400: 0.18,
 };
 
-/** How far toward DARK_FLOOR each darker step goes (900 = fullest) */
 const DARKER_BLEND = {
   600: 0.22,
   700: 0.44,
   800: 0.68,
-  900: 1,
+  900: 0.88,
+  950: 1,
 };
 
 function clampLightness(l) {
@@ -109,6 +110,12 @@ export function isColorLight(hex) {
   const { r, g, b } = hexToRgb(normalizeHex(hex));
   const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
   return luminance > 0.58;
+}
+
+export function formatHsl(hex) {
+  const { r, g, b } = hexToRgb(normalizeHex(hex));
+  const { h, s, l } = rgbToHsl(r, g, b);
+  return `${Math.round(h)}° ${Math.round(s)}% ${Math.round(l)}%`;
 }
 
 export function generateColorScale(baseHex) {
@@ -142,3 +149,11 @@ export function generateComboScales(colors) {
     neutral: generateColorScale(colors.text),
   };
 }
+
+export const COLOR_ROLE_CONFIG = {
+  background: { label: 'Background', usage: 'background' },
+  secondary: { label: 'Surface', usage: 'surface' },
+  primary: { label: 'Primary', usage: 'primary' },
+  accent: { label: 'Accent', usage: 'accent' },
+  text: { label: 'Text', usage: 'text' },
+};

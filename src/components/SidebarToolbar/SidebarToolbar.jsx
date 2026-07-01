@@ -11,6 +11,7 @@ function SidebarToolbar({
   onSave,
   isSaved,
   onExport,
+  exportActive = false,
   dataTour,
 }) {
   return (
@@ -19,7 +20,7 @@ function SidebarToolbar({
         label={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
         onClick={onToggleTheme}
       >
-        <Icon icon={theme === 'light' ? SunIcon : MoonIcon} size={ICON_SIZE} />
+        <Icon icon={theme === 'light' ? SunIcon : MoonIcon} size={ICON_SIZE} active />
       </IconButton>
       <IconButton label="Share combo" onClick={onShare}>
         <Icon icon={ShareNetworkIcon} size={ICON_SIZE} />
@@ -29,9 +30,14 @@ function SidebarToolbar({
         onClick={onSave}
         active={isSaved}
       >
-        <Icon icon={HeartIcon} size={ICON_SIZE} weight={isSaved ? 'fill' : 'regular'} />
+        <Icon icon={HeartIcon} size={ICON_SIZE} />
       </IconButton>
-      <button type="button" className="btn btn--primary btn--sm sidebar-toolbar__export" onClick={onExport}>
+      <button
+        type="button"
+        className={`btn btn--primary btn--sm sidebar-toolbar__export ${exportActive ? 'sidebar-toolbar__export--active' : ''}`}
+        onClick={onExport}
+        aria-pressed={exportActive}
+      >
         <Icon icon={ExportIcon} size={ICON_SIZE} />
         Export
       </button>

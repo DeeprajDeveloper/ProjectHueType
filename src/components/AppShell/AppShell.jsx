@@ -10,39 +10,38 @@ import {
   useUiPreferences,
   useWalkthrough,
 } from '../../hooks';
-import { SidebarSimpleIcon, BooksIcon } from '@phosphor-icons/react';
+import { SidebarSimpleIcon, BooksIcon, PackageIcon } from '@phosphor-icons/react';
 import Icon from '../Icon/Icon';
 import { ICON_SIZE } from '../Icon/iconConfig';
+import { APP_VERSION } from '../../data/buildInfo';
 import './AppShell.scss';
-import AccordionStack from '../Accordion/AccordionStack';
-import PresetsPanel from '../PresetsPanel/PresetsPanel';
 import LivePreview from '../LivePreview/LivePreview';
-import CustomizePanel from '../CustomizePanel/CustomizePanel';
 import LockRandomizeControls from '../LockRandomizeControls/LockRandomizeControls';
-import ExportModal from '../ExportModal/ExportModal';
-import DesignSystemModal from '../DesignSystemModal/DesignSystemModal';
+import ExportPanel from '../ExportPanel/ExportPanel';
 import Toast from '../Toast/Toast';
 import SidebarRail from '../SidebarRail/SidebarRail';
 import SidebarToolbar from '../SidebarToolbar/SidebarToolbar';
-import PreviewComponentsPanel from '../PreviewComponentsPanel/PreviewComponentsPanel';
+import SidebarNav from '../SidebarNav/SidebarNav';
+import OptionsPanel from '../OptionsPanel/OptionsPanel';
 import Walkthrough from '../Walkthrough/Walkthrough';
 
 function AppShell() {
-  const [activeView, setActiveView] = useState('workspace');
+  const [activePanel, setActivePanel] = useState('workspace');
   const [exportOpen, setExportOpen] = useState(false);
-  const [designSystemOpen, setDesignSystemOpen] = useState(false);
   const [previewMode, setPreviewMode] = useState('desktop');
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [originalCombo, setOriginalCombo] = useState(COMBOS[0]);
 
   const { theme, toggleTheme } = useTheme();
   const { toast, showToast } = useToast();
-  const { saved, isSaved, toggleSave } = useSavedCombos();
+  const { saved, isSaved, toggleSave, clearAllSaved } = useSavedCombos();
   const {
     showColorScales,
     toggleColorScales,
     typeBasePx,
     setTypeBasePx,
+    typeScaleRatio,
+    setTypeScaleRatio,
     previewArchetype,
     setPreviewArchetype,
     archetypeParts,
@@ -65,17 +64,84 @@ function AppShell() {
     setColor,
     setFont,
     resetRole,
+    resetAllColors,
+    resetAllFonts,
   } = useComboState(COMBOS[0]);
 
-  const filter = useComboFilter(activeView === 'saved' ? saved : COMBOS);
+  const isSavedView = activePanel === 'saved';
+  const filter = useComboFilter(isSavedView ? saved : COMBOS);
+
+  const handlePanelToggle = useCallback((panel) => {
+    if (activePanel === panel && componentsSidebarOpen) {
+      setComponentsSidebarOpen(false);
+    } else {
+      setActivePanel(panel);
+      setComponentsSidebarOpen(true);
+    }
+  }, [activePanel, componentsSidebarOpen, setComponentsSidebarOpen]);
 
   const handleTourStepEnter = useCallback(
     (step) => {
-      if (step.prepare === 'sidebar-workspace') {
+      const prepare = step?.prepare;
+
+      if (prepare === 'sidebar-workspace' || prepare === 'open-workspace') {
         setSidebarOpen(true);
-        setActiveView('workspace');
-      } else if (step.prepare === 'components-panel') {
+        setActivePanel('workspace');
         setComponentsSidebarOpen(true);
+        setExportOpen(false);
+        return;
+      }
+
+      if (prepare === 'open-colors') {
+        setSidebarOpen(true);
+        setActivePanel('colors');
+        setComponentsSidebarOpen(true);
+        setExportOpen(false);
+        return;
+      }
+
+      if (prepare === 'open-archetypes') {
+        setSidebarOpen(true);
+        setActivePanel('archetypes');
+        setComponentsSidebarOpen(true);
+        setExportOpen(false);
+        window.setTimeout(() => {
+          const trigger = document.querySelector('[data-tour="nav-prototypes"]');
+          if (trigger?.getAttribute('aria-expanded') === 'false') {
+            trigger.click();
+          }
+        }, 0);
+        return;
+      }
+
+      if (prepare === 'close-panels') {
+        setExportOpen(false);
+        return;
+      }
+
+      if (prepare === 'open-export') {
+        setExportOpen(true);
+        return;
+      }
+
+      if (prepare === 'close-export') {
+        setExportOpen(false);
+        return;
+      }
+
+      if (prepare === 'open-build-info') {
+        setSidebarOpen(true);
+        setActivePanel('build-info');
+        setComponentsSidebarOpen(true);
+        setExportOpen(false);
+        return;
+      }
+
+      if (prepare === 'open-feature-catalog') {
+        setSidebarOpen(true);
+        setActivePanel('feature-catalog');
+        setComponentsSidebarOpen(true);
+        setExportOpen(false);
       }
     },
     [setComponentsSidebarOpen],
@@ -86,7 +152,9 @@ function AppShell() {
   useKeyboardShuffle(() => {
     if (tour.active) return;
     const next = shuffle();
-    setOriginalCombo(structuredClone(next));
+    if (next) {
+      setOriginalCombo(structuredClone(next));
+    }
     showToast('Shuffled unlocked roles');
   });
 
@@ -97,7 +165,9 @@ function AppShell() {
 
   const handleShuffle = () => {
     const next = shuffle();
-    setOriginalCombo(structuredClone(next));
+    if (next) {
+      setOriginalCombo(structuredClone(next));
+    }
     showToast('Shuffled unlocked roles');
   };
 
@@ -116,8 +186,23 @@ function AppShell() {
     }
   };
 
-  const handleExportCopy = () => {
-    showToast('Copied to clipboard');
+  const handleExportToggle = useCallback(() => {
+    setExportOpen((open) => !open);
+  }, []);
+
+  const handleResetAllColors = () => {
+    resetAllColors(originalCombo);
+    showToast('All colors reset');
+  };
+
+  const handleResetAllFonts = () => {
+    resetAllFonts(originalCombo);
+    showToast('All fonts reset');
+  };
+
+  const handleClearAllSaved = () => {
+    clearAllSaved();
+    showToast('All saved presets removed');
   };
 
   return (
@@ -147,37 +232,28 @@ function AppShell() {
 
           <SidebarRail
             onExpand={() => setSidebarOpen(true)}
-            activeView={activeView}
-            onViewChange={setActiveView}
+            activePanel={activePanel}
+            panelOpen={componentsSidebarOpen}
+            onPanelChange={handlePanelToggle}
             onShuffle={handleShuffle}
             onToggleTheme={toggleTheme}
             onShare={handleShare}
             onSave={handleSave}
             isSaved={isSaved(combo.id)}
-            onExport={() => setExportOpen(true)}
-            onOpenDesignSystem={() => setDesignSystemOpen(true)}
-            onStartTour={tour.start}
+            onExport={handleExportToggle}
+            exportActive={exportOpen}
             theme={theme}
             hasActiveFilters={filter.hasActiveFilters}
           />
 
           <div className="app-shell__sidebar-panel">
-            <nav className="app-shell__sidebar-nav" aria-label="Library views">
-              <button
-                type="button"
-                className={`app-shell__sidebar-nav-btn ${activeView === 'workspace' ? 'app-shell__sidebar-nav-btn--active' : ''}`}
-                onClick={() => setActiveView('workspace')}
-              >
-                My Workspace
-              </button>
-              <button
-                type="button"
-                className={`app-shell__sidebar-nav-btn ${activeView === 'saved' ? 'app-shell__sidebar-nav-btn--active' : ''}`}
-                onClick={() => setActiveView('saved')}
-              >
-                My Presets {saved.length > 0 && `(${saved.length})`}
-              </button>
-            </nav>
+            <SidebarNav
+              activePanel={activePanel}
+              panelOpen={componentsSidebarOpen}
+              onPanelChange={handlePanelToggle}
+              savedCount={saved.length}
+              hasActiveFilters={filter.hasActiveFilters}
+            />
 
             <SidebarToolbar
               theme={theme}
@@ -185,47 +261,11 @@ function AppShell() {
               onShare={handleShare}
               onSave={handleSave}
               isSaved={isSaved(combo.id)}
-              onExport={() => setExportOpen(true)}
+              onExport={handleExportToggle}
+              exportActive={exportOpen}
               dataTour="toolbar"
             />
 
-            <AccordionStack className="app-shell__sidebar-accordions">
-              <PresetsPanel
-                search={filter.search}
-                onSearchChange={filter.setSearch}
-                moodFilter={filter.moodFilter}
-                industryFilter={filter.industryFilter}
-                modeFilter={filter.modeFilter}
-                onModeFilterChange={filter.setModeFilter}
-                onToggleMood={filter.toggleMood}
-                onToggleIndustry={filter.toggleIndustry}
-                onClearMood={filter.clearMoodFilter}
-                onClearIndustry={filter.clearIndustryFilter}
-                onClearFilters={filter.clearFilters}
-                hasActiveFilters={filter.hasActiveFilters}
-                isSavedView={activeView === 'saved'}
-                combos={filter.filtered}
-                selectedId={combo.id}
-                savedIds={saved.map((s) => s.id)}
-                onSelect={handleSelectCombo}
-                onSave={toggleSave}
-                onClearFiltersLibrary={filter.clearFilters}
-              />
-              <CustomizePanel
-                combo={combo}
-                originalCombo={originalCombo}
-                locks={locks}
-                showColorScales={showColorScales}
-                onToggleColorScales={toggleColorScales}
-                typeBasePx={typeBasePx}
-                onTypeBasePxChange={setTypeBasePx}
-                onColorChange={setColor}
-                onFontChange={setFont}
-                onToggleLock={toggleLock}
-                onResetRole={resetRole}
-                onCopyColor={(hex) => showToast(`Copied ${hex}`)}
-              />
-            </AccordionStack>
             <LockRandomizeControls locks={locks} onShuffle={handleShuffle} dataTour="shuffle" />
           </div>
 
@@ -233,13 +273,28 @@ function AppShell() {
             <footer className="app-shell__sidebar-footer">
               <button
                 type="button"
-                className="app-shell__design-system-link"
-                onClick={() => setDesignSystemOpen(true)}
+                className={`app-shell__sidebar-footer-link ${activePanel === 'build-info' && componentsSidebarOpen ? 'app-shell__sidebar-footer-link--active' : ''}`}
+                onClick={() => handlePanelToggle('build-info')}
+                aria-pressed={activePanel === 'build-info' && componentsSidebarOpen}
+                data-tour="build-info-footer"
               >
-                <Icon icon={BooksIcon} size={ICON_SIZE} className="app-shell__design-system-icon" />
-                <span className="app-shell__design-system-text">
-                  <span className="app-shell__design-system-label">Design system</span>
-                  <span className="app-shell__design-system-desc">Built &amp; planned components</span>
+                <Icon icon={PackageIcon} size={ICON_SIZE} className="app-shell__sidebar-footer-icon" />
+                <span className="app-shell__sidebar-footer-text">
+                  <span className="app-shell__sidebar-footer-label">Build Info</span>
+                  <span className="app-shell__sidebar-footer-desc">v{APP_VERSION} · app overview</span>
+                </span>
+              </button>
+              <button
+                type="button"
+                className={`app-shell__sidebar-footer-link ${activePanel === 'feature-catalog' && componentsSidebarOpen ? 'app-shell__sidebar-footer-link--active' : ''}`}
+                onClick={() => handlePanelToggle('feature-catalog')}
+                aria-pressed={activePanel === 'feature-catalog' && componentsSidebarOpen}
+                data-tour="feature-catalog-footer"
+              >
+                <Icon icon={BooksIcon} size={ICON_SIZE} className="app-shell__sidebar-footer-icon" />
+                <span className="app-shell__sidebar-footer-text">
+                  <span className="app-shell__sidebar-footer-label">Feature Catalog</span>
+                  <span className="app-shell__sidebar-footer-desc">Built &amp; planned components</span>
                 </span>
               </button>
             </footer>
@@ -247,45 +302,85 @@ function AppShell() {
         </aside>
 
         <main id="main-content" className="app-shell__content">
-          <LivePreview
-            combo={combo}
-            contrastPairs={contrastPairs}
-            contrastStatus={contrastStatus}
-            fontsLoading={fontsLoading}
-            previewMode={previewMode}
-            onPreviewModeChange={setPreviewMode}
-            archetype={previewArchetype}
-            archetypeParts={archetypeParts}
-            previewLogoText={previewLogoText}
-            typeBasePx={typeBasePx}
-          />
+          {exportOpen ? (
+            <ExportPanel
+              combo={combo}
+              onClose={() => setExportOpen(false)}
+              onCopy={() => showToast('Copied to clipboard')}
+              onDownload={(filename) => showToast(`Downloaded ${filename}`)}
+            />
+          ) : (
+            <LivePreview
+              combo={combo}
+              fontsLoading={fontsLoading}
+              contrastStatus={contrastStatus}
+              previewMode={previewMode}
+              onPreviewModeChange={setPreviewMode}
+              archetype={previewArchetype}
+              archetypeParts={archetypeParts}
+              previewLogoText={previewLogoText}
+              typeBasePx={typeBasePx}
+              typeScaleRatio={typeScaleRatio}
+              onOpenInfo={() => handlePanelToggle('info')}
+              infoActive={activePanel === 'info' && componentsSidebarOpen}
+            />
+          )}
         </main>
 
-        <div className={`app-shell__components ${!componentsSidebarOpen ? 'app-shell__components--collapsed' : ''}`} data-tour="components-panel">
-          <PreviewComponentsPanel
+        <div className={`app-shell__components ${!componentsSidebarOpen ? 'app-shell__components--collapsed' : ''}`}>
+          <OptionsPanel
             open={componentsSidebarOpen}
             onToggleOpen={setComponentsSidebarOpen}
+            activePanel={activePanel}
+            search={filter.search}
+            onSearchChange={filter.setSearch}
+            moodFilter={filter.moodFilter}
+            industryFilter={filter.industryFilter}
+            modeFilter={filter.modeFilter}
+            onModeFilterChange={filter.setModeFilter}
+            onToggleMood={filter.toggleMood}
+            onToggleIndustry={filter.toggleIndustry}
+            onClearMood={filter.clearMoodFilter}
+            onClearIndustry={filter.clearIndustryFilter}
+            onClearFilters={filter.clearFilters}
+            hasActiveFilters={filter.hasActiveFilters}
+            combos={filter.filtered}
+            selectedId={combo.id}
+            savedIds={saved.map((s) => s.id)}
+            onSelect={handleSelectCombo}
+            onSave={toggleSave}
+            onClearFiltersLibrary={filter.clearFilters}
+            savedCount={saved.length}
+            combo={combo}
+            originalCombo={originalCombo}
+            locks={locks}
+            showColorScales={showColorScales}
+            onToggleColorScales={toggleColorScales}
+            typeBasePx={typeBasePx}
+            onTypeBasePxChange={setTypeBasePx}
+            typeScaleRatio={typeScaleRatio}
+            onTypeScaleRatioChange={setTypeScaleRatio}
+            onColorChange={setColor}
+            onFontChange={setFont}
+            onToggleLock={toggleLock}
+            onResetRole={resetRole}
+            onResetAllColors={handleResetAllColors}
+            onResetAllFonts={handleResetAllFonts}
+            onClearAllSaved={handleClearAllSaved}
+            onCopyColor={(hex) => showToast(`Copied ${hex}`)}
+            contrastPairs={contrastPairs}
+            contrastStatus={contrastStatus}
+            onShowToast={showToast}
             archetype={previewArchetype}
             onArchetypeChange={setPreviewArchetype}
             archetypeParts={archetypeParts}
             onToggleArchetypePart={toggleArchetypePart}
             previewLogoText={previewLogoText}
             onPreviewLogoTextChange={setPreviewLogoText}
+            onStartTour={tour.start}
           />
         </div>
       </div>
-
-      {exportOpen && (
-        <ExportModal
-          combo={combo}
-          onClose={() => setExportOpen(false)}
-          onCopy={handleExportCopy}
-        />
-      )}
-
-      {designSystemOpen && (
-        <DesignSystemModal onClose={() => setDesignSystemOpen(false)} />
-      )}
 
       {toast && <Toast message={toast.message} />}
 

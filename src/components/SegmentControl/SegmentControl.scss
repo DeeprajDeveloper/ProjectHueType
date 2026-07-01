@@ -28,6 +28,7 @@
   &--active {
     background: var(--accent);
     color: var(--accent-contrast);
+    font-weight: 600;
   }
 
   &:hover:not(&--active) {

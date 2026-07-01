@@ -43,7 +43,7 @@ function MultiSelectDropdown({
         >
           <span className="multi-select__summary">{summary}</span>
           <span className={`multi-select__arrow ${open ? 'multi-select__arrow--open' : ''}`} aria-hidden="true">
-            <Icon icon={CaretDown} size={ICON_SIZE_SM} />
+            <Icon icon={CaretDown} size={ICON_SIZE_SM} active={open} />
           </span>
         </button>
 

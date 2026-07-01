@@ -46,7 +46,7 @@ function ComboCard({ combo, isSelected, isSaved, onSelect, onSave }) {
               onSave();
             }}
           >
-            <Icon icon={Heart} size={ICON_SIZE} weight={isSaved ? 'fill' : 'regular'} />
+            <Icon icon={Heart} size={ICON_SIZE} active={isSaved} />
           </button>
         </div>
 

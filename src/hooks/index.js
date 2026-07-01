@@ -28,13 +28,10 @@ export function useComboState(initialCombo) {
   }, []);
 
   const shuffle = useCallback(() => {
-    let nextCombo;
-    setCombo((prev) => {
-      nextCombo = shuffleCombo(prev, locks);
-      return nextCombo;
-    });
+    const nextCombo = shuffleCombo(combo, locks);
+    setCombo(nextCombo);
     return nextCombo;
-  }, [locks]);
+  }, [combo, locks]);
 
   const toggleLock = useCallback((key) => {
     setLocks((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -56,6 +53,20 @@ export function useComboState(initialCombo) {
     }
   }, []);
 
+  const resetAllColors = useCallback((originalCombo) => {
+    setCombo((prev) => ({
+      ...prev,
+      colors: { ...originalCombo.colors },
+    }));
+  }, []);
+
+  const resetAllFonts = useCallback((originalCombo) => {
+    setCombo((prev) => ({
+      ...prev,
+      fonts: structuredClone(originalCombo.fonts),
+    }));
+  }, []);
+
   return {
     combo,
     locks,
@@ -68,6 +79,8 @@ export function useComboState(initialCombo) {
     setColor,
     setFont,
     resetRole,
+    resetAllColors,
+    resetAllFonts,
   };
 }
 
@@ -176,7 +189,11 @@ export function useSavedCombos() {
     return true;
   };
 
-  return { saved, isSaved, save, unsave, toggleSave };
+  const clearAll = () => {
+    persist([]);
+  };
+
+  return { saved, isSaved, save, unsave, toggleSave, clearAll };
 }
 
 export function useTheme() {
@@ -219,11 +236,12 @@ export function useKeyboardShuffle(onShuffle) {
 }
 
 import { getDefaultArchetypeParts } from '../components/PreviewComponentsPanel/previewArchetypes';
-import { TYPE_BASE_PX, clampTypeBasePx } from '../utils/typographyScale';
+import { TYPE_BASE_PX, clampTypeBasePx, DEFAULT_SCALE_RATIO, clampScaleRatio } from '../utils/typographyScale';
 
 export function useUiPreferences() {
   const COLOR_SCALES_KEY = 'huetype-show-color-scales';
   const TYPE_BASE_KEY = 'huetype-type-base-px';
+  const TYPE_RATIO_KEY = 'huetype-type-scale-ratio';
   const PREVIEW_ARCHETYPE_KEY = 'huetype-preview-archetype';
   const PREVIEW_PARTS_KEY = 'huetype-preview-parts';
   const COMPONENTS_SIDEBAR_KEY = 'huetype-components-sidebar-open';
@@ -249,6 +267,16 @@ export function useUiPreferences() {
       // ignore
     }
     return TYPE_BASE_PX;
+  });
+
+  const [typeScaleRatio, setTypeScaleRatioState] = useState(() => {
+    try {
+      const stored = localStorage.getItem(TYPE_RATIO_KEY);
+      if (stored !== null) return clampScaleRatio(stored);
+    } catch {
+      // ignore
+    }
+    return DEFAULT_SCALE_RATIO;
   });
 
   const [previewArchetype, setPreviewArchetypeState] = useState(() => {
@@ -330,6 +358,16 @@ export function useUiPreferences() {
     }
   }, []);
 
+  const setTypeScaleRatio = useCallback((value) => {
+    const next = clampScaleRatio(value);
+    setTypeScaleRatioState(next);
+    try {
+      localStorage.setItem(TYPE_RATIO_KEY, String(next));
+    } catch {
+      // ignore
+    }
+  }, []);
+
   const setPreviewArchetype = useCallback((archetype) => {
     if (!VALID_ARCHETYPES.has(archetype)) return;
     setPreviewArchetypeState(archetype);
@@ -382,6 +420,8 @@ export function useUiPreferences() {
     setColorScalesEnabled,
     typeBasePx,
     setTypeBasePx,
+    typeScaleRatio,
+    setTypeScaleRatio,
     previewArchetype,
     setPreviewArchetype,
     archetypeParts,

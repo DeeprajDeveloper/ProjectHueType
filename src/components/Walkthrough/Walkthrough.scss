@@ -3,7 +3,7 @@
 .walkthrough {
   position: fixed;
   inset: 0;
-  z-index: 300;
+  z-index: 1000;
   pointer-events: none;
 }
 
@@ -15,17 +15,13 @@
   &--full {
     background: rgba(0, 0, 0, 0.55);
   }
-
-  &--dimmed {
-    background: rgba(0, 0, 0, 0.55);
-  }
 }
 
 .walkthrough__spotlight {
   position: fixed;
   border-radius: var(--radius-md);
   box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.55);
-  border: 1px dashed var(--border-subtle);
+  border: 2px solid var(--accent);
   pointer-events: none;
   z-index: 1;
   transition:
@@ -49,6 +45,51 @@
   &--center {
     max-width: 420px;
     width: min(420px, calc(100vw - var(--space-6) * 2));
+  }
+
+  &--right::before,
+  &--left::before,
+  &--top::before,
+  &--bottom::before {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: var(--surface-raised);
+    border: 1px solid var(--border-subtle);
+    transform: rotate(45deg);
+  }
+
+  &--right::before {
+    left: -6px;
+    top: 50%;
+    margin-top: -5px;
+    border-right: none;
+    border-top: none;
+  }
+
+  &--left::before {
+    right: -6px;
+    top: 50%;
+    margin-top: -5px;
+    border-left: none;
+    border-bottom: none;
+  }
+
+  &--bottom::before {
+    top: -6px;
+    left: 50%;
+    margin-left: -5px;
+    border-bottom: none;
+    border-right: none;
+  }
+
+  &--top::before {
+    bottom: -6px;
+    left: 50%;
+    margin-left: -5px;
+    border-top: none;
+    border-left: none;
   }
 }
 

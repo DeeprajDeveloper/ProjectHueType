@@ -44,28 +44,24 @@
     color: var(--text-primary);
 
     .preview-components-panel__expand-tooltip {
-      opacity: 1;
-      visibility: visible;
+      @include tooltip-show('left');
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+
+    .preview-components-panel__expand-tooltip {
+      @include tooltip-show('left');
     }
   }
 }
 
 .preview-components-panel__expand-tooltip {
-  position: absolute;
-  right: calc(100% + 8px);
-  top: 50%;
-  transform: translateY(-50%);
-  padding: var(--space-1) var(--space-2);
-  font-size: var(--text-caption);
-  font-weight: 500;
-  color: var(--accent-contrast);
-  background: var(--accent);
-  border-radius: var(--radius-sm);
-  white-space: nowrap;
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transition: opacity var(--transition-fast), visibility var(--transition-fast);
+  @include tooltip-base;
+  @include tooltip-style('accent');
+  @include tooltip-position('left');
 }
 
 .preview-components-panel__header {

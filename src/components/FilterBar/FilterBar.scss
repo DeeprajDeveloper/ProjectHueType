@@ -7,6 +7,10 @@
   &--embedded {
     padding-top: 0;
     border-bottom: none;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--surface-raised);
   }
 }
 
