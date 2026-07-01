@@ -57,7 +57,7 @@ export const COMBOS = [
     colors: {
       primary: '#146EF5',
       secondary: '#E8F0FE',
-      accent: '#FF6B35',
+      accent: '#C95010',
       background: '#FFFFFF',
       text: '#1A1A2E',
     },
@@ -167,7 +167,7 @@ export const COMBOS = [
     colors: {
       primary: '#4A4A4A',
       secondary: '#F5EDE8',
-      accent: '#C9A9A6',
+      accent: '#8A6E6B',
       background: '#FAF7F5',
       text: '#3D3D3D',
     },
@@ -275,9 +275,9 @@ export const COMBOS = [
     colorFamily: 'Coral',
     mode: 'light',
     colors: {
-      primary: '#E07A5F',
+      primary: '#C8644A',
       secondary: '#F4E1C1',
-      accent: '#F2CC8F',
+      accent: '#A78D63',
       background: '#FFF8F0',
       text: '#3D405B',
     },
@@ -407,7 +407,7 @@ export const COMBOS = [
     colorFamily: 'Coral',
     mode: 'light',
     colors: {
-      primary: '#D97757',
+      primary: '#C06040',
       secondary: '#F5F0E8',
       accent: '#1E293B',
       background: '#FAF7F2',

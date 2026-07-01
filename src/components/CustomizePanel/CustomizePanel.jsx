@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Lock, LockOpen, ArrowCounterClockwise } from '@phosphor-icons/react';
 import { COLOR_ROLES, FONT_ROLES, GOOGLE_FONTS } from '../../data/combos';
 import { normalizeHexColor } from '../../utils/color';
 import Accordion from '../Accordion/Accordion';
-import ColorScaleStrip from '../ColorScaleStrip/ColorScaleStrip';
+import ColorScaleVisualizer from '../ColorScaleVisualizer/ColorScaleVisualizer';
 import TypographyScale from '../TypographyScale/TypographyScale';
 import Icon from '../Icon/Icon';
 import { ICON_SIZE_SM } from '../Icon/iconConfig';
@@ -62,10 +62,11 @@ function ColorSelectors({
   onResetAll,
   isColorChanged,
   hasAnyChanges,
+  compact = false,
 }) {
   return (
-    <div className="customize-panel__color-selectors">
-      {hasAnyChanges && (
+    <>
+      {hasAnyChanges && !compact && (
         <div className="customize-panel__section-actions">
           <button
             type="button"
@@ -79,88 +80,68 @@ function ColorSelectors({
       )}
       {COLOR_ROLES.map((role) => (
         <div key={role} className="customize-panel__row">
-          <label className="customize-panel__label" htmlFor={`color-${role}`}>
+          <label
+            className="customize-panel__label"
+            htmlFor={compact ? undefined : `color-${role}`}
+          >
             {role.charAt(0).toUpperCase() + role.slice(1)}
           </label>
           <div className="customize-panel__controls">
             <input
-              id={`color-${role}`}
+              id={compact ? undefined : `color-${role}`}
               type="color"
               className="customize-panel__color-input"
               value={combo.colors[role]}
               onChange={(e) => onColorChange(role, e.target.value)}
               aria-label={`${role} color`}
             />
-            <HexColorInput
-              value={combo.colors[role]}
-              onChange={(hex) => onColorChange(role, hex)}
-              role={role}
-            />
-            <button
-              type="button"
-              className={`customize-panel__lock ${locks[`color-${role}`] ? 'customize-panel__lock--locked' : ''}`}
-              aria-label={locks[`color-${role}`] ? `Unlock ${role} color` : `Lock ${role} color`}
-              aria-pressed={locks[`color-${role}`]}
-              onClick={() => onToggleLock(`color-${role}`)}
-            >
-                    <Icon
-                      icon={locks[`color-${role}`] ? Lock : LockOpen}
-                      size={ICON_SIZE_SM}
-                      active={locks[`color-${role}`]}
-                    />
-            </button>
-            {isColorChanged(role) && (
-              <button
-                type="button"
-                className="customize-panel__reset"
-                onClick={() => onResetRole('color', role, originalCombo)}
-                aria-label={`Reset ${role} color`}
-              >
-                <Icon icon={ArrowCounterClockwise} size={ICON_SIZE_SM} />
-              </button>
+            {!compact && (
+              <>
+                <HexColorInput
+                  value={combo.colors[role]}
+                  onChange={(hex) => onColorChange(role, hex)}
+                  role={role}
+                />
+                <button
+                  type="button"
+                  className={`customize-panel__lock ${locks[`color-${role}`] ? 'customize-panel__lock--locked' : ''}`}
+                  aria-label={locks[`color-${role}`] ? `Unlock ${role} color` : `Lock ${role} color`}
+                  aria-pressed={locks[`color-${role}`]}
+                  onClick={() => onToggleLock(`color-${role}`)}
+                >
+                  <Icon
+                    icon={locks[`color-${role}`] ? Lock : LockOpen}
+                    size={ICON_SIZE_SM}
+                    active={locks[`color-${role}`]}
+                  />
+                </button>
+                {isColorChanged(role) && (
+                  <button
+                    type="button"
+                    className="customize-panel__reset"
+                    onClick={() => onResetRole('color', role, originalCombo)}
+                    aria-label={`Reset ${role} color`}
+                  >
+                    <Icon icon={ArrowCounterClockwise} size={ICON_SIZE_SM} />
+                  </button>
+                )}
+              </>
             )}
           </div>
         </div>
       ))}
-    </div>
+    </>
   );
 }
 
-function ColorScalesGroup({ combo, onCopyColor, showScaleHex, onToggleScaleHex }) {
+function ColorScalesGroup({ combo, onCopyColor }) {
   return (
     <div className="customize-panel__color-scales-group">
-      <div className="customize-panel__scales-group-header">
-        <h4 className="customize-panel__group-title">Color scales (100–900)</h4>
-        <div className="customize-panel__scales-toggle customize-panel__scales-toggle--inline">
-          <span className="customize-panel__scales-label">Show hex codes</span>
-          <button
-            type="button"
-            role="switch"
-            className={`customize-panel__scales-switch ${showScaleHex ? 'customize-panel__scales-switch--on' : ''}`}
-            aria-checked={showScaleHex}
-            aria-label={showScaleHex ? 'Hide hex codes' : 'Show hex codes'}
-            onClick={onToggleScaleHex}
-          >
-            <span className="customize-panel__scales-switch-thumb" />
-          </button>
-        </div>
-      </div>
-      {COLOR_ROLES.map((role) => (
-        <div key={role} className="customize-panel__color-scale">
-          <div className="customize-panel__color-scale-header">
-            <span className="customize-panel__color-scale-label">
-              {role.charAt(0).toUpperCase() + role.slice(1)}
-            </span>
-            <span className="customize-panel__color-scale-base">{combo.colors[role]}</span>
-          </div>
-          <ColorScaleStrip
-            baseHex={combo.colors[role]}
-            roleLabel={role}
-            onCopy={onCopyColor}
-            showHex={showScaleHex}
-          />
-        </div>
-      ))}
+      <h4 className="customize-panel__group-title">Color scales</h4>
+      <ColorScaleVisualizer
+        colors={combo.colors}
+        onCopy={onCopyColor}
+      />
     </div>
   );
 }
@@ -171,6 +152,8 @@ function FontsContent({
   locks,
   typeBasePx,
   onTypeBasePxChange,
+  typeScaleRatio,
+  onTypeScaleRatioChange,
   onFontChange,
   onToggleLock,
   onResetRole,
@@ -245,7 +228,9 @@ function FontsContent({
         <TypographyScale
           fonts={combo.fonts}
           basePx={typeBasePx}
+          scaleRatio={typeScaleRatio}
           onBasePxChange={onTypeBasePxChange}
+          onScaleRatioChange={onTypeScaleRatioChange}
         />
       </div>
     </>
@@ -260,10 +245,10 @@ function CustomizePanel({
   locks,
   showColorScales,
   onToggleColorScales,
-  showScaleHex = false,
-  onToggleScaleHex,
   typeBasePx,
   onTypeBasePxChange,
+  typeScaleRatio,
+  onTypeScaleRatioChange,
   onColorChange,
   onFontChange,
   onToggleLock,
@@ -280,11 +265,72 @@ function CustomizePanel({
   const hasFontChanges = FONT_ROLES.some(isFontChanged);
   const showColors = section === 'all' || section === 'colors';
   const showFonts = section === 'all' || section === 'fonts';
+  const scrollSentinelRef = useRef(null);
+  const [selectorsCompact, setSelectorsCompact] = useState(false);
+
+  useEffect(() => {
+    if (!showColors) return undefined;
+
+    const sentinel = scrollSentinelRef.current;
+    if (!sentinel) return undefined;
+
+    const scrollRoot = sentinel.closest('.options-panel__body--flat');
+    if (!scrollRoot) return undefined;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setSelectorsCompact(!entry.isIntersecting),
+      { root: scrollRoot, threshold: 0 },
+    );
+    observer.observe(sentinel);
+
+    return () => observer.disconnect();
+  }, [showColors, showColorScales]);
 
   const colorsContent = (
     <>
+      <div className="customize-panel__colors-chrome">
+        <div
+          className={[
+            'customize-panel__color-selectors-sticky',
+            selectorsCompact ? 'customize-panel__color-selectors-sticky--visible' : '',
+          ].filter(Boolean).join(' ')}
+          aria-hidden={!selectorsCompact}
+        >
+          <div className="customize-panel__color-selectors customize-panel__color-selectors--compact">
+            <ColorSelectors
+              combo={combo}
+              originalCombo={baseline}
+              locks={locks}
+              onColorChange={onColorChange}
+              onToggleLock={onToggleLock}
+              onResetRole={onResetRole}
+              onResetAll={onResetAllColors}
+              isColorChanged={isColorChanged}
+              hasAnyChanges={hasColorChanges}
+              compact
+            />
+          </div>
+        </div>
+
+        <div className="customize-panel__color-selectors customize-panel__color-selectors--inflow">
+          <ColorSelectors
+            combo={combo}
+            originalCombo={baseline}
+            locks={locks}
+            onColorChange={onColorChange}
+            onToggleLock={onToggleLock}
+            onResetRole={onResetRole}
+            onResetAll={onResetAllColors}
+            isColorChanged={isColorChanged}
+            hasAnyChanges={hasColorChanges}
+          />
+        </div>
+
+        <div ref={scrollSentinelRef} className="customize-panel__scroll-sentinel" aria-hidden="true" />
+      </div>
+
       <div className="customize-panel__scales-toggle">
-        <span className="customize-panel__scales-label">Color scales (100–900)</span>
+        <span className="customize-panel__scales-label">Color scales</span>
         <button
           type="button"
           role="switch"
@@ -297,24 +343,10 @@ function CustomizePanel({
         </button>
       </div>
 
-      <ColorSelectors
-        combo={combo}
-        originalCombo={baseline}
-        locks={locks}
-        onColorChange={onColorChange}
-        onToggleLock={onToggleLock}
-        onResetRole={onResetRole}
-        onResetAll={onResetAllColors}
-        isColorChanged={isColorChanged}
-        hasAnyChanges={hasColorChanges}
-      />
-
       {showColorScales && (
         <ColorScalesGroup
           combo={combo}
           onCopyColor={onCopyColor}
-          showScaleHex={showScaleHex}
-          onToggleScaleHex={onToggleScaleHex}
         />
       )}
     </>
@@ -327,6 +359,8 @@ function CustomizePanel({
       locks={locks}
       typeBasePx={typeBasePx}
       onTypeBasePxChange={onTypeBasePxChange}
+      typeScaleRatio={typeScaleRatio}
+      onTypeScaleRatioChange={onTypeScaleRatioChange}
       onFontChange={onFontChange}
       onToggleLock={onToggleLock}
       onResetRole={onResetRole}

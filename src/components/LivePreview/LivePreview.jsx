@@ -91,6 +91,7 @@ function LivePreview({
   archetypeParts,
   previewLogoText = '',
   typeBasePx,
+  typeScaleRatio,
   contrastStatus,
   onOpenInfo,
   infoActive = false,
@@ -173,7 +174,7 @@ function LivePreview({
   }, [previewMode, tabletOrientation, containerWidth, containerHeight, archetype, frameWidth, frameHeight]);
 
   const previewStyle = {
-    ...getPreviewTypeStyle(typeBasePx),
+    ...getPreviewTypeStyle(typeBasePx, typeScaleRatio),
     '--preview-primary': combo.colors.primary,
     '--preview-secondary': combo.colors.secondary,
     '--preview-accent': combo.colors.accent,
@@ -237,11 +238,11 @@ function LivePreview({
               type="button"
               className={`live-preview__info ${infoActive ? 'live-preview__info--active' : ''}`}
               onClick={onOpenInfo}
-              aria-label="View combo details"
+              aria-label={`View WCAG contrast for ${combo.name}`}
               aria-pressed={infoActive}
             >
               <Icon icon={InfoIcon} size={ICON_SIZE_SM} active={infoActive} />
-              <span className="live-preview__info-tooltip" role="tooltip">Combo details</span>
+              <span className="live-preview__info-tooltip" role="tooltip">{combo.name}</span>
             </button>
           </div>
           {isTablet && (

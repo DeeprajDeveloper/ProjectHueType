@@ -1,0 +1,109 @@
+.build-info-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding: var(--space-6);
+}
+
+.build-info-panel__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.build-info-panel__version {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  color: var(--text-tertiary);
+}
+
+.build-info-panel__title {
+  margin: 0;
+  font-size: var(--text-heading);
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.build-info-panel__tagline {
+  margin: 0;
+  font-size: var(--text-body);
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+.build-info-panel__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.build-info-panel__section-title {
+  margin: 0;
+  font-size: var(--text-caption);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-tertiary);
+}
+
+.build-info-panel__stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+}
+
+.build-info-panel__stack-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface-sunken);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+
+  dt {
+    margin: 0;
+    font-size: var(--text-caption);
+    color: var(--text-secondary);
+  }
+
+  dd {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-caption);
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+}
+
+.build-info-panel__list {
+  margin: 0;
+  padding-left: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+
+  li {
+    font-size: var(--text-body);
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  &--notes li {
+    font-size: var(--text-caption);
+  }
+}
+
+.build-info-panel__tour-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+  margin-top: var(--space-2);
+}

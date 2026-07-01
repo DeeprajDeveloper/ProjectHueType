@@ -10,9 +10,10 @@ import {
   useUiPreferences,
   useWalkthrough,
 } from '../../hooks';
-import { SidebarSimpleIcon, BooksIcon } from '@phosphor-icons/react';
+import { SidebarSimpleIcon, BooksIcon, InfoIcon } from '@phosphor-icons/react';
 import Icon from '../Icon/Icon';
 import { ICON_SIZE } from '../Icon/iconConfig';
+import { APP_VERSION } from '../../data/buildInfo';
 import './AppShell.scss';
 import LivePreview from '../LivePreview/LivePreview';
 import LockRandomizeControls from '../LockRandomizeControls/LockRandomizeControls';
@@ -39,10 +40,10 @@ function AppShell() {
   const {
     showColorScales,
     toggleColorScales,
-    showScaleHex,
-    toggleScaleHex,
     typeBasePx,
     setTypeBasePx,
+    typeScaleRatio,
+    setTypeScaleRatio,
     previewArchetype,
     setPreviewArchetype,
     archetypeParts,
@@ -72,15 +73,14 @@ function AppShell() {
   const isSavedView = activePanel === 'saved';
   const filter = useComboFilter(isSavedView ? saved : COMBOS);
 
-  const handlePanelChange = useCallback((panel) => {
-    setActivePanel(panel);
-    setComponentsSidebarOpen(true);
-  }, [setComponentsSidebarOpen]);
-
-  const handleOpenInfo = useCallback(() => {
-    setActivePanel('info');
-    setComponentsSidebarOpen(true);
-  }, [setComponentsSidebarOpen]);
+  const handlePanelToggle = useCallback((panel) => {
+    if (activePanel === panel && componentsSidebarOpen) {
+      setComponentsSidebarOpen(false);
+    } else {
+      setActivePanel(panel);
+      setComponentsSidebarOpen(true);
+    }
+  }, [activePanel, componentsSidebarOpen, setComponentsSidebarOpen]);
 
   const handleTourStepEnter = useCallback(
     (step) => {
@@ -182,7 +182,8 @@ function AppShell() {
           <SidebarRail
             onExpand={() => setSidebarOpen(true)}
             activePanel={activePanel}
-            onPanelChange={handlePanelChange}
+            panelOpen={componentsSidebarOpen}
+            onPanelChange={handlePanelToggle}
             onShuffle={handleShuffle}
             onToggleTheme={toggleTheme}
             onShare={handleShare}
@@ -190,7 +191,6 @@ function AppShell() {
             isSaved={isSaved(combo.id)}
             onExport={() => setExportOpen(true)}
             onOpenDesignSystem={() => setDesignSystemOpen(true)}
-            onStartTour={tour.start}
             theme={theme}
             hasActiveFilters={filter.hasActiveFilters}
           />
@@ -198,7 +198,8 @@ function AppShell() {
           <div className="app-shell__sidebar-panel">
             <SidebarNav
               activePanel={activePanel}
-              onPanelChange={handlePanelChange}
+              panelOpen={componentsSidebarOpen}
+              onPanelChange={handlePanelToggle}
               savedCount={saved.length}
               hasActiveFilters={filter.hasActiveFilters}
             />
@@ -220,13 +221,25 @@ function AppShell() {
             <footer className="app-shell__sidebar-footer">
               <button
                 type="button"
-                className="app-shell__design-system-link"
+                className={`app-shell__sidebar-footer-link ${activePanel === 'build-info' && componentsSidebarOpen ? 'app-shell__sidebar-footer-link--active' : ''}`}
+                onClick={() => handlePanelToggle('build-info')}
+                aria-pressed={activePanel === 'build-info' && componentsSidebarOpen}
+              >
+                <Icon icon={InfoIcon} size={ICON_SIZE} className="app-shell__sidebar-footer-icon" />
+                <span className="app-shell__sidebar-footer-text">
+                  <span className="app-shell__sidebar-footer-label">Build Info</span>
+                  <span className="app-shell__sidebar-footer-desc">v{APP_VERSION} · app overview</span>
+                </span>
+              </button>
+              <button
+                type="button"
+                className="app-shell__sidebar-footer-link"
                 onClick={() => setDesignSystemOpen(true)}
               >
-                <Icon icon={BooksIcon} size={ICON_SIZE} className="app-shell__design-system-icon" />
-                <span className="app-shell__design-system-text">
-                  <span className="app-shell__design-system-label">Design system</span>
-                  <span className="app-shell__design-system-desc">Built &amp; planned components</span>
+                <Icon icon={BooksIcon} size={ICON_SIZE} className="app-shell__sidebar-footer-icon" />
+                <span className="app-shell__sidebar-footer-text">
+                  <span className="app-shell__sidebar-footer-label">Design system</span>
+                  <span className="app-shell__sidebar-footer-desc">Built &amp; planned components</span>
                 </span>
               </button>
             </footer>
@@ -244,7 +257,8 @@ function AppShell() {
             archetypeParts={archetypeParts}
             previewLogoText={previewLogoText}
             typeBasePx={typeBasePx}
-            onOpenInfo={handleOpenInfo}
+            typeScaleRatio={typeScaleRatio}
+            onOpenInfo={() => handlePanelToggle('info')}
             infoActive={activePanel === 'info' && componentsSidebarOpen}
           />
         </main>
@@ -278,10 +292,10 @@ function AppShell() {
             locks={locks}
             showColorScales={showColorScales}
             onToggleColorScales={toggleColorScales}
-            showScaleHex={showScaleHex}
-            onToggleScaleHex={toggleScaleHex}
             typeBasePx={typeBasePx}
             onTypeBasePxChange={setTypeBasePx}
+            typeScaleRatio={typeScaleRatio}
+            onTypeScaleRatioChange={setTypeScaleRatio}
             onColorChange={setColor}
             onFontChange={setFont}
             onToggleLock={toggleLock}
@@ -292,12 +306,14 @@ function AppShell() {
             onCopyColor={(hex) => showToast(`Copied ${hex}`)}
             contrastPairs={contrastPairs}
             contrastStatus={contrastStatus}
+            onShowToast={showToast}
             archetype={previewArchetype}
             onArchetypeChange={setPreviewArchetype}
             archetypeParts={archetypeParts}
             onToggleArchetypePart={toggleArchetypePart}
             previewLogoText={previewLogoText}
             onPreviewLogoTextChange={setPreviewLogoText}
+            onStartTour={tour.start}
           />
         </div>
       </div>

@@ -4,6 +4,7 @@ import { ICON_SIZE } from '../Icon/iconConfig';
 import PresetsPanel from '../PresetsPanel/PresetsPanel';
 import CustomizePanel from '../CustomizePanel/CustomizePanel';
 import ComboInfoPanel from '../ComboInfoPanel/ComboInfoPanel';
+import BuildInfoPanel from '../BuildInfoPanel/BuildInfoPanel';
 import ComponentToggle from '../PreviewComponentsPanel/ComponentToggle';
 import { ARCHETYPE_PARTS, PREVIEW_ARCHETYPES } from '../PreviewComponentsPanel/previewArchetypes';
 import './OptionsPanel.scss';
@@ -15,7 +16,8 @@ const PANEL_TITLES = {
   fonts: 'Fonts',
   'preview-settings': 'Preview settings',
   archetypes: 'Prototypes',
-  info: 'Combo details',
+  info: 'WCAG contrast',
+  'build-info': 'Build Info',
 };
 
 function PreviewSettingsContent({ previewLogoText, onPreviewLogoTextChange }) {
@@ -124,10 +126,10 @@ function OptionsPanel({
   locks,
   showColorScales,
   onToggleColorScales,
-  showScaleHex,
-  onToggleScaleHex,
   typeBasePx,
   onTypeBasePxChange,
+  typeScaleRatio,
+  onTypeScaleRatioChange,
   onColorChange,
   onFontChange,
   onToggleLock,
@@ -139,6 +141,7 @@ function OptionsPanel({
   // Combo info
   contrastPairs,
   contrastStatus,
+  onShowToast,
   // Preview
   archetype,
   onArchetypeChange,
@@ -146,9 +149,10 @@ function OptionsPanel({
   onToggleArchetypePart,
   previewLogoText,
   onPreviewLogoTextChange,
+  onStartTour,
 }) {
   const panelId = activePanel === 'preview-parts' ? 'archetypes' : activePanel;
-  const title = panelId === 'info' ? combo.name : PANEL_TITLES[panelId] || 'Options';
+  const title = PANEL_TITLES[panelId] || 'Options';
 
   if (!open) {
     return (
@@ -234,10 +238,10 @@ function OptionsPanel({
             locks={locks}
             showColorScales={showColorScales}
             onToggleColorScales={onToggleColorScales}
-            showScaleHex={showScaleHex}
-            onToggleScaleHex={onToggleScaleHex}
             typeBasePx={typeBasePx}
             onTypeBasePxChange={onTypeBasePxChange}
+            typeScaleRatio={typeScaleRatio}
+            onTypeScaleRatioChange={onTypeScaleRatioChange}
             onColorChange={onColorChange}
             onFontChange={onFontChange}
             onToggleLock={onToggleLock}
@@ -258,10 +262,10 @@ function OptionsPanel({
             locks={locks}
             showColorScales={showColorScales}
             onToggleColorScales={onToggleColorScales}
-            showScaleHex={showScaleHex}
-            onToggleScaleHex={onToggleScaleHex}
             typeBasePx={typeBasePx}
             onTypeBasePxChange={onTypeBasePxChange}
+            typeScaleRatio={typeScaleRatio}
+            onTypeScaleRatioChange={onTypeScaleRatioChange}
             onColorChange={onColorChange}
             onFontChange={onFontChange}
             onToggleLock={onToggleLock}
@@ -299,7 +303,14 @@ function OptionsPanel({
             combo={combo}
             contrastPairs={contrastPairs}
             contrastStatus={contrastStatus}
+            onColorChange={onColorChange}
+            onShowToast={onShowToast}
           />
+        );
+
+      case 'build-info':
+        return (
+          <BuildInfoPanel onStartTour={onStartTour} />
         );
 
       default:

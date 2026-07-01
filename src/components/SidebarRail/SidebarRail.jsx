@@ -13,7 +13,7 @@ import {
   HeartIcon,
   ExportIcon,
   BooksIcon,
-  QuestionIcon,
+  InfoIcon,
 } from '@phosphor-icons/react';
 import Icon from '../Icon/Icon';
 import { ICON_SIZE } from '../Icon/iconConfig';
@@ -38,6 +38,7 @@ const APP_ITEMS = [
 function SidebarRail({
   onExpand,
   activePanel,
+  panelOpen,
   onPanelChange,
   onShuffle,
   onToggleTheme,
@@ -46,7 +47,6 @@ function SidebarRail({
   isSaved,
   onExport,
   onOpenDesignSystem,
-  onStartTour,
   theme,
   hasActiveFilters,
 }) {
@@ -91,10 +91,15 @@ function SidebarRail({
     return null;
   };
 
-  const isActive = (item) => (
-    NAV_ITEMS.some((nav) => nav.id === item.id && activePanel === nav.id) ||
-    (item.id === 'save' && isSaved)
-  );
+  const isActive = (item) => {
+    if (item.id === 'build-info') {
+      return activePanel === 'build-info' && panelOpen;
+    }
+    return (
+      NAV_ITEMS.some((nav) => nav.id === item.id && activePanel === nav.id && panelOpen) ||
+      (item.id === 'save' && isSaved)
+    );
+  };
 
   const renderButton = (item, group) => (
     <button
@@ -147,12 +152,13 @@ function SidebarRail({
       <div className="sidebar-rail__footer">
         <button
           type="button"
-          className="sidebar-rail__btn sidebar-rail__btn--app"
-          aria-label="Restart product tour"
-          onClick={onStartTour}
+          className={`sidebar-rail__btn sidebar-rail__btn--app ${activePanel === 'build-info' && panelOpen ? 'sidebar-rail__btn--active' : ''}`}
+          aria-label="Build Info"
+          aria-pressed={activePanel === 'build-info' && panelOpen}
+          onClick={() => onPanelChange('build-info')}
         >
-          <Icon icon={QuestionIcon} size={ICON_SIZE} />
-          <span className="sidebar-rail__tooltip" role="tooltip">Product tour</span>
+          <Icon icon={InfoIcon} size={ICON_SIZE} />
+          <span className="sidebar-rail__tooltip" role="tooltip">Build Info</span>
         </button>
         <button
           type="button"

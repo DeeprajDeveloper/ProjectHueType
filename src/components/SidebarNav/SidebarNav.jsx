@@ -19,12 +19,12 @@ const NAV_ITEMS = [
   { id: 'archetypes', label: 'Prototypes', icon: LayoutIcon },
 ];
 
-function SidebarNav({ activePanel, onPanelChange, savedCount, hasActiveFilters }) {
+function SidebarNav({ activePanel, panelOpen, onPanelChange, savedCount, hasActiveFilters }) {
   return (
     <nav className="sidebar-nav" aria-label="Options">
       <ul className="sidebar-nav__list">
         {NAV_ITEMS.map((item) => {
-          const isActive = activePanel === item.id;
+          const isActive = activePanel === item.id && panelOpen;
           const showBadge = item.id === 'saved' && savedCount > 0;
           const showDot = item.id === 'workspace' && hasActiveFilters;
 
@@ -34,6 +34,7 @@ function SidebarNav({ activePanel, onPanelChange, savedCount, hasActiveFilters }
                 type="button"
                 className={`sidebar-nav__btn ${isActive ? 'sidebar-nav__btn--active' : ''}`}
                 onClick={() => onPanelChange(item.id)}
+                aria-pressed={isActive}
                 data-tour={item.id === 'workspace' ? 'nav-workspace' : item.id === 'colors' ? 'nav-customize' : undefined}
               >
                 <Icon icon={item.icon} size={ICON_SIZE_SM} active={isActive} />

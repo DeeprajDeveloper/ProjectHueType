@@ -199,9 +199,11 @@
   margin-top: auto;
   border-top: 1px solid var(--border-subtle);
   background: var(--surface-sunken);
+  display: flex;
+  flex-direction: column;
 }
 
-.app-shell__design-system-link {
+.app-shell__sidebar-footer-link {
   @include button-reset;
   display: flex;
   align-items: center;
@@ -209,30 +211,48 @@
   width: 100%;
   padding: var(--space-3) var(--space-4);
   text-align: left;
+  border-bottom: 1px solid var(--border-subtle);
   transition: background var(--transition-fast);
+
+  &:last-child {
+    border-bottom: none;
+  }
 
   &:hover {
     background: var(--surface-base);
 
-    .app-shell__design-system-label {
+    .app-shell__sidebar-footer-label {
       color: var(--text-primary);
+    }
+  }
+
+  &--active {
+    background: var(--accent-subtle);
+
+    .app-shell__sidebar-footer-label {
+      color: var(--text-primary);
+      font-weight: 700;
+    }
+
+    .app-shell__sidebar-footer-icon {
+      color: var(--accent);
     }
   }
 }
 
-.app-shell__design-system-icon {
+.app-shell__sidebar-footer-icon {
   flex-shrink: 0;
   color: var(--text-secondary);
 }
 
-.app-shell__design-system-text {
+.app-shell__sidebar-footer-text {
   display: flex;
   flex-direction: column;
   gap: 1px;
   min-width: 0;
 }
 
-.app-shell__design-system-label {
+.app-shell__sidebar-footer-label {
   font-size: var(--text-body);
   font-weight: 600;
   color: var(--text-secondary);
@@ -240,7 +260,7 @@
   transition: color var(--transition-fast);
 }
 
-.app-shell__design-system-desc {
+.app-shell__sidebar-footer-desc {
   font-size: 11px;
   color: var(--text-tertiary);
   line-height: 1.35;

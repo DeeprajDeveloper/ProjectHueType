@@ -73,7 +73,7 @@ export const TOUR_STEPS = [
     target: null,
     title: "You're all set",
     content:
-      'Reopen this tour anytime from the help icon in the sidebar. Press Space to shuffle, and explore the design system catalog when you want to see what else is planned.',
+      'Reopen Build Info from the sidebar footer anytime. Press Space to shuffle, and explore the design system catalog when you want to see what else is planned.',
     placement: 'center',
   },
 ];

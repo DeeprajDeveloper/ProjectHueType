@@ -236,12 +236,12 @@ export function useKeyboardShuffle(onShuffle) {
 }
 
 import { getDefaultArchetypeParts } from '../components/PreviewComponentsPanel/previewArchetypes';
-import { TYPE_BASE_PX, clampTypeBasePx } from '../utils/typographyScale';
+import { TYPE_BASE_PX, clampTypeBasePx, DEFAULT_SCALE_RATIO, clampScaleRatio } from '../utils/typographyScale';
 
 export function useUiPreferences() {
   const COLOR_SCALES_KEY = 'huetype-show-color-scales';
-  const SCALE_HEX_KEY = 'huetype-show-scale-hex';
   const TYPE_BASE_KEY = 'huetype-type-base-px';
+  const TYPE_RATIO_KEY = 'huetype-type-scale-ratio';
   const PREVIEW_ARCHETYPE_KEY = 'huetype-preview-archetype';
   const PREVIEW_PARTS_KEY = 'huetype-preview-parts';
   const COMPONENTS_SIDEBAR_KEY = 'huetype-components-sidebar-open';
@@ -259,16 +259,6 @@ export function useUiPreferences() {
     return true;
   });
 
-  const [showScaleHex, setShowScaleHex] = useState(() => {
-    try {
-      const stored = localStorage.getItem(SCALE_HEX_KEY);
-      if (stored !== null) return stored === 'true';
-    } catch {
-      // ignore
-    }
-    return false;
-  });
-
   const [typeBasePx, setTypeBasePxState] = useState(() => {
     try {
       const stored = localStorage.getItem(TYPE_BASE_KEY);
@@ -277,6 +267,16 @@ export function useUiPreferences() {
       // ignore
     }
     return TYPE_BASE_PX;
+  });
+
+  const [typeScaleRatio, setTypeScaleRatioState] = useState(() => {
+    try {
+      const stored = localStorage.getItem(TYPE_RATIO_KEY);
+      if (stored !== null) return clampScaleRatio(stored);
+    } catch {
+      // ignore
+    }
+    return DEFAULT_SCALE_RATIO;
   });
 
   const [previewArchetype, setPreviewArchetypeState] = useState(() => {
@@ -339,18 +339,6 @@ export function useUiPreferences() {
     });
   }, []);
 
-  const toggleScaleHex = useCallback(() => {
-    setShowScaleHex((prev) => {
-      const next = !prev;
-      try {
-        localStorage.setItem(SCALE_HEX_KEY, String(next));
-      } catch {
-        // ignore
-      }
-      return next;
-    });
-  }, []);
-
   const setColorScalesEnabled = useCallback((enabled) => {
     setShowColorScales(enabled);
     try {
@@ -365,6 +353,16 @@ export function useUiPreferences() {
     setTypeBasePxState(next);
     try {
       localStorage.setItem(TYPE_BASE_KEY, String(next));
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  const setTypeScaleRatio = useCallback((value) => {
+    const next = clampScaleRatio(value);
+    setTypeScaleRatioState(next);
+    try {
+      localStorage.setItem(TYPE_RATIO_KEY, String(next));
     } catch {
       // ignore
     }
@@ -420,10 +418,10 @@ export function useUiPreferences() {
     showColorScales,
     toggleColorScales,
     setColorScalesEnabled,
-    showScaleHex,
-    toggleScaleHex,
     typeBasePx,
     setTypeBasePx,
+    typeScaleRatio,
+    setTypeScaleRatio,
     previewArchetype,
     setPreviewArchetype,
     archetypeParts,

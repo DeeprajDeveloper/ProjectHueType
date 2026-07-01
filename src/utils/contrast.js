@@ -38,19 +38,81 @@ export function getContrastLevel(ratio, isLargeText = false) {
   return { level: 'Fail', status: 'fail' };
 }
 
+export function getTierBadges(ratio) {
+  return {
+    aa: ratio >= 4.5,
+    aaLarge: ratio >= 3,
+    aaa: ratio >= 7,
+  };
+}
+
+export function getContrastingTextColor(background) {
+  const blackRatio = contrastRatio('#000000', background);
+  const whiteRatio = contrastRatio('#FFFFFF', background);
+  return blackRatio >= whiteRatio ? '#000000' : '#FFFFFF';
+}
+
 export function checkPair(foreground, background, isLargeText = false) {
   const ratio = contrastRatio(foreground, background);
   const { level, status } = getContrastLevel(ratio, isLargeText);
-  return { ratio: Math.round(ratio * 100) / 100, level, status };
+  return {
+    ratio: Math.round(ratio * 100) / 100,
+    level,
+    status,
+    tiers: getTierBadges(ratio),
+  };
 }
 
 export function checkComboContrast(colors) {
   const pairs = [
-    { id: 'text-on-background', fg: colors.text, bg: colors.background, label: 'Text on background', large: false },
-    { id: 'text-on-secondary', fg: colors.text, bg: colors.secondary, label: 'Text on secondary', large: false },
-    { id: 'text-on-primary', fg: colors.background, bg: colors.primary, label: 'Light text on primary', large: false },
-    { id: 'accent-on-background', fg: colors.accent, bg: colors.background, label: 'Accent on background', large: true },
-    { id: 'primary-on-background', fg: colors.primary, bg: colors.background, label: 'Primary on background', large: true },
+    {
+      id: 'text-on-background',
+      fg: colors.text,
+      bg: colors.background,
+      label: 'Body text on background',
+      description: 'Body text on background',
+      large: false,
+    },
+    {
+      id: 'text-on-surface',
+      fg: colors.text,
+      bg: colors.secondary,
+      label: 'Body text on surface',
+      description: 'Body text on surface',
+      large: false,
+    },
+    {
+      id: 'button-on-primary',
+      fg: getContrastingTextColor(colors.primary),
+      bg: colors.primary,
+      label: 'Button text on primary',
+      description: 'Button text on primary',
+      large: false,
+    },
+    {
+      id: 'accent-on-background',
+      fg: colors.accent,
+      bg: colors.background,
+      label: 'Accent on background',
+      description: 'Accent links and labels on background',
+      large: true,
+    },
+    {
+      id: 'primary-on-background',
+      fg: colors.primary,
+      bg: colors.background,
+      label: 'Primary on background',
+      description: 'Primary headings and links on background',
+      large: true,
+    },
+    {
+      id: 'button-on-accent',
+      fg: getContrastingTextColor(colors.accent),
+      bg: colors.accent,
+      label: 'Button text on accent',
+      description: 'Button text on accent',
+      large: false,
+    },
   ];
 
   return pairs.map((pair) => ({
@@ -59,25 +121,58 @@ export function checkComboContrast(colors) {
   }));
 }
 
-export function suggestFix(foreground, background, targetRatio = 4.5) {
+function adjustRgbChannel(channel, factor, lighten) {
+  return lighten
+    ? Math.round(channel + (255 - channel) * factor)
+    : Math.round(channel * (1 - factor));
+}
+
+export function suggestFixText(foreground, background, targetRatio = 4.5) {
   const fg = hexToRgb(foreground);
   const bgLum = relativeLuminance(hexToRgb(background));
 
   for (let step = 0; step <= 100; step++) {
     const factor = step / 100;
-    const adjust = bgLum > 0.5
-      ? (c) => Math.round(c * (1 - factor))
-      : (c) => Math.round(c + (255 - c) * factor);
-
-    const candidate = `#${[adjust(fg.r), adjust(fg.g), adjust(fg.b)]
+    const lighten = bgLum > 0.5;
+    const candidate = `#${[adjustRgbChannel(fg.r, factor, !lighten), adjustRgbChannel(fg.g, factor, !lighten), adjustRgbChannel(fg.b, factor, !lighten)]
       .map((c) => Math.min(255, Math.max(0, c)).toString(16).padStart(2, '0'))
       .join('')}`;
 
     if (contrastRatio(candidate, background) >= targetRatio) {
-      return candidate;
+      return candidate.toUpperCase();
     }
   }
   return foreground;
+}
+
+export function suggestFixBackground(foreground, background, targetRatio = 4.5) {
+  const bg = hexToRgb(background);
+  const fgLum = relativeLuminance(hexToRgb(foreground));
+
+  for (let step = 0; step <= 100; step++) {
+    const factor = step / 100;
+    const lighten = fgLum < 0.5;
+    const candidate = `#${[adjustRgbChannel(bg.r, factor, lighten), adjustRgbChannel(bg.g, factor, lighten), adjustRgbChannel(bg.b, factor, lighten)]
+      .map((c) => Math.min(255, Math.max(0, c)).toString(16).padStart(2, '0'))
+      .join('')}`;
+
+    if (contrastRatio(foreground, candidate) >= targetRatio) {
+      return candidate.toUpperCase();
+    }
+  }
+  return background;
+}
+
+export function suggestFixes(foreground, background, targetRatio = 4.5) {
+  return {
+    darkerText: suggestFixText(foreground, background, targetRatio),
+    lighterBackground: suggestFixBackground(foreground, background, targetRatio),
+  };
+}
+
+/** @deprecated use suggestFixText */
+export function suggestFix(foreground, background, targetRatio = 4.5) {
+  return suggestFixText(foreground, background, targetRatio);
 }
 
 export function getOverallContrastStatus(pairs) {
@@ -85,4 +180,41 @@ export function getOverallContrastStatus(pairs) {
   if (pairs.some((p) => p.status === 'warn')) return 'warn';
   if (pairs.every((p) => p.level === 'AAA')) return 'aaa';
   return 'aa';
+}
+
+export function getContrastSummary(pairs) {
+  const failures = pairs.filter((p) => p.status === 'fail');
+  const borderline = pairs.filter((p) => p.status === 'warn');
+  const passCount = pairs.filter((p) => p.status === 'pass').length;
+
+  if (failures.length > 0) {
+    return {
+      state: 'fail',
+      failures: failures.length,
+      borderline: borderline.length,
+      total: pairs.length,
+      passCount,
+      worstRatio: Math.min(...pairs.map((p) => p.ratio)),
+    };
+  }
+
+  if (borderline.length > 0) {
+    return {
+      state: 'warn',
+      failures: 0,
+      borderline: borderline.length,
+      total: pairs.length,
+      passCount,
+      worstRatio: Math.min(...pairs.map((p) => p.ratio)),
+    };
+  }
+
+  return {
+    state: 'pass',
+    failures: 0,
+    borderline: 0,
+    total: pairs.length,
+    passCount,
+    worstRatio: Math.min(...pairs.map((p) => p.ratio)),
+  };
 }
