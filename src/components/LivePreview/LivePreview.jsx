@@ -12,7 +12,7 @@ import {
 import SegmentControl from '../SegmentControl/SegmentControl';
 import ContrastBadge from '../ContrastBadge/ContrastBadge';
 import Icon from '../Icon/Icon';
-import { ICON_SIZE_SM } from '../Icon/iconConfig';
+import { ICON_SIZE_XL, ICON_SIZE_SM } from '../Icon/iconConfig';
 import MockupMarketing from './MockupMarketing';
 import MockupDashboard from './MockupDashboard';
 import MockupPricing from './MockupPricing';
@@ -64,6 +64,11 @@ const DEVICE_LABELS = {
   tablet: 'Tablet',
   mobile: 'Mobile',
 };
+
+const MOBILE_PREVIEW_DISABLED_MESSAGE =
+  'Desktop and tablet previews are unavailable on mobile view.';
+
+export { MOBILE_PREVIEW_DISABLED_MESSAGE };
 
 function renderArchetype(archetype, previewMode, parts, logoText, onFrameScrollLock) {
   const brand = logoText.trim() || 'Acme Co.';
@@ -124,9 +129,19 @@ function LivePreview({
   onShuffle,
   lockedCount = 0,
   isCompact = false,
+  onShowToast,
 }) {
   const breakpoint = useBreakpoint();
-  const iconsOnly = breakpoint === 'mobile';
+  const isMobileView = breakpoint === 'mobile';
+  const iconsOnly = isMobileView;
+
+  const handlePreviewModeChange = useCallback((mode) => {
+    if (isMobileView && mode !== 'mobile') {
+      onShowToast?.(MOBILE_PREVIEW_DISABLED_MESSAGE);
+      return;
+    }
+    onPreviewModeChange(mode);
+  }, [isMobileView, onPreviewModeChange, onShowToast]);
   const activeParts = resolveArchetypeParts(archetype, archetypeParts[archetype]);
   const previewEmpty = isArchetypePreviewEmpty(archetype, activeParts);
   const [frameScrollLocked, setFrameScrollLocked] = useState(false);
@@ -290,12 +305,24 @@ function LivePreview({
           )}
           <SegmentControl
             options={[
-              { value: 'desktop', label: 'Desktop', icon: DesktopIcon },
-              { value: 'tablet', label: 'Tablet', icon: DeviceTabletCameraIcon },
+              {
+                value: 'desktop',
+                label: 'Desktop',
+                icon: DesktopIcon,
+                disabled: isMobileView,
+                disabledTitle: MOBILE_PREVIEW_DISABLED_MESSAGE,
+              },
+              {
+                value: 'tablet',
+                label: 'Tablet',
+                icon: DeviceTabletCameraIcon,
+                disabled: isMobileView,
+                disabledTitle: MOBILE_PREVIEW_DISABLED_MESSAGE,
+              },
               { value: 'mobile', label: 'Mobile', icon: DeviceMobileCameraIcon },
             ]}
             value={previewMode}
-            onChange={onPreviewModeChange}
+            onChange={handlePreviewModeChange}
             ariaLabel="Preview device width"
             iconsOnly={iconsOnly}
           />
@@ -330,7 +357,7 @@ function LivePreview({
           aria-label="Shuffle presets"
           data-tour="shuffle"
         >
-          <Icon icon={ShuffleIcon} size={ICON_SIZE_SM} />
+          <Icon icon={ShuffleIcon} size={ICON_SIZE_XL} />
           {lockedCount > 0 && (
             <span className="live-preview__shuffle-badge" aria-label={`${lockedCount} roles locked`}>
               {lockedCount}

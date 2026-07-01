@@ -3,7 +3,10 @@
 .app-shell {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100dvh;
+  max-height: 100dvh;
+  min-height: 100dvh;
+  overflow: hidden;
   background: var(--surface-base);
 }
 
@@ -112,11 +115,15 @@
     bottom: 0;
     left: var(--sidebar-width-collapsed);
     width: auto;
-    max-height: none;
+    max-height: 100dvh;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
     z-index: 200;
     transform: translateX(0);
     transition: transform var(--transition-base), visibility var(--transition-base);
     box-shadow: var(--shadow-lg);
+    overflow: hidden;
 
     &--collapsed {
       visibility: hidden;
@@ -132,14 +139,8 @@
   border-right: 1px solid var(--border-subtle);
   background: var(--surface-raised);
   overflow: hidden;
-  max-height: 100vh;
+  max-height: 100dvh;
   transition: width var(--transition-base);
-
-  @include respond-to(mobile) {
-    max-height: none;
-    border-right: none;
-    border-bottom: 1px solid var(--border-subtle);
-  }
 
   &--collapsed {
     @include respond-to(desktop) {
@@ -365,26 +366,19 @@
   display: flex;
   flex-direction: column;
   min-height: 0;
-  max-height: 100vh;
+  max-height: 100dvh;
   height: 100%;
   overflow: hidden;
   background: var(--surface-base);
   min-width: 0;
-
-  @include respond-to(mobile) {
-    max-height: none;
-    height: auto;
-    min-height: 70vh;
-  }
 }
 
 .app-shell__components {
-  max-height: 100vh;
+  max-height: 100dvh;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
-
-  @include respond-to(mobile) {
-    max-height: none;
-  }
 
   &--collapsed {
     @include respond-to(desktop) {

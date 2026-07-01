@@ -4,9 +4,15 @@
 
 body {
   overflow-x: hidden;
+  height: 100%;
+}
+
+html {
+  height: 100%;
 }
 
 #root {
-  min-height: 100vh;
-  min-height: 100dvh;
+  height: 100dvh;
+  max-height: 100dvh;
+  overflow: hidden;
 }

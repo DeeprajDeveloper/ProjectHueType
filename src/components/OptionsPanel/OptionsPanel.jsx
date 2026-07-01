@@ -78,9 +78,13 @@ function PreviewSettingsContent({
 }
 
 function ArchetypesContent({ archetype, onArchetypeChange }) {
+  const availableGroups = ARCHETYPE_GROUPS.filter(
+    (group) => getArchetypesForGroup(group.id).length > 0,
+  );
+
   return (
     <div className="options-panel__archetypes-view">
-      {ARCHETYPE_GROUPS.map((group) => (
+      {availableGroups.map((group) => (
         <section key={group.id} className="options-panel__archetype-group">
           <h4 className="options-panel__group-label">{group.label}</h4>
           <p className="options-panel__group-desc">{group.description}</p>

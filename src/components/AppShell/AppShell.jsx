@@ -18,7 +18,7 @@ import Icon from '../Icon/Icon';
 import { ICON_SIZE } from '../Icon/iconConfig';
 import { APP_VERSION } from '../../data/buildInfo';
 import './AppShell.scss';
-import LivePreview from '../LivePreview/LivePreview';
+import LivePreview, { MOBILE_PREVIEW_DISABLED_MESSAGE } from '../LivePreview/LivePreview';
 import ExportPanel from '../ExportPanel/ExportPanel';
 import Toast from '../Toast/Toast';
 import SidebarRail from '../SidebarRail/SidebarRail';
@@ -26,6 +26,7 @@ import SidebarToolbar from '../SidebarToolbar/SidebarToolbar';
 import SidebarNav from '../SidebarNav/SidebarNav';
 import OptionsPanel from '../OptionsPanel/OptionsPanel';
 import Walkthrough from '../Walkthrough/Walkthrough';
+import { readStoredActivePanel, storeActivePanel } from '../../data/sidebarNavItems';
 
 function getInitialPreviewMode() {
   if (typeof window !== 'undefined' && window.matchMedia('(max-width: 639px)').matches) {
@@ -35,7 +36,7 @@ function getInitialPreviewMode() {
 }
 
 function AppShell() {
-  const [activePanel, setActivePanel] = useState('workspace');
+  const [activePanel, setActivePanelState] = useState(readStoredActivePanel);
   const [exportOpen, setExportOpen] = useState(false);
   const [previewMode, setPreviewMode] = useState(getInitialPreviewMode);
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -79,6 +80,11 @@ function AppShell() {
 
   const isSavedView = activePanel === 'saved';
   const filter = useComboFilter(isSavedView ? saved : COMBOS);
+
+  const setActivePanel = useCallback((panel) => {
+    setActivePanelState(panel);
+    storeActivePanel(panel);
+  }, []);
 
   const handlePanelToggle = useCallback((panel) => {
     if (activePanel === panel && componentsSidebarOpen) {
@@ -162,9 +168,17 @@ function AppShell() {
 
   useEffect(() => {
     if (breakpoint === 'mobile') {
-      setPreviewMode((current) => (current === 'desktop' ? 'mobile' : current));
+      setPreviewMode((current) => (current !== 'mobile' ? 'mobile' : current));
     }
   }, [breakpoint]);
+
+  const handlePreviewModeChange = useCallback((mode) => {
+    if (breakpoint === 'mobile' && mode !== 'mobile') {
+      showToast(MOBILE_PREVIEW_DISABLED_MESSAGE);
+      return;
+    }
+    setPreviewMode(mode);
+  }, [breakpoint, showToast]);
 
   useEffect(() => {
     if (isCompact) {
@@ -174,10 +188,17 @@ function AppShell() {
 
   useEffect(() => {
     if (!isCompact || !componentsSidebarOpen) return undefined;
-    const previousOverflow = document.body.style.overflow;
+
+    const html = document.documentElement;
+    const previousHtmlOverflow = html.style.overflow;
+    const previousBodyOverflow = document.body.style.overflow;
+
+    html.style.overflow = 'hidden';
     document.body.style.overflow = 'hidden';
+
     return () => {
-      document.body.style.overflow = previousOverflow;
+      html.style.overflow = previousHtmlOverflow;
+      document.body.style.overflow = previousBodyOverflow;
     };
   }, [isCompact, componentsSidebarOpen]);
 
@@ -194,7 +215,7 @@ function AppShell() {
     enabled: !tour.active,
     exportOpen,
     onNavPanel: handlePanelToggle,
-    onPreviewModeChange: setPreviewMode,
+    onPreviewModeChange: handlePreviewModeChange,
   });
 
   const handleSelectCombo = (selected) => {
@@ -376,7 +397,7 @@ function AppShell() {
               fontsLoading={fontsLoading}
               contrastStatus={contrastStatus}
               previewMode={previewMode}
-              onPreviewModeChange={setPreviewMode}
+              onPreviewModeChange={handlePreviewModeChange}
               archetype={previewArchetype}
               archetypeParts={archetypeParts}
               previewLogoText={previewLogoText}
@@ -387,6 +408,7 @@ function AppShell() {
               onShuffle={handleShuffle}
               lockedCount={Object.values(locks).filter(Boolean).length}
               isCompact={isCompact}
+              onShowToast={showToast}
             />
           )}
         </main>

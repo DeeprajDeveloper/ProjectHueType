@@ -271,6 +271,7 @@
     border: none;
     border-radius: var(--radius-sm);
     background: transparent;
+    width: auto;
 
     &:hover {
       background: var(--surface-sunken);
@@ -278,10 +279,20 @@
 
     &--active {
       background: var(--accent);
+      color: var(--accent-contrast);
       border-color: transparent;
 
       .export-panel__format-label {
         color: var(--accent-contrast);
+      }
+
+      &:hover {
+        background: var(--accent-hover);
+        color: var(--accent-contrast);
+
+        .export-panel__format-label {
+          color: var(--accent-contrast);
+        }
       }
     }
   }
