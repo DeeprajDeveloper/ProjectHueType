@@ -14,7 +14,12 @@ function SegmentControl({ options, value, onChange, ariaLabel }) {
           onClick={() => onChange(option.value)}
         >
           {option.icon && (
-            <Icon icon={option.icon} size={ICON_SIZE_SM} className="segment-control__icon" />
+            <Icon
+              icon={option.icon}
+              size={ICON_SIZE_SM}
+              className="segment-control__icon"
+              active={value === option.value}
+            />
           )}
           {option.label}
         </button>

@@ -2,7 +2,10 @@ import {
   SidebarSimpleIcon,
   PaletteIcon,
   BookmarkSimpleIcon,
-  SlidersHorizontalIcon,
+  DropIcon,
+  TextAaIcon,
+  GearIcon,
+  LayoutIcon,
   ShuffleIcon,
   SunIcon,
   MoonIcon,
@@ -16,12 +19,13 @@ import Icon from '../Icon/Icon';
 import { ICON_SIZE } from '../Icon/iconConfig';
 import './SidebarRail.scss';
 
-const WORKSPACE_ITEMS = [
-  { id: 'expand', icon: SidebarSimpleIcon, label: 'Expand sidebar' },
-  { id: 'workspace', icon: PaletteIcon, label: 'Workspace' },
-  { id: 'saved', icon: BookmarkSimpleIcon, label: 'My Saved Presets' },
-  { id: 'customize', icon: SlidersHorizontalIcon, label: 'Customize panel' },
-  { id: 'shuffle', icon: ShuffleIcon, label: 'Shuffle Presets' },
+const NAV_ITEMS = [
+  { id: 'workspace', icon: PaletteIcon, label: 'My Workspace' },
+  { id: 'saved', icon: BookmarkSimpleIcon, label: 'My Presets' },
+  { id: 'colors', icon: DropIcon, label: 'Colors' },
+  { id: 'fonts', icon: TextAaIcon, label: 'Fonts' },
+  { id: 'preview-settings', icon: GearIcon, label: 'Preview settings' },
+  { id: 'archetypes', icon: LayoutIcon, label: 'Prototypes' },
 ];
 
 const APP_ITEMS = [
@@ -33,8 +37,8 @@ const APP_ITEMS = [
 
 function SidebarRail({
   onExpand,
-  activeView,
-  onViewChange,
+  activePanel,
+  onPanelChange,
   onShuffle,
   onToggleTheme,
   onShare,
@@ -49,17 +53,6 @@ function SidebarRail({
   const handleClick = (id) => {
     switch (id) {
       case 'expand':
-        onExpand();
-        break;
-      case 'workspace':
-        onViewChange('workspace');
-        onExpand();
-        break;
-      case 'saved':
-        onViewChange('saved');
-        onExpand();
-        break;
-      case 'customize':
         onExpand();
         break;
       case 'shuffle':
@@ -78,6 +71,9 @@ function SidebarRail({
         onExport();
         break;
       default:
+        if (NAV_ITEMS.some((item) => item.id === id)) {
+          onPanelChange(id);
+        }
         break;
     }
   };
@@ -87,14 +83,16 @@ function SidebarRail({
       return <Icon icon={theme === 'light' ? SunIcon : MoonIcon} size={ICON_SIZE} />;
     }
     if (item.id === 'save') {
-      return <Icon icon={HeartIcon} size={ICON_SIZE} weight={isSaved ? 'fill' : 'regular'} />;
+      return <Icon icon={HeartIcon} size={ICON_SIZE} active={isSaved} />;
     }
-    return <Icon icon={item.icon} size={ICON_SIZE} />;
+    if (item.icon) {
+      return <Icon icon={item.icon} size={ICON_SIZE} active={isActive(item)} />;
+    }
+    return null;
   };
 
   const isActive = (item) => (
-    (item.id === 'workspace' && activeView === 'workspace') ||
-    (item.id === 'saved' && activeView === 'saved') ||
+    NAV_ITEMS.some((nav) => nav.id === item.id && activePanel === nav.id) ||
     (item.id === 'save' && isSaved)
   );
 
@@ -106,7 +104,11 @@ function SidebarRail({
       aria-label={item.label}
       onClick={() => handleClick(item.id)}
     >
-      {renderIcon(item)}
+      {item.id === 'expand' ? (
+        <Icon icon={SidebarSimpleIcon} size={ICON_SIZE} />
+      ) : (
+        renderIcon(item)
+      )}
       <span className="sidebar-rail__tooltip" role="tooltip">{item.label}</span>
       {item.id === 'workspace' && hasActiveFilters && (
         <span className="sidebar-rail__dot" aria-label="Filters active" />
@@ -117,7 +119,25 @@ function SidebarRail({
   return (
     <nav className="sidebar-rail" aria-label="Sidebar shortcuts">
       <div className="sidebar-rail__group">
-        {WORKSPACE_ITEMS.map((item) => renderButton(item, 'workspace'))}
+        <button
+          type="button"
+          className="sidebar-rail__btn"
+          aria-label="Expand sidebar"
+          onClick={() => handleClick('expand')}
+        >
+          <Icon icon={SidebarSimpleIcon} size={ICON_SIZE} />
+          <span className="sidebar-rail__tooltip" role="tooltip">Expand sidebar</span>
+        </button>
+        {NAV_ITEMS.map((item) => renderButton(item, 'workspace'))}
+        <button
+          type="button"
+          className="sidebar-rail__btn"
+          aria-label="Shuffle Presets"
+          onClick={() => handleClick('shuffle')}
+        >
+          <Icon icon={ShuffleIcon} size={ICON_SIZE} />
+          <span className="sidebar-rail__tooltip" role="tooltip">Shuffle Presets</span>
+        </button>
       </div>
 
       <div className="sidebar-rail__group sidebar-rail__group--app">

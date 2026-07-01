@@ -6,7 +6,7 @@ import './Walkthrough.scss';
 
 const SPOTLIGHT_PADDING = 8;
 const VIEWPORT_MARGIN = 16;
-const POPOVER_GAP = 14;
+const POPOVER_GAP = 16;
 
 function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max);
@@ -40,62 +40,121 @@ function ensureTargetExpanded(selector) {
   return false;
 }
 
+function getPopoverRect(top, left, popoverSize) {
+  return {
+    top,
+    left,
+    width: popoverSize.width,
+    height: popoverSize.height,
+    right: left + popoverSize.width,
+    bottom: top + popoverSize.height,
+  };
+}
+
+function rectsOverlap(a, b, gap = 0) {
+  return !(
+    a.right + gap <= b.left ||
+    a.left >= b.right + gap ||
+    a.bottom + gap <= b.top ||
+    a.top >= b.bottom + gap
+  );
+}
+
+function positionForSide(side, rect, popoverSize) {
+  const { width: pw, height: ph } = popoverSize;
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const tallTarget = rect.height > vh * 0.55;
+
+  let top;
+  let left;
+
+  switch (side) {
+    case 'top':
+      top = rect.top - POPOVER_GAP - ph;
+      left = rect.left + rect.width / 2 - pw / 2;
+      break;
+    case 'bottom':
+      top = rect.bottom + POPOVER_GAP;
+      left = rect.left + rect.width / 2 - pw / 2;
+      break;
+    case 'left':
+      top = tallTarget ? rect.top : rect.top + rect.height / 2 - ph / 2;
+      left = rect.left - POPOVER_GAP - pw;
+      break;
+    case 'right':
+    default:
+      top = tallTarget ? rect.top : rect.top + rect.height / 2 - ph / 2;
+      left = rect.right + POPOVER_GAP;
+      break;
+  }
+
+  top = clamp(top, VIEWPORT_MARGIN, vh - ph - VIEWPORT_MARGIN);
+  left = clamp(left, VIEWPORT_MARGIN, vw - pw - VIEWPORT_MARGIN);
+
+  return {
+    top: `${top}px`,
+    left: `${left}px`,
+    transform: 'none',
+    placement: side,
+    rect: getPopoverRect(top, left, popoverSize),
+  };
+}
+
 function computePopoverPosition(rect, placement, popoverSize) {
   if (!rect) {
     return {
       top: '50%',
       left: '50%',
       transform: 'translate(-50%, -50%)',
+      placement: 'center',
     };
   }
 
-  const { width: pw, height: ph } = popoverSize;
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
+  const preferred = placement && placement !== 'center' ? placement : 'right';
+  const sides = [preferred, 'right', 'left', 'bottom', 'top'];
+  const uniqueSides = [...new Set(sides)];
 
-  const placements = [placement, 'bottom', 'top', 'right', 'left'];
-  const uniquePlacements = [...new Set(placements)];
+  let bestFallback = null;
 
-  for (const side of uniquePlacements) {
-    let top;
-    let left;
+  for (const side of uniqueSides) {
+    const candidate = positionForSide(side, rect, popoverSize);
+    const fitsViewport = (
+      candidate.rect.top >= VIEWPORT_MARGIN &&
+      candidate.rect.left >= VIEWPORT_MARGIN &&
+      candidate.rect.bottom <= window.innerHeight - VIEWPORT_MARGIN &&
+      candidate.rect.right <= window.innerWidth - VIEWPORT_MARGIN
+    );
 
-    switch (side) {
-      case 'top':
-        top = rect.top - POPOVER_GAP - ph;
-        left = rect.left + rect.width / 2 - pw / 2;
-        break;
-      case 'bottom':
-        top = rect.bottom + POPOVER_GAP;
-        left = rect.left + rect.width / 2 - pw / 2;
-        break;
-      case 'left':
-        top = rect.top + rect.height / 2 - ph / 2;
-        left = rect.left - POPOVER_GAP - pw;
-        break;
-      case 'right':
-      default:
-        top = rect.top + rect.height / 2 - ph / 2;
-        left = rect.right + POPOVER_GAP;
-        break;
+    if (!fitsViewport) continue;
+
+    if (!rectsOverlap(candidate.rect, rect, POPOVER_GAP)) {
+      return {
+        top: candidate.top,
+        left: candidate.left,
+        transform: candidate.transform,
+        placement: candidate.placement,
+      };
     }
 
-    top = clamp(top, VIEWPORT_MARGIN, vh - ph - VIEWPORT_MARGIN);
-    left = clamp(left, VIEWPORT_MARGIN, vw - pw - VIEWPORT_MARGIN);
-
-    const fitsVertically = top >= VIEWPORT_MARGIN && top + ph <= vh - VIEWPORT_MARGIN;
-    const fitsHorizontally = left >= VIEWPORT_MARGIN && left + pw <= vw - VIEWPORT_MARGIN;
-
-    if (fitsVertically && fitsHorizontally) {
-      return { top: `${top}px`, left: `${left}px`, transform: 'none', placement: side };
-    }
+    if (!bestFallback) bestFallback = candidate;
   }
 
+  if (bestFallback) {
+    return {
+      top: bestFallback.top,
+      left: bestFallback.left,
+      transform: bestFallback.transform,
+      placement: bestFallback.placement,
+    };
+  }
+
+  const bottom = positionForSide('bottom', rect, popoverSize);
   return {
-    top: `${clamp(rect.bottom + POPOVER_GAP, VIEWPORT_MARGIN, vh - ph - VIEWPORT_MARGIN)}px`,
-    left: `${clamp(rect.left, VIEWPORT_MARGIN, vw - pw - VIEWPORT_MARGIN)}px`,
-    transform: 'none',
-    placement: 'bottom',
+    top: bottom.top,
+    left: bottom.left,
+    transform: bottom.transform,
+    placement: bottom.placement,
   };
 }
 
@@ -180,19 +239,16 @@ function Walkthrough({
   return (
     <div className="walkthrough" role="presentation">
       {hasTarget ? (
-        <>
-          <div className="walkthrough__overlay walkthrough__overlay--dimmed" aria-hidden="true" />
-          <div
-            className="walkthrough__spotlight"
-            style={{
-              top: spotlightRect.top,
-              left: spotlightRect.left,
-              width: spotlightRect.width,
-              height: spotlightRect.height,
-            }}
-            aria-hidden="true"
-          />
-        </>
+        <div
+          className="walkthrough__spotlight"
+          style={{
+            top: spotlightRect.top,
+            left: spotlightRect.left,
+            width: spotlightRect.width,
+            height: spotlightRect.height,
+          }}
+          aria-hidden="true"
+        />
       ) : (
         <div className="walkthrough__overlay walkthrough__overlay--full" aria-hidden="true" />
       )}

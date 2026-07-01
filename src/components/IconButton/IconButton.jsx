@@ -1,6 +1,16 @@
+import { Children, cloneElement, isValidElement } from 'react';
 import './IconButton.scss';
 
 function IconButton({ children, label, onClick, active = false }) {
+  const content = Children.map(children, (child) => {
+    if (isValidElement(child) && child.props?.icon != null) {
+      return cloneElement(child, {
+        active: child.props.active ?? active,
+      });
+    }
+    return child;
+  });
+
   return (
     <button
       type="button"
@@ -9,7 +19,7 @@ function IconButton({ children, label, onClick, active = false }) {
       aria-label={label}
       title={label}
     >
-      {children}
+      {content}
     </button>
   );
 }

@@ -28,13 +28,10 @@ export function useComboState(initialCombo) {
   }, []);
 
   const shuffle = useCallback(() => {
-    let nextCombo;
-    setCombo((prev) => {
-      nextCombo = shuffleCombo(prev, locks);
-      return nextCombo;
-    });
+    const nextCombo = shuffleCombo(combo, locks);
+    setCombo(nextCombo);
     return nextCombo;
-  }, [locks]);
+  }, [combo, locks]);
 
   const toggleLock = useCallback((key) => {
     setLocks((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -56,6 +53,20 @@ export function useComboState(initialCombo) {
     }
   }, []);
 
+  const resetAllColors = useCallback((originalCombo) => {
+    setCombo((prev) => ({
+      ...prev,
+      colors: { ...originalCombo.colors },
+    }));
+  }, []);
+
+  const resetAllFonts = useCallback((originalCombo) => {
+    setCombo((prev) => ({
+      ...prev,
+      fonts: structuredClone(originalCombo.fonts),
+    }));
+  }, []);
+
   return {
     combo,
     locks,
@@ -68,6 +79,8 @@ export function useComboState(initialCombo) {
     setColor,
     setFont,
     resetRole,
+    resetAllColors,
+    resetAllFonts,
   };
 }
 
@@ -176,7 +189,11 @@ export function useSavedCombos() {
     return true;
   };
 
-  return { saved, isSaved, save, unsave, toggleSave };
+  const clearAll = () => {
+    persist([]);
+  };
+
+  return { saved, isSaved, save, unsave, toggleSave, clearAll };
 }
 
 export function useTheme() {
@@ -223,6 +240,7 @@ import { TYPE_BASE_PX, clampTypeBasePx } from '../utils/typographyScale';
 
 export function useUiPreferences() {
   const COLOR_SCALES_KEY = 'huetype-show-color-scales';
+  const SCALE_HEX_KEY = 'huetype-show-scale-hex';
   const TYPE_BASE_KEY = 'huetype-type-base-px';
   const PREVIEW_ARCHETYPE_KEY = 'huetype-preview-archetype';
   const PREVIEW_PARTS_KEY = 'huetype-preview-parts';
@@ -239,6 +257,16 @@ export function useUiPreferences() {
       // ignore
     }
     return true;
+  });
+
+  const [showScaleHex, setShowScaleHex] = useState(() => {
+    try {
+      const stored = localStorage.getItem(SCALE_HEX_KEY);
+      if (stored !== null) return stored === 'true';
+    } catch {
+      // ignore
+    }
+    return false;
   });
 
   const [typeBasePx, setTypeBasePxState] = useState(() => {
@@ -304,6 +332,18 @@ export function useUiPreferences() {
       const next = !prev;
       try {
         localStorage.setItem(COLOR_SCALES_KEY, String(next));
+      } catch {
+        // ignore
+      }
+      return next;
+    });
+  }, []);
+
+  const toggleScaleHex = useCallback(() => {
+    setShowScaleHex((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem(SCALE_HEX_KEY, String(next));
       } catch {
         // ignore
       }
@@ -380,6 +420,8 @@ export function useUiPreferences() {
     showColorScales,
     toggleColorScales,
     setColorScalesEnabled,
+    showScaleHex,
+    toggleScaleHex,
     typeBasePx,
     setTypeBasePx,
     previewArchetype,

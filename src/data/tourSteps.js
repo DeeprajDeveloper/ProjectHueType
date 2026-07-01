@@ -18,7 +18,7 @@ export const TOUR_STEPS = [
   },
   {
     id: 'customize',
-    target: '[data-tour="customize"]',
+    target: '[data-tour="nav-customize"]',
     title: 'Customize colors & type',
     content:
       'Fine-tune each color role and font pairing. Lock any role you want to keep — locked roles stay put when you shuffle.',
@@ -39,8 +39,8 @@ export const TOUR_STEPS = [
     target: '[data-tour="live-preview"]',
     title: 'Live preview',
     content:
-      'See your combo applied to realistic mockups — marketing pages, dashboards, pricing tables, and more. Contrast checks appear in the header.',
-    placement: 'left',
+      'See your combo applied to realistic mockups — marketing pages, dashboards, pricing tables, and more. Click the info icon beside the device controls to view contrast checks and combo details.',
+    placement: 'right',
   },
   {
     id: 'preview-controls',
@@ -55,7 +55,7 @@ export const TOUR_STEPS = [
     target: '[data-tour="components-panel"]',
     title: 'Preview components',
     content:
-      'Pick a layout archetype and toggle individual sections on or off. Customize logo text to match your brand.',
+      'Pick a prototype layout and toggle individual sections on or off. Customize logo text to match your brand. Open these from the left sidebar.',
     placement: 'left',
     prepare: 'components-panel',
   },

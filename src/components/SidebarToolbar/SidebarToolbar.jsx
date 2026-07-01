@@ -19,7 +19,7 @@ function SidebarToolbar({
         label={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
         onClick={onToggleTheme}
       >
-        <Icon icon={theme === 'light' ? SunIcon : MoonIcon} size={ICON_SIZE} />
+        <Icon icon={theme === 'light' ? SunIcon : MoonIcon} size={ICON_SIZE} active />
       </IconButton>
       <IconButton label="Share combo" onClick={onShare}>
         <Icon icon={ShareNetworkIcon} size={ICON_SIZE} />
@@ -29,7 +29,7 @@ function SidebarToolbar({
         onClick={onSave}
         active={isSaved}
       >
-        <Icon icon={HeartIcon} size={ICON_SIZE} weight={isSaved ? 'fill' : 'regular'} />
+        <Icon icon={HeartIcon} size={ICON_SIZE} />
       </IconButton>
       <button type="button" className="btn btn--primary btn--sm sidebar-toolbar__export" onClick={onExport}>
         <Icon icon={ExportIcon} size={ICON_SIZE} />

@@ -1,6 +1,7 @@
 // Global design tokens — app chrome (not user preview palettes)
 :root {
   // Surfaces — light, easy on the eyes
+  --surface-white: #ffffff;
   --surface-base: #fafafa;
   --surface-raised: #fafafa;
   --surface-sunken: #f5f5f5;
@@ -27,7 +28,7 @@
   --danger-subtle: #ffe6e6;
 
   // Typography
-  --font-chrome: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-chrome: 'Manrope', system-ui, -apple-system, sans-serif;
   --font-mono: 'SF Mono', 'Fira Code', 'Consolas', monospace;
 
   --text-display: 1.75rem;
@@ -59,9 +60,9 @@
   --shadow-lg: 0 12px 32px rgba(28, 28, 26, 0.1);
 
   // Layout
-  --sidebar-width: 450px;
+  --sidebar-width: 220px;
   --sidebar-width-collapsed: 52px;
-  --components-sidebar-width: 300px;
+  --components-sidebar-width: 380px;
   --components-sidebar-width-collapsed: 52px;
   --transition-fast: 150ms ease;
   --transition-base: 250ms ease;

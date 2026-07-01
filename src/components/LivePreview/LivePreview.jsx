@@ -5,11 +5,10 @@ import {
   DeviceMobileCameraIcon,
   DeviceRotateIcon,
   FlaskIcon,
+  InfoIcon,
 } from '@phosphor-icons/react';
-import ContrastBadge from '../ContrastBadge/ContrastBadge';
-import { suggestFix } from '../../utils/contrast';
 import SegmentControl from '../SegmentControl/SegmentControl';
-import Accordion from '../Accordion/Accordion';
+import ContrastBadge from '../ContrastBadge/ContrastBadge';
 import Icon from '../Icon/Icon';
 import { ICON_SIZE_SM } from '../Icon/iconConfig';
 import MockupMarketing from './MockupMarketing';
@@ -76,10 +75,15 @@ function renderArchetype(archetype, previewMode, parts, logoText, onFrameScrollL
   }
 }
 
+const WCAG_STATUS_LABELS = {
+  aaa: 'WCAG AAA',
+  aa: 'WCAG AA',
+  warn: 'WCAG AA large',
+  fail: 'WCAG Fail',
+};
+
 function LivePreview({
   combo,
-  contrastPairs,
-  contrastStatus,
   fontsLoading,
   previewMode,
   onPreviewModeChange,
@@ -87,6 +91,9 @@ function LivePreview({
   archetypeParts,
   previewLogoText = '',
   typeBasePx,
+  contrastStatus,
+  onOpenInfo,
+  infoActive = false,
 }) {
   const activeParts = archetypeParts[archetype] || {};
   const previewEmpty = isArchetypePreviewEmpty(archetype, activeParts);
@@ -209,41 +216,6 @@ function LivePreview({
 
   return (
     <div className="live-preview">
-      <header className="live-preview__header">
-        <Accordion
-          variant="chrome"
-          title={combo.name}
-          badge={<ContrastBadge status={contrastStatus} compact />}
-          defaultOpen={false}
-          persistKey="preview-info"
-        >
-          <p className="live-preview__meta">
-            Inspired by {combo.inspiredBy} · {combo.mood.join(', ')}
-          </p>
-
-          <div className="live-preview__contrast" aria-live="polite" aria-label="Contrast check results">
-            {contrastPairs.map((pair) => (
-              <div key={pair.id} className="live-preview__contrast-item">
-                <ContrastBadge
-                  status={pair.status === 'pass' ? (pair.level === 'AAA' ? 'aaa' : 'aa') : pair.status === 'warn' ? 'warn' : 'fail'}
-                  ratio={pair.ratio}
-                  label={pair.label}
-                />
-                {pair.status === 'fail' && (
-                  <span className="live-preview__fix">
-                    Suggest: {suggestFix(pair.fg, pair.bg)}
-                  </span>
-                )}
-              </div>
-            ))}
-          </div>
-
-          {combo.whyItWorks && (
-            <p className="live-preview__why">{combo.whyItWorks}</p>
-          )}
-        </Accordion>
-      </header>
-
       <div className="live-preview__controls" data-tour="preview-controls">
         <div className="live-preview__controls-heading">
           <h2 className="live-preview__label">
@@ -255,6 +227,23 @@ function LivePreview({
           </p>
         </div>
         <div className="live-preview__controls-actions">
+          <div className="live-preview__status-tools">
+            <ContrastBadge
+              status={contrastStatus}
+              compact
+              label={WCAG_STATUS_LABELS[contrastStatus] || WCAG_STATUS_LABELS.aa}
+            />
+            <button
+              type="button"
+              className={`live-preview__info ${infoActive ? 'live-preview__info--active' : ''}`}
+              onClick={onOpenInfo}
+              aria-label="View combo details"
+              aria-pressed={infoActive}
+            >
+              <Icon icon={InfoIcon} size={ICON_SIZE_SM} active={infoActive} />
+              <span className="live-preview__info-tooltip" role="tooltip">Combo details</span>
+            </button>
+          </div>
           {isTablet && (
             <button
               type="button"
@@ -292,7 +281,7 @@ function LivePreview({
           {previewEmpty ? (
             <div className="live-preview__empty">
               <p>All preview parts are hidden.</p>
-              <p className="live-preview__empty-hint">Turn sections on in the Components panel → Preview parts.</p>
+              <p className="live-preview__empty-hint">Turn sections on in the Options panel → Prototypes.</p>
             </div>
           ) : (
             renderArchetype(archetype, previewMode, activeParts, previewLogoText, setFrameScrollLocked)

@@ -1,9 +1,27 @@
 .presets-panel {
   display: contents;
 
+  &--flat {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    min-height: 0;
+    overflow-y: auto;
+  }
+
   .accordion__content {
     padding-left: 0;
     padding-right: 0;
     padding-bottom: 0;
   }
+}
+
+.presets-panel__actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.presets-panel__clear-all {
+  width: 100%;
 }
