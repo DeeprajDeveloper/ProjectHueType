@@ -11,6 +11,7 @@ function SidebarToolbar({
   onSave,
   isSaved,
   onExport,
+  exportActive = false,
   dataTour,
 }) {
   return (
@@ -31,7 +32,12 @@ function SidebarToolbar({
       >
         <Icon icon={HeartIcon} size={ICON_SIZE} />
       </IconButton>
-      <button type="button" className="btn btn--primary btn--sm sidebar-toolbar__export" onClick={onExport}>
+      <button
+        type="button"
+        className={`btn btn--primary btn--sm sidebar-toolbar__export ${exportActive ? 'sidebar-toolbar__export--active' : ''}`}
+        onClick={onExport}
+        aria-pressed={exportActive}
+      >
         <Icon icon={ExportIcon} size={ICON_SIZE} />
         Export
       </button>

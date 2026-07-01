@@ -8,4 +8,8 @@
 
 .sidebar-toolbar__export {
   margin-left: auto;
+
+  &--active {
+    box-shadow: inset 0 0 0 2px var(--accent-contrast);
+  }
 }

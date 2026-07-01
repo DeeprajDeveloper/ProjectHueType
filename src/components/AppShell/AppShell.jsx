@@ -10,15 +10,14 @@ import {
   useUiPreferences,
   useWalkthrough,
 } from '../../hooks';
-import { SidebarSimpleIcon, BooksIcon, InfoIcon } from '@phosphor-icons/react';
+import { SidebarSimpleIcon, BooksIcon, PackageIcon } from '@phosphor-icons/react';
 import Icon from '../Icon/Icon';
 import { ICON_SIZE } from '../Icon/iconConfig';
 import { APP_VERSION } from '../../data/buildInfo';
 import './AppShell.scss';
 import LivePreview from '../LivePreview/LivePreview';
 import LockRandomizeControls from '../LockRandomizeControls/LockRandomizeControls';
-import ExportModal from '../ExportModal/ExportModal';
-import DesignSystemModal from '../DesignSystemModal/DesignSystemModal';
+import ExportPanel from '../ExportPanel/ExportPanel';
 import Toast from '../Toast/Toast';
 import SidebarRail from '../SidebarRail/SidebarRail';
 import SidebarToolbar from '../SidebarToolbar/SidebarToolbar';
@@ -29,7 +28,6 @@ import Walkthrough from '../Walkthrough/Walkthrough';
 function AppShell() {
   const [activePanel, setActivePanel] = useState('workspace');
   const [exportOpen, setExportOpen] = useState(false);
-  const [designSystemOpen, setDesignSystemOpen] = useState(false);
   const [previewMode, setPreviewMode] = useState('desktop');
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [originalCombo, setOriginalCombo] = useState(COMBOS[0]);
@@ -84,13 +82,66 @@ function AppShell() {
 
   const handleTourStepEnter = useCallback(
     (step) => {
-      if (step.prepare === 'sidebar-workspace') {
+      const prepare = step?.prepare;
+
+      if (prepare === 'sidebar-workspace' || prepare === 'open-workspace') {
         setSidebarOpen(true);
         setActivePanel('workspace');
         setComponentsSidebarOpen(true);
-      } else if (step.prepare === 'components-panel') {
+        setExportOpen(false);
+        return;
+      }
+
+      if (prepare === 'open-colors') {
+        setSidebarOpen(true);
+        setActivePanel('colors');
         setComponentsSidebarOpen(true);
-        setActivePanel('preview-settings');
+        setExportOpen(false);
+        return;
+      }
+
+      if (prepare === 'open-archetypes') {
+        setSidebarOpen(true);
+        setActivePanel('archetypes');
+        setComponentsSidebarOpen(true);
+        setExportOpen(false);
+        window.setTimeout(() => {
+          const trigger = document.querySelector('[data-tour="nav-prototypes"]');
+          if (trigger?.getAttribute('aria-expanded') === 'false') {
+            trigger.click();
+          }
+        }, 0);
+        return;
+      }
+
+      if (prepare === 'close-panels') {
+        setExportOpen(false);
+        return;
+      }
+
+      if (prepare === 'open-export') {
+        setExportOpen(true);
+        return;
+      }
+
+      if (prepare === 'close-export') {
+        setExportOpen(false);
+        return;
+      }
+
+      if (prepare === 'open-build-info') {
+        setSidebarOpen(true);
+        setActivePanel('build-info');
+        setComponentsSidebarOpen(true);
+        setExportOpen(false);
+        return;
+      }
+
+      if (prepare === 'open-feature-catalog') {
+        setSidebarOpen(true);
+        setActivePanel('feature-catalog');
+        setComponentsSidebarOpen(true);
+        setExportOpen(false);
       }
     },
     [setComponentsSidebarOpen],
@@ -135,9 +186,9 @@ function AppShell() {
     }
   };
 
-  const handleExportCopy = () => {
-    showToast('Copied to clipboard');
-  };
+  const handleExportToggle = useCallback(() => {
+    setExportOpen((open) => !open);
+  }, []);
 
   const handleResetAllColors = () => {
     resetAllColors(originalCombo);
@@ -189,8 +240,8 @@ function AppShell() {
             onShare={handleShare}
             onSave={handleSave}
             isSaved={isSaved(combo.id)}
-            onExport={() => setExportOpen(true)}
-            onOpenDesignSystem={() => setDesignSystemOpen(true)}
+            onExport={handleExportToggle}
+            exportActive={exportOpen}
             theme={theme}
             hasActiveFilters={filter.hasActiveFilters}
           />
@@ -210,7 +261,8 @@ function AppShell() {
               onShare={handleShare}
               onSave={handleSave}
               isSaved={isSaved(combo.id)}
-              onExport={() => setExportOpen(true)}
+              onExport={handleExportToggle}
+              exportActive={exportOpen}
               dataTour="toolbar"
             />
 
@@ -224,8 +276,9 @@ function AppShell() {
                 className={`app-shell__sidebar-footer-link ${activePanel === 'build-info' && componentsSidebarOpen ? 'app-shell__sidebar-footer-link--active' : ''}`}
                 onClick={() => handlePanelToggle('build-info')}
                 aria-pressed={activePanel === 'build-info' && componentsSidebarOpen}
+                data-tour="build-info-footer"
               >
-                <Icon icon={InfoIcon} size={ICON_SIZE} className="app-shell__sidebar-footer-icon" />
+                <Icon icon={PackageIcon} size={ICON_SIZE} className="app-shell__sidebar-footer-icon" />
                 <span className="app-shell__sidebar-footer-text">
                   <span className="app-shell__sidebar-footer-label">Build Info</span>
                   <span className="app-shell__sidebar-footer-desc">v{APP_VERSION} · app overview</span>
@@ -233,12 +286,14 @@ function AppShell() {
               </button>
               <button
                 type="button"
-                className="app-shell__sidebar-footer-link"
-                onClick={() => setDesignSystemOpen(true)}
+                className={`app-shell__sidebar-footer-link ${activePanel === 'feature-catalog' && componentsSidebarOpen ? 'app-shell__sidebar-footer-link--active' : ''}`}
+                onClick={() => handlePanelToggle('feature-catalog')}
+                aria-pressed={activePanel === 'feature-catalog' && componentsSidebarOpen}
+                data-tour="feature-catalog-footer"
               >
                 <Icon icon={BooksIcon} size={ICON_SIZE} className="app-shell__sidebar-footer-icon" />
                 <span className="app-shell__sidebar-footer-text">
-                  <span className="app-shell__sidebar-footer-label">Design system</span>
+                  <span className="app-shell__sidebar-footer-label">Feature Catalog</span>
                   <span className="app-shell__sidebar-footer-desc">Built &amp; planned components</span>
                 </span>
               </button>
@@ -247,20 +302,29 @@ function AppShell() {
         </aside>
 
         <main id="main-content" className="app-shell__content">
-          <LivePreview
-            combo={combo}
-            fontsLoading={fontsLoading}
-            contrastStatus={contrastStatus}
-            previewMode={previewMode}
-            onPreviewModeChange={setPreviewMode}
-            archetype={previewArchetype}
-            archetypeParts={archetypeParts}
-            previewLogoText={previewLogoText}
-            typeBasePx={typeBasePx}
-            typeScaleRatio={typeScaleRatio}
-            onOpenInfo={() => handlePanelToggle('info')}
-            infoActive={activePanel === 'info' && componentsSidebarOpen}
-          />
+          {exportOpen ? (
+            <ExportPanel
+              combo={combo}
+              onClose={() => setExportOpen(false)}
+              onCopy={() => showToast('Copied to clipboard')}
+              onDownload={(filename) => showToast(`Downloaded ${filename}`)}
+            />
+          ) : (
+            <LivePreview
+              combo={combo}
+              fontsLoading={fontsLoading}
+              contrastStatus={contrastStatus}
+              previewMode={previewMode}
+              onPreviewModeChange={setPreviewMode}
+              archetype={previewArchetype}
+              archetypeParts={archetypeParts}
+              previewLogoText={previewLogoText}
+              typeBasePx={typeBasePx}
+              typeScaleRatio={typeScaleRatio}
+              onOpenInfo={() => handlePanelToggle('info')}
+              infoActive={activePanel === 'info' && componentsSidebarOpen}
+            />
+          )}
         </main>
 
         <div className={`app-shell__components ${!componentsSidebarOpen ? 'app-shell__components--collapsed' : ''}`}>
@@ -317,18 +381,6 @@ function AppShell() {
           />
         </div>
       </div>
-
-      {exportOpen && (
-        <ExportModal
-          combo={combo}
-          onClose={() => setExportOpen(false)}
-          onCopy={handleExportCopy}
-        />
-      )}
-
-      {designSystemOpen && (
-        <DesignSystemModal onClose={() => setDesignSystemOpen(false)} />
-      )}
 
       {toast && <Toast message={toast.message} />}
 

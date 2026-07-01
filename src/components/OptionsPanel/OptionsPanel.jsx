@@ -5,6 +5,7 @@ import PresetsPanel from '../PresetsPanel/PresetsPanel';
 import CustomizePanel from '../CustomizePanel/CustomizePanel';
 import ComboInfoPanel from '../ComboInfoPanel/ComboInfoPanel';
 import BuildInfoPanel from '../BuildInfoPanel/BuildInfoPanel';
+import FeatureCatalogPanel from '../FeatureCatalogPanel/FeatureCatalogPanel';
 import ComponentToggle from '../PreviewComponentsPanel/ComponentToggle';
 import { ARCHETYPE_PARTS, PREVIEW_ARCHETYPES } from '../PreviewComponentsPanel/previewArchetypes';
 import './OptionsPanel.scss';
@@ -18,6 +19,7 @@ const PANEL_TITLES = {
   archetypes: 'Prototypes',
   info: 'WCAG contrast',
   'build-info': 'Build Info',
+  'feature-catalog': 'Feature Catalog',
 };
 
 function PreviewSettingsContent({ previewLogoText, onPreviewLogoTextChange }) {
@@ -311,6 +313,11 @@ function OptionsPanel({
       case 'build-info':
         return (
           <BuildInfoPanel onStartTour={onStartTour} />
+        );
+
+      case 'feature-catalog':
+        return (
+          <FeatureCatalogPanel />
         );
 
       default:

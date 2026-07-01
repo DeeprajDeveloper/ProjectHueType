@@ -11,7 +11,7 @@ import './BuildInfoPanel.scss';
 
 function BuildInfoPanel({ onStartTour }) {
   return (
-    <div className="build-info-panel">
+    <div className="build-info-panel" data-tour="build-info">
       <header className="build-info-panel__header">
         <p className="build-info-panel__version">v{APP_VERSION}</p>
         <h3 className="build-info-panel__title">HueType</h3>

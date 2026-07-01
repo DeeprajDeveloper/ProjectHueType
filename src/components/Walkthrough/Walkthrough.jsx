@@ -198,7 +198,11 @@ function Walkthrough({
     const expanded = ensureTargetExpanded(step?.target);
     measure();
 
-    const delays = expanded ? [50, 200, 400] : [350];
+    const delays = expanded
+      ? [50, 200, 400]
+      : step?.target
+        ? [100, 350, 600]
+        : [350];
     const timers = delays.map((delay) => window.setTimeout(measure, delay));
 
     return () => timers.forEach((timer) => window.clearTimeout(timer));

@@ -1,11 +1,6 @@
+import { useState, useRef, useEffect } from 'react';
 import {
   SidebarSimpleIcon,
-  PaletteIcon,
-  BookmarkSimpleIcon,
-  DropIcon,
-  TextAaIcon,
-  GearIcon,
-  LayoutIcon,
   ShuffleIcon,
   SunIcon,
   MoonIcon,
@@ -13,20 +8,17 @@ import {
   HeartIcon,
   ExportIcon,
   BooksIcon,
-  InfoIcon,
+  PackageIcon,
 } from '@phosphor-icons/react';
+import {
+  TOP_NAV_ITEMS,
+  PROTOTYPE_GROUP,
+} from '../../data/sidebarNavItems';
 import Icon from '../Icon/Icon';
-import { ICON_SIZE } from '../Icon/iconConfig';
+import { ICON_SIZE, ICON_SIZE_SM } from '../Icon/iconConfig';
 import './SidebarRail.scss';
 
-const NAV_ITEMS = [
-  { id: 'workspace', icon: PaletteIcon, label: 'My Workspace' },
-  { id: 'saved', icon: BookmarkSimpleIcon, label: 'My Presets' },
-  { id: 'colors', icon: DropIcon, label: 'Colors' },
-  { id: 'fonts', icon: TextAaIcon, label: 'Fonts' },
-  { id: 'preview-settings', icon: GearIcon, label: 'Preview settings' },
-  { id: 'archetypes', icon: LayoutIcon, label: 'Prototypes' },
-];
+const RAIL_NAV_ITEMS = [...TOP_NAV_ITEMS, PROTOTYPE_GROUP];
 
 const APP_ITEMS = [
   { id: 'theme', icon: null, label: 'Switch Light/Dark Mode' },
@@ -46,10 +38,38 @@ function SidebarRail({
   onSave,
   isSaved,
   onExport,
-  onOpenDesignSystem,
+  exportActive = false,
   theme,
   hasActiveFilters,
 }) {
+  const [openMenuId, setOpenMenuId] = useState(null);
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    if (!openMenuId) return undefined;
+
+    const handlePointerDown = (event) => {
+      if (menuRef.current?.contains(event.target)) return;
+      setOpenMenuId(null);
+    };
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') setOpenMenuId(null);
+    };
+
+    document.addEventListener('pointerdown', handlePointerDown);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [openMenuId]);
+
+  const handleNavClick = (id) => {
+    setOpenMenuId(null);
+    onPanelChange(id);
+  };
+
   const handleClick = (id) => {
     switch (id) {
       case 'expand':
@@ -71,11 +91,34 @@ function SidebarRail({
         onExport();
         break;
       default:
-        if (NAV_ITEMS.some((item) => item.id === id)) {
-          onPanelChange(id);
+        if (TOP_NAV_ITEMS.some((item) => item.id === id)) {
+          handleNavClick(id);
         }
         break;
     }
+  };
+
+  const isFlatNavActive = (item) => activePanel === item.id && panelOpen;
+
+  const isGroupActive = (item) =>
+    openMenuId === item.id ||
+    item.children?.some((child) => activePanel === child.id && panelOpen);
+
+  const isActive = (item) => {
+    if (item.id === 'build-info') {
+      return activePanel === 'build-info' && panelOpen;
+    }
+    if (item.id === 'feature-catalog') {
+      return activePanel === 'feature-catalog' && panelOpen;
+    }
+    if (item.children) {
+      return isGroupActive(item);
+    }
+    return (
+      isFlatNavActive(item) ||
+      (item.id === 'save' && isSaved) ||
+      (item.id === 'export' && exportActive)
+    );
   };
 
   const renderIcon = (item) => {
@@ -91,35 +134,83 @@ function SidebarRail({
     return null;
   };
 
-  const isActive = (item) => {
-    if (item.id === 'build-info') {
-      return activePanel === 'build-info' && panelOpen;
-    }
+  const renderSubmenu = (item) => {
+    const isOpen = openMenuId === item.id;
+    const groupActive = isGroupActive(item);
+
     return (
-      NAV_ITEMS.some((nav) => nav.id === item.id && activePanel === nav.id && panelOpen) ||
-      (item.id === 'save' && isSaved)
+      <div
+        key={item.id}
+        className="sidebar-rail__submenu"
+        ref={isOpen ? menuRef : undefined}
+      >
+        <button
+          type="button"
+          className={`sidebar-rail__btn ${groupActive ? 'sidebar-rail__btn--active' : ''} ${isOpen ? 'sidebar-rail__btn--menu-open' : ''}`}
+          aria-label={item.label}
+          aria-expanded={isOpen}
+          aria-haspopup="menu"
+          onClick={() => setOpenMenuId(isOpen ? null : item.id)}
+        >
+          <Icon icon={item.icon} size={ICON_SIZE} active={groupActive} />
+          {!isOpen && (
+            <span className="sidebar-rail__tooltip" role="tooltip">{item.label}</span>
+          )}
+        </button>
+
+        {isOpen && (
+          <div className="sidebar-rail__popover" role="menu" aria-label={item.label}>
+            <p className="sidebar-rail__popover-title">{item.label}</p>
+            <ul className="sidebar-rail__popover-list">
+              {item.children.map((child) => {
+                const childActive = activePanel === child.id && panelOpen;
+                return (
+                  <li key={child.id}>
+                    <button
+                      type="button"
+                      role="menuitem"
+                      className={`sidebar-rail__popover-btn ${childActive ? 'sidebar-rail__popover-btn--active' : ''}`}
+                      aria-pressed={childActive}
+                      onClick={() => handleNavClick(child.id)}
+                    >
+                      <Icon icon={child.icon} size={ICON_SIZE_SM} active={childActive} />
+                      <span>{child.label}</span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )}
+      </div>
     );
   };
 
-  const renderButton = (item, group) => (
-    <button
-      key={item.id}
-      type="button"
-      className={`sidebar-rail__btn ${group === 'app' ? 'sidebar-rail__btn--app' : ''} ${isActive(item) ? 'sidebar-rail__btn--active' : ''}`}
-      aria-label={item.label}
-      onClick={() => handleClick(item.id)}
-    >
-      {item.id === 'expand' ? (
-        <Icon icon={SidebarSimpleIcon} size={ICON_SIZE} />
-      ) : (
-        renderIcon(item)
-      )}
-      <span className="sidebar-rail__tooltip" role="tooltip">{item.label}</span>
-      {item.id === 'workspace' && hasActiveFilters && (
-        <span className="sidebar-rail__dot" aria-label="Filters active" />
-      )}
-    </button>
-  );
+  const renderButton = (item, group) => {
+    if (item.children) {
+      return renderSubmenu(item);
+    }
+
+    return (
+      <button
+        key={item.id}
+        type="button"
+        className={`sidebar-rail__btn ${group === 'app' ? 'sidebar-rail__btn--app' : ''} ${isActive(item) ? 'sidebar-rail__btn--active' : ''}`}
+        aria-label={item.label}
+        onClick={() => handleClick(item.id)}
+      >
+        {item.id === 'expand' ? (
+          <Icon icon={SidebarSimpleIcon} size={ICON_SIZE} />
+        ) : (
+          renderIcon(item)
+        )}
+        <span className="sidebar-rail__tooltip" role="tooltip">{item.label}</span>
+        {item.id === 'workspace' && hasActiveFilters && (
+          <span className="sidebar-rail__dot" aria-label="Filters active" />
+        )}
+      </button>
+    );
+  };
 
   return (
     <nav className="sidebar-rail" aria-label="Sidebar shortcuts">
@@ -133,7 +224,7 @@ function SidebarRail({
           <Icon icon={SidebarSimpleIcon} size={ICON_SIZE} />
           <span className="sidebar-rail__tooltip" role="tooltip">Expand sidebar</span>
         </button>
-        {NAV_ITEMS.map((item) => renderButton(item, 'workspace'))}
+        {RAIL_NAV_ITEMS.map((item) => renderButton(item, 'workspace'))}
         <button
           type="button"
           className="sidebar-rail__btn"
@@ -157,17 +248,18 @@ function SidebarRail({
           aria-pressed={activePanel === 'build-info' && panelOpen}
           onClick={() => onPanelChange('build-info')}
         >
-          <Icon icon={InfoIcon} size={ICON_SIZE} />
+          <Icon icon={PackageIcon} size={ICON_SIZE} />
           <span className="sidebar-rail__tooltip" role="tooltip">Build Info</span>
         </button>
         <button
           type="button"
-          className="sidebar-rail__btn sidebar-rail__btn--app"
-          aria-label="Design system catalog"
-          onClick={onOpenDesignSystem}
+          className={`sidebar-rail__btn sidebar-rail__btn--app ${activePanel === 'feature-catalog' && panelOpen ? 'sidebar-rail__btn--active' : ''}`}
+          aria-label="Feature Catalog"
+          aria-pressed={activePanel === 'feature-catalog' && panelOpen}
+          onClick={() => onPanelChange('feature-catalog')}
         >
           <Icon icon={BooksIcon} size={ICON_SIZE} />
-          <span className="sidebar-rail__tooltip" role="tooltip">Design system catalog</span>
+          <span className="sidebar-rail__tooltip" role="tooltip">Feature Catalog</span>
         </button>
       </div>
     </nav>

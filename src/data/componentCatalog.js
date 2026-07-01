@@ -25,7 +25,7 @@ export const UTILITY_COMPONENTS = [
     label: 'Dropdown / select',
     description: 'Single-select and multi-select dropdowns for fonts, sort order, export format, mood, and industry filters.',
     status: 'built',
-    usedIn: 'Customize Panel, Filter Bar, Export modal',
+    usedIn: 'Export panel, Filter Bar',
   },
   {
     id: 'combobox',
@@ -49,9 +49,9 @@ export const UTILITY_COMPONENTS = [
   {
     id: 'tabs',
     label: 'Tabs',
-    description: 'Tabbed panels used inside Export, Design system catalog, and reusable elsewhere.',
+    description: 'Tabbed panels used inside Export, Feature catalog, and reusable elsewhere.',
     status: 'built',
-    usedIn: 'Export modal, Design system catalog',
+    usedIn: 'Export panel, Feature catalog',
   },
   {
     id: 'segmented-control',
@@ -65,7 +65,7 @@ export const UTILITY_COMPONENTS = [
     label: 'Modal / dialog wrapper',
     description: 'Generic dialog shell with backdrop, header, and close — used for app-level overlays.',
     status: 'built',
-    usedIn: 'Export modal, Design system catalog',
+    usedIn: 'Export panel, Feature catalog',
   },
   {
     id: 'accordion',
@@ -115,9 +115,9 @@ export const UTILITY_COMPONENTS = [
 
 export const FEATURE_COMPONENTS = [
   {
-    id: 'design-system-catalog',
-    label: 'Design system catalog',
-    description: 'Built vs planned inventory of utility, feature, and live preview components — this modal.',
+    id: 'feature-catalog',
+    label: 'Feature catalog',
+    description: 'Built vs planned inventory of utility, feature, and live preview components — opens in the right panel.',
     status: 'built',
     usedIn: 'Left sidebar footer, collapsed sidebar rail',
   },
@@ -150,7 +150,7 @@ export const FEATURE_COMPONENTS = [
   {
     id: 'onboarding-tour',
     label: 'Onboarding tour',
-    description: 'First-run walkthrough pointing at Shuffle, Lock, and Export.',
+    description: 'First-run walkthrough covering navigation, shuffle, export, Build Info, and Feature Catalog.',
     status: 'built',
   },
   {

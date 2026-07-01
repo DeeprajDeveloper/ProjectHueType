@@ -4,8 +4,17 @@ export const TOUR_STEPS = [
     target: null,
     title: 'Welcome to HueType',
     content:
-      'Explore curated color and typography combos, customize them to your taste, and preview how they look on real UI layouts. This quick tour shows you where everything lives.',
+      'Explore curated color and typography combos, customize them to your taste, and preview how they look on realistic UI layouts. This quick tour walks through the updated workspace.',
     placement: 'center',
+  },
+  {
+    id: 'sidebar-nav',
+    target: '[data-tour="sidebar-nav"]',
+    title: 'Sidebar navigation',
+    content:
+      'Use the left sidebar to switch sections — My Workspace, My Presets, Colors, Fonts, and Prototypes. Each selection opens its panel on the right.',
+    placement: 'right',
+    prepare: 'sidebar-workspace',
   },
   {
     id: 'presets',
@@ -13,17 +22,17 @@ export const TOUR_STEPS = [
     title: 'Browse presets',
     content:
       'Start from a curated combo in the library. Search, filter by mood or industry, and click a card to load it into your workspace.',
-    placement: 'right',
-    prepare: 'sidebar-workspace',
+    placement: 'left',
+    prepare: 'open-workspace',
   },
   {
-    id: 'customize',
-    target: '[data-tour="nav-customize"]',
+    id: 'colors',
+    target: '[data-tour="customize"]',
     title: 'Customize colors & type',
     content:
-      'Fine-tune each color role and font pairing. Lock any role you want to keep — locked roles stay put when you shuffle.',
-    placement: 'right',
-    prepare: 'sidebar-workspace',
+      'Open Colors to fine-tune each role, view scales, and lock what you want to keep. The Fonts tab works the same way for heading and body pairings.',
+    placement: 'left',
+    prepare: 'open-colors',
   },
   {
     id: 'shuffle',
@@ -39,8 +48,9 @@ export const TOUR_STEPS = [
     target: '[data-tour="live-preview"]',
     title: 'Live preview',
     content:
-      'See your combo applied to realistic mockups — marketing pages, dashboards, pricing tables, and more. Click the info icon beside the device controls to view contrast checks and combo details.',
+      'See your combo on realistic mockups — marketing pages, dashboards, pricing tables, and more. The info button beside the contrast badge opens WCAG details.',
     placement: 'right',
+    prepare: 'close-panels',
   },
   {
     id: 'preview-controls',
@@ -49,31 +59,60 @@ export const TOUR_STEPS = [
     content:
       'Switch between desktop, tablet, and mobile widths to stress-test readability and layout at different breakpoints.',
     placement: 'bottom',
+    prepare: 'close-panels',
   },
   {
-    id: 'components-panel',
+    id: 'prototypes',
     target: '[data-tour="components-panel"]',
-    title: 'Preview components',
+    title: 'Prototypes & preview options',
     content:
-      'Pick a prototype layout and toggle individual sections on or off. Customize logo text to match your brand. Open these from the left sidebar.',
+      'Under Prototypes, pick a layout archetype and toggle individual sections. Options lets you customize logo text shown across mockups.',
     placement: 'left',
-    prepare: 'components-panel',
+    prepare: 'open-archetypes',
   },
   {
     id: 'toolbar',
     target: '[data-tour="toolbar"]',
-    title: 'Save & export',
+    title: 'Save, share & export',
     content:
-      'Heart a combo to save it under My Presets. Export copies CSS variables, Tailwind config, or JSON tokens to your clipboard.',
+      'Heart a combo to save it under My Presets, copy a shareable link, or open Export to copy or download design tokens.',
     placement: 'right',
     prepare: 'sidebar-workspace',
+  },
+  {
+    id: 'export',
+    target: '[data-tour="export-panel"]',
+    title: 'Export workspace',
+    content:
+      'Choose a format — CSS, SCSS, Tailwind, JSON, Style Dictionary, and more. Preview the output, copy to clipboard, or download a file with color scales included.',
+    placement: 'left',
+    prepare: 'open-export',
+  },
+  {
+    id: 'build-info',
+    target: '[data-tour="build-info"]',
+    title: 'Build Info',
+    content:
+      'Version, tech stack, shipped features, and tips for getting around. You can restart this tour anytime from the button at the bottom of this panel.',
+    placement: 'left',
+    prepare: 'open-build-info',
+  },
+  {
+    id: 'feature-catalog',
+    target: '[data-tour="feature-catalog"]',
+    title: 'Feature Catalog',
+    content:
+      'Browse what is built today versus planned next — utility primitives, app features, and live preview archetypes. Filter by status to focus on the roadmap.',
+    placement: 'left',
+    prepare: 'open-feature-catalog',
   },
   {
     id: 'finish',
     target: null,
     title: "You're all set",
     content:
-      'Reopen Build Info from the sidebar footer anytime. Press Space to shuffle, and explore the design system catalog when you want to see what else is planned.',
+      'Build Info and Feature Catalog live in the sidebar footer. Press Space to shuffle, and export your combo when you are ready to ship tokens to code.',
     placement: 'center',
+    prepare: 'close-export',
   },
 ];
