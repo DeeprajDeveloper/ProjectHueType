@@ -4,6 +4,10 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  font-family: var(--font-chrome);
+  font-size: var(--text-body);
+  line-height: 1.45;
+  color: var(--text-primary);
   background: var(--surface-raised);
   border-left: 1px solid var(--border-subtle);
   overflow: hidden;
@@ -115,7 +119,7 @@
 }
 
 .options-panel__subtitle {
-  font-size: var(--text-caption);
+  font-size: var(--text-body);
   color: var(--text-secondary);
   line-height: 1.5;
 }
@@ -168,7 +172,7 @@
 }
 
 .options-panel__section-hint {
-  font-size: var(--text-caption);
+  font-size: var(--text-body);
   color: var(--text-secondary);
   line-height: 1.45;
   margin-bottom: var(--space-3);
@@ -194,7 +198,7 @@
 }
 
 .options-panel__group-desc {
-  font-size: var(--text-caption);
+  font-size: var(--text-body);
   color: var(--text-tertiary);
   line-height: 1.45;
   margin: 0;
@@ -267,7 +271,7 @@
 }
 
 .options-panel__option-desc {
-  font-size: var(--text-micro);
+  font-size: var(--text-caption);
   color: var(--text-secondary);
   line-height: 1.45;
 }
@@ -291,7 +295,7 @@
 }
 
 .options-panel__field-hint {
-  font-size: var(--text-caption);
+  font-size: var(--text-body);
   color: var(--text-secondary);
   line-height: 1.45;
 }
@@ -383,7 +387,7 @@
 }
 
 .component-toggle__desc {
-  font-size: var(--text-caption);
+  font-size: var(--text-body);
   color: var(--text-secondary);
   line-height: 1.4;
 }

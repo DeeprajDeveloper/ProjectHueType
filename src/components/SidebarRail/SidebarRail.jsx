@@ -14,6 +14,7 @@ import {
   TOP_NAV_ITEMS,
   PROTOTYPE_GROUP,
   SYSTEM_INFO_GROUP,
+  resolvePanelId,
 } from '../../data/sidebarNavItems';
 import Icon from '../Icon/Icon';
 import { ICON_SIZE, ICON_SIZE_SM } from '../Icon/iconConfig';
@@ -69,7 +70,7 @@ function SidebarRail({
 
   const handleNavClick = (id) => {
     setOpenMenuId(null);
-    onPanelChange(id);
+    onPanelChange(resolvePanelId(id));
   };
 
   const handleClick = (id) => {

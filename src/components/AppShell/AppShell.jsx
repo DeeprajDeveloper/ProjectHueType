@@ -13,22 +13,18 @@ import {
   useIsCompactLayout,
   useBreakpoint,
 } from '../../hooks';
-import { SidebarSimpleIcon } from '@phosphor-icons/react';
-import Icon from '../Icon/Icon';
-import { ICON_SIZE } from '../Icon/iconConfig';
+import SidebarHeader from '../SidebarHeader/SidebarHeader';
 import SidebarFooter from '../SidebarFooter/SidebarFooter';
 import './AppShell.scss';
 import LivePreview, { MOBILE_PREVIEW_DISABLED_MESSAGE } from '../LivePreview/LivePreview';
 import ExportPanel from '../ExportPanel/ExportPanel';
 import Toast from '../Toast/Toast';
-import SidebarRail from '../SidebarRail/SidebarRail';
-import SidebarToolbar from '../SidebarToolbar/SidebarToolbar';
 import SidebarNav from '../SidebarNav/SidebarNav';
 import OptionsPanel from '../OptionsPanel/OptionsPanel';
 import Walkthrough from '../Walkthrough/Walkthrough';
 import FeedbackModal from '../FeedbackModal/FeedbackModal';
 import { submitFeedback } from '../../utils/feedback';
-import { readStoredActivePanel, storeActivePanel } from '../../data/sidebarNavItems';
+import { readStoredActivePanel, storeActivePanel, resolvePanelId } from '../../data/sidebarNavItems';
 
 function getInitialPreviewMode() {
   if (typeof window !== 'undefined' && window.matchMedia('(max-width: 639px)').matches) {
@@ -63,6 +59,8 @@ function AppShell() {
     setComponentsSidebarOpen,
     previewLogoText,
     setPreviewLogoText,
+    chipBarArchetypeIds,
+    toggleChipBarArchetype,
   } = useUiPreferences();
 
   const {
@@ -90,13 +88,14 @@ function AppShell() {
   }, []);
 
   const handlePanelToggle = useCallback((panel) => {
-    if (activePanel === panel && componentsSidebarOpen) {
+    const resolvedPanel = resolvePanelId(panel);
+    if (activePanel === resolvedPanel && componentsSidebarOpen) {
       setComponentsSidebarOpen(false);
     } else {
-      setActivePanel(panel);
+      setActivePanel(resolvedPanel);
       setComponentsSidebarOpen(true);
     }
-  }, [activePanel, componentsSidebarOpen, setComponentsSidebarOpen]);
+  }, [activePanel, componentsSidebarOpen, setActivePanel, setComponentsSidebarOpen]);
 
   const handleTourStepEnter = useCallback(
     (step) => {
@@ -279,6 +278,10 @@ function AppShell() {
     setExportOpen((open) => !open);
   }, []);
 
+  const handleSidebarToggle = useCallback(() => {
+    setSidebarOpen((open) => !open);
+  }, []);
+
   const handleResetAllColors = () => {
     resetAllColors(originalCombo);
     showToast('All colors reset');
@@ -309,42 +312,15 @@ function AppShell() {
         ].filter(Boolean).join(' ')}
       >
         <aside className={`app-shell__sidebar ${!sidebarOpen ? 'app-shell__sidebar--collapsed' : ''}`}>
-          <div className="app-shell__sidebar-brand">
-            <div className="app-shell__brand">
-              <img
-                src='/logo_light.svg'
-                alt="HueType"
-                className="app-shell__logo"
-              />
-              <span className="app-shell__brand-name">HueType</span>
-            </div>
-            {sidebarOpen && (
-              <button
-                type="button"
-                className="app-shell__sidebar-toggle"
-                aria-label="Collapse sidebar"
-                onClick={() => setSidebarOpen(false)}
-              >
-                <Icon icon={SidebarSimpleIcon} size={ICON_SIZE} />
-              </button>
-            )}
-          </div>
-
-          <SidebarRail
-            onExpand={() => setSidebarOpen(true)}
-            activePanel={activePanel}
-            panelOpen={componentsSidebarOpen}
-            onPanelChange={handlePanelToggle}
+          <SidebarHeader
+            theme={theme}
             onToggleTheme={toggleTheme}
             onShare={handleShare}
             onSave={handleSave}
             isSaved={isSaved(combo.id)}
-            onExport={handleExportToggle}
-            exportActive={exportOpen}
-            theme={theme}
-            hasActiveFilters={filter.hasActiveFilters}
+            sidebarOpen={sidebarOpen}
+            onToggleSidebar={handleSidebarToggle}
             isCompact={isCompact}
-            onFeedback={handleFeedbackOpen}
           />
 
           <div className="app-shell__sidebar-panel">
@@ -352,31 +328,34 @@ function AppShell() {
               activePanel={activePanel}
               panelOpen={componentsSidebarOpen}
               onPanelChange={handlePanelToggle}
+              activeArchetype={previewArchetype}
+              onArchetypeChange={setPreviewArchetype}
               savedCount={saved.length}
+              presetCount={filter.filtered.length}
               hasActiveFilters={filter.hasActiveFilters}
-            />
-
-            <SidebarToolbar
-              theme={theme}
-              onToggleTheme={toggleTheme}
-              onShare={handleShare}
-              onSave={handleSave}
-              isSaved={isSaved(combo.id)}
-              onExport={handleExportToggle}
-              exportActive={exportOpen}
-              dataTour="toolbar"
+              collapsed={!sidebarOpen}
             />
           </div>
 
-          {sidebarOpen && (
-            <SidebarFooter
-              activePanel={activePanel}
-              panelOpen={componentsSidebarOpen}
-              onPanelChange={handlePanelToggle}
-              onFeedback={handleFeedbackOpen}
-            />
-          )}
+          <SidebarFooter
+            activePanel={activePanel}
+            panelOpen={componentsSidebarOpen}
+            onPanelChange={handlePanelToggle}
+            onExport={handleExportToggle}
+            exportActive={exportOpen}
+            onFeedback={handleFeedbackOpen}
+            collapsed={!sidebarOpen}
+          />
         </aside>
+
+        {isCompact && sidebarOpen && (
+          <button
+            type="button"
+            className="app-shell__sidebar-backdrop"
+            aria-label="Close sidebar"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
 
         <main id="main-content" className="app-shell__content">
           {exportOpen ? (
@@ -394,12 +373,15 @@ function AppShell() {
               previewMode={previewMode}
               onPreviewModeChange={handlePreviewModeChange}
               archetype={previewArchetype}
+              onArchetypeChange={setPreviewArchetype}
+              onOpenArchetypes={() => handlePanelToggle('archetypes')}
+              chipBarArchetypeIds={chipBarArchetypeIds}
+              onToggleChipBarArchetype={toggleChipBarArchetype}
               archetypeParts={archetypeParts}
               previewLogoText={previewLogoText}
               typeBasePx={typeBasePx}
               typeScaleRatio={typeScaleRatio}
-              onOpenInfo={() => handlePanelToggle('info')}
-              infoActive={activePanel === 'info' && componentsSidebarOpen}
+              onOpenContrast={() => handlePanelToggle('info')}
               onShuffle={handleShuffle}
               lockedCount={Object.values(locks).filter(Boolean).length}
               isCompact={isCompact}

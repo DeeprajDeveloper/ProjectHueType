@@ -1,18 +1,13 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useBreakpoint } from '../../hooks';
 import {
-  DesktopIcon,
-  DeviceTabletCameraIcon,
-  DeviceMobileCameraIcon,
   DeviceRotateIcon,
-  FlaskIcon,
-  InfoIcon,
   ShuffleIcon,
 } from '@phosphor-icons/react';
-import SegmentControl from '../SegmentControl/SegmentControl';
 import ContrastBadge from '../ContrastBadge/ContrastBadge';
 import Icon from '../Icon/Icon';
 import { ICON_SIZE_SM } from '../Icon/iconConfig';
+import ArchetypeQuickSelect from '../ArchetypeQuickSelect/ArchetypeQuickSelect';
 import MockupMarketing from './MockupMarketing';
 import MockupDashboard from './MockupDashboard';
 import MockupPricing from './MockupPricing';
@@ -114,19 +109,24 @@ const WCAG_STATUS_LABELS = {
   fail: getContrastStatusLabel('fail'),
 };
 
+const FRAME_OPTIONS = ['desktop', 'tablet', 'mobile'];
+
 function LivePreview({
   combo,
   fontsLoading,
   previewMode,
   onPreviewModeChange,
   archetype,
+  onArchetypeChange,
+  onOpenArchetypes,
+  chipBarArchetypeIds = [],
+  onToggleChipBarArchetype,
   archetypeParts,
   previewLogoText = '',
   typeBasePx,
   typeScaleRatio,
   contrastStatus,
-  onOpenInfo,
-  infoActive = false,
+  onOpenContrast,
   onShuffle,
   lockedCount = 0,
   isCompact = false,
@@ -134,7 +134,6 @@ function LivePreview({
 }) {
   const breakpoint = useBreakpoint();
   const isMobileView = breakpoint === 'mobile';
-  const iconsOnly = isMobileView;
 
   const handlePreviewModeChange = useCallback((mode) => {
     if (isMobileView && mode !== 'mobile') {
@@ -252,46 +251,34 @@ function LivePreview({
   const deviceLabel = isTablet
     ? `${DEVICE_LABELS.tablet} (${tabletOrientation === 'landscape' ? 'Landscape' : 'Portrait'})`
     : DEVICE_LABELS[previewMode] ?? DEVICE_LABELS.desktop;
-  const previewHeading = `Live preview of '${archetypeLabel}' on ${deviceLabel}`;
 
   const dimensionsLabel = frameSize.width > 0 && frameSize.height > 0
-    ? `${frameSize.width} ✕ ${frameSize.height}px`
+    ? `${frameSize.width} × ${frameSize.height}px`
     : previewMode === 'desktop'
       ? 'Sizing to available width'
       : previewMode === 'mobile'
         ? '375px target width'
-        : `${TABLET_SIZE[tabletOrientation].width} ✕ ${TABLET_SIZE[tabletOrientation].height}px`;
+        : `${TABLET_SIZE[tabletOrientation].width} × ${TABLET_SIZE[tabletOrientation].height}px`;
 
   return (
     <div className={`live-preview ${isCompact ? 'live-preview--compact' : ''}`}>
-      <div className="live-preview__controls" data-tour="preview-controls">
-        <div className="live-preview__controls-heading">
-          <h2 className="live-preview__label">
-            <Icon icon={FlaskIcon} size={ICON_SIZE_SM} />
-            {previewHeading}
-          </h2>
-          <p className="live-preview__dimensions" aria-live="polite">
-            Frame: {dimensionsLabel}
-          </p>
-        </div>
-        <div className="live-preview__controls-actions">
-          <div className="live-preview__status-tools">
+      <div className="live-preview__topbar" data-tour="preview-controls">
+        <p className="live-preview__topbar-label">
+          Live preview · <span className="live-preview__topbar-archetype">{archetypeLabel}</span>
+        </p>
+        <div className="live-preview__topbar-actions">
+          <button
+            type="button"
+            className="live-preview__wcag"
+            onClick={onOpenContrast}
+            aria-label={`View WCAG contrast for ${combo.name}`}
+          >
             <ContrastBadge
               status={contrastStatus}
               compact
               label={WCAG_STATUS_LABELS[contrastStatus] || WCAG_STATUS_LABELS.aa}
             />
-            <button
-              type="button"
-              className={`live-preview__info ${infoActive ? 'live-preview__info--active' : ''}`}
-              onClick={onOpenInfo}
-              aria-label={`View WCAG contrast for ${combo.name}`}
-              aria-pressed={infoActive}
-            >
-              <Icon icon={InfoIcon} size={ICON_SIZE_SM} active={infoActive} />
-              <span className="live-preview__info-tooltip" role="tooltip">{combo.name}</span>
-            </button>
-          </div>
+          </button>
           {isTablet && (
             <button
               type="button"
@@ -301,32 +288,22 @@ function LivePreview({
               title={isTabletLandscape ? 'Portrait' : 'Landscape'}
             >
               <Icon icon={DeviceRotateIcon} size={ICON_SIZE_SM} />
-              <span>{isTabletLandscape ? 'Portrait' : 'Landscape'}</span>
             </button>
           )}
-          <SegmentControl
-            options={[
-              {
-                value: 'desktop',
-                label: 'Desktop',
-                icon: DesktopIcon,
-                disabled: isMobileView,
-                disabledTitle: MOBILE_PREVIEW_DISABLED_MESSAGE,
-              },
-              {
-                value: 'tablet',
-                label: 'Tablet',
-                icon: DeviceTabletCameraIcon,
-                disabled: isMobileView,
-                disabledTitle: MOBILE_PREVIEW_DISABLED_MESSAGE,
-              },
-              { value: 'mobile', label: 'Mobile', icon: DeviceMobileCameraIcon },
-            ]}
-            value={previewMode}
-            onChange={handlePreviewModeChange}
-            ariaLabel="Preview device width"
-            iconsOnly={iconsOnly}
-          />
+          <div className="live-preview__frame-toggle" role="group" aria-label="Preview device width">
+            {FRAME_OPTIONS.map((mode) => (
+              <button
+                key={mode}
+                type="button"
+                className={`live-preview__frame-btn ${previewMode === mode ? 'live-preview__frame-btn--active' : ''}`}
+                onClick={() => handlePreviewModeChange(mode)}
+                disabled={isMobileView && mode !== 'mobile'}
+                title={isMobileView && mode !== 'mobile' ? MOBILE_PREVIEW_DISABLED_MESSAGE : undefined}
+              >
+                {DEVICE_LABELS[mode]}
+              </button>
+            ))}
+          </div>
           {onShuffle && (
             <button
               type="button"
@@ -349,6 +326,10 @@ function LivePreview({
         </div>
       </div>
 
+      <p className="live-preview__meta" aria-live="polite">
+        {archetypeLabel} · {deviceLabel} · {dimensionsLabel}
+      </p>
+
       <div className={frameWrapClassName} ref={frameWrapRef} data-tour="live-preview">
         <div
           ref={frameRef}
@@ -361,13 +342,21 @@ function LivePreview({
           {previewEmpty ? (
             <div className="live-preview__empty">
               <p>All preview parts are hidden.</p>
-              <p className="live-preview__empty-hint">Turn sections on in Prototypes → Options.</p>
+              <p className="live-preview__empty-hint">Turn sections on in Preview → Options.</p>
             </div>
           ) : (
             renderArchetype(archetype, previewMode, activeParts, previewLogoText, setFrameScrollLocked)
           )}
         </div>
       </div>
+
+      <ArchetypeQuickSelect
+        activeArchetype={archetype}
+        chipBarArchetypeIds={chipBarArchetypeIds}
+        onArchetypeChange={onArchetypeChange}
+        onToggleChipBarArchetype={onToggleChipBarArchetype}
+        onOpenArchetypes={onOpenArchetypes}
+      />
     </div>
   );
 }

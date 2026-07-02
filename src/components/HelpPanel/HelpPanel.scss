@@ -53,7 +53,7 @@
 
   dt {
     margin: 0;
-    font-size: var(--text-caption);
+    font-size: var(--text-body);
     color: var(--text-secondary);
   }
 
@@ -65,7 +65,7 @@
     display: inline-block;
     padding: 2px 8px;
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: var(--text-caption);
     font-weight: 500;
     color: var(--text-primary);
     background: var(--surface-base);

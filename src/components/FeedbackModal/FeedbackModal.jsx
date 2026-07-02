@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { XIcon } from '@phosphor-icons/react';
-import { FEEDBACK_TYPES } from '../../utils/feedback';
+import { FEEDBACK_TYPES, FEEDBACK_MESSAGE_MAX_LENGTH } from '../../utils/feedback';
 import Icon from '../Icon/Icon';
 import { ICON_SIZE_SM } from '../Icon/iconConfig';
 import './FeedbackModal.scss';
@@ -109,7 +109,7 @@ function FeedbackModal({ onClose, onSubmit }) {
             />
           </label>
 
-          <label className="feedback-modal__field" htmlFor="feedback-message">
+          <label className="feedback-modal__field feedback-modal__field--message" htmlFor="feedback-message">
             <span className="feedback-modal__label">Message</span>
             <textarea
               id="feedback-message"
@@ -120,9 +120,13 @@ function FeedbackModal({ onClose, onSubmit }) {
                 if (error) setError('');
               }}
               placeholder="What happened? What would you like to see improved?"
-              rows={5}
+              rows={6}
+              maxLength={FEEDBACK_MESSAGE_MAX_LENGTH}
               required
             />
+            <span className="feedback-modal__char-count" aria-live="polite">
+              {message.length}/{FEEDBACK_MESSAGE_MAX_LENGTH}
+            </span>
           </label>
 
           {error && (

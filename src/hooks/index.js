@@ -7,6 +7,7 @@ import { syncUrlState, readUrlState, isDefaultAppState } from '../utils/urlState
 import { isEditableTarget, matchesShortcut } from '../utils/keyboard';
 import { NAV_PANEL_SHORTCUTS, PREVIEW_DEVICE_SHORTCUTS } from '../data/keyboardShortcuts';
 import { getDefaultArchetypeParts, PREVIEW_ARCHETYPES, mergeArchetypePartsState, resolveArchetypeParts } from '../components/PreviewComponentsPanel/previewArchetypes';
+import { CHIP_BAR_ARCHETYPE_IDS } from '../data/sidebarNavItems';
 import { TYPE_BASE_PX, clampTypeBasePx, DEFAULT_SCALE_RATIO, clampScaleRatio } from '../utils/typographyScale';
 
 export function useComboState(initialCombo) {
@@ -290,8 +291,26 @@ export function useUiPreferences() {
   const PREVIEW_PARTS_KEY = 'huetype-preview-parts';
   const COMPONENTS_SIDEBAR_KEY = 'huetype-components-sidebar-open';
   const PREVIEW_LOGO_KEY = 'huetype-preview-logo-text';
+  const CHIP_BAR_KEY = 'huetype-chip-bar-archetypes';
   const VALID_ARCHETYPES = new Set(PREVIEW_ARCHETYPES.map((archetype) => archetype.id));
   const DEFAULT_PREVIEW_LOGO = 'Acme Co.';
+  const MAX_CHIP_BAR = 8;
+
+  const readChipBarArchetypeIds = () => {
+    try {
+      const stored = JSON.parse(localStorage.getItem(CHIP_BAR_KEY));
+      if (
+        Array.isArray(stored)
+        && stored.length <= MAX_CHIP_BAR
+        && stored.every((id) => VALID_ARCHETYPES.has(id))
+      ) {
+        return stored;
+      }
+    } catch {
+      // ignore
+    }
+    return CHIP_BAR_ARCHETYPE_IDS.filter((id) => VALID_ARCHETYPES.has(id));
+  };
 
   const [showColorScales, setShowColorScales] = useState(() => {
     try {
@@ -366,6 +385,8 @@ export function useUiPreferences() {
     }
     return DEFAULT_PREVIEW_LOGO;
   });
+
+  const [chipBarArchetypeIds, setChipBarArchetypeIdsState] = useState(readChipBarArchetypeIds);
 
   const toggleColorScales = useCallback(() => {
     setShowColorScales((prev) => {
@@ -455,6 +476,35 @@ export function useUiPreferences() {
     }
   }, []);
 
+  const persistChipBarArchetypeIds = useCallback((ids) => {
+    setChipBarArchetypeIdsState(ids);
+    try {
+      localStorage.setItem(CHIP_BAR_KEY, JSON.stringify(ids));
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  const toggleChipBarArchetype = useCallback((archetypeId) => {
+    if (!VALID_ARCHETYPES.has(archetypeId)) return;
+    setChipBarArchetypeIdsState((prev) => {
+      let next = prev;
+      if (prev.includes(archetypeId)) {
+        next = prev.filter((id) => id !== archetypeId);
+      } else if (prev.length >= MAX_CHIP_BAR) {
+        return prev;
+      } else {
+        next = [...prev, archetypeId];
+      }
+      try {
+        localStorage.setItem(CHIP_BAR_KEY, JSON.stringify(next));
+      } catch {
+        // ignore
+      }
+      return next;
+    });
+  }, []);
+
   return {
     showColorScales,
     toggleColorScales,
@@ -471,6 +521,9 @@ export function useUiPreferences() {
     setComponentsSidebarOpen,
     previewLogoText,
     setPreviewLogoText,
+    chipBarArchetypeIds,
+    toggleChipBarArchetype,
+    setChipBarArchetypeIds: persistChipBarArchetypeIds,
   };
 }
 

@@ -2,6 +2,7 @@ import { APP_VERSION } from '../data/buildInfo';
 
 export const FEEDBACK_EMAIL = 'hello@huetype.dev';
 export const FEEDBACK_STORAGE_KEY = 'huetype-feedback-submissions';
+export const FEEDBACK_MESSAGE_MAX_LENGTH = 2000;
 
 export const FEEDBACK_TYPES = [
   { id: 'bug', label: 'Bug report' },
