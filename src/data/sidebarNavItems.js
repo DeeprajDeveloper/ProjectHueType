@@ -151,6 +151,49 @@ export function storeActivePanel(panelId) {
   }
 }
 
+export function readStoredLayoutsOpen() {
+  try {
+    const stored = localStorage.getItem(LAYOUTS_STORAGE_KEY);
+    if (stored !== null) return stored === 'true';
+  } catch {
+    // ignore
+  }
+  return true;
+}
+
+export function storeLayoutsOpen(open) {
+  try {
+    localStorage.setItem(LAYOUTS_STORAGE_KEY, String(open));
+  } catch {
+    // ignore
+  }
+}
+
+export const PREVIEW_MODE_STORAGE_KEY = 'huetype-preview-mode';
+
+export function readStoredPreviewMode() {
+  try {
+    if (typeof window !== 'undefined' && window.matchMedia('(max-width: 639px)').matches) {
+      return 'mobile';
+    }
+    const stored = localStorage.getItem(PREVIEW_MODE_STORAGE_KEY);
+    if (stored === 'desktop' || stored === 'tablet' || stored === 'mobile') {
+      return stored;
+    }
+  } catch {
+    // ignore
+  }
+  return 'desktop';
+}
+
+export function storePreviewMode(mode) {
+  try {
+    localStorage.setItem(PREVIEW_MODE_STORAGE_KEY, mode);
+  } catch {
+    // ignore
+  }
+}
+
 export function isPreviewPanelActive(activePanel, panelOpen) {
   return panelOpen && (
     activePanel === 'preview-settings'

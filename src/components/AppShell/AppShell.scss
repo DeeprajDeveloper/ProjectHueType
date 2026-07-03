@@ -53,18 +53,26 @@
   }
 }
 
-.app-shell__backdrop {
+.app-shell__backdrop,
+.app-shell__sidebar-backdrop {
   @include button-reset;
   position: fixed;
   inset: 0;
-  z-index: 180;
-  background: rgb(0 0 0 / 45%);
   cursor: default;
+  background: rgb(15 15 15 / 28%);
   animation: app-shell-backdrop-in 200ms ease;
 
   @media (prefers-reduced-motion: reduce) {
     animation: none;
   }
+}
+
+.app-shell__backdrop {
+  z-index: 180;
+}
+
+.app-shell__sidebar-backdrop {
+  z-index: 205;
 }
 
 @keyframes app-shell-backdrop-in {
@@ -91,6 +99,10 @@
     overflow: hidden;
     z-index: 210;
     transition: width var(--transition-base), box-shadow var(--transition-base);
+
+    &.app-shell__sidebar--collapsed {
+      overflow: visible;
+    }
   }
 
   .app-shell__sidebar:not(.app-shell__sidebar--collapsed) {
@@ -100,6 +112,14 @@
     bottom: 0;
     width: var(--sidebar-width);
     box-shadow: var(--shadow-lg);
+  }
+
+  .app-shell__sidebar-panel {
+    overflow: hidden;
+  }
+
+  .app-shell__sidebar--collapsed .app-shell__sidebar-panel {
+    overflow: visible;
   }
 
   .app-shell__content {
@@ -133,20 +153,6 @@
   }
 }
 
-.app-shell__sidebar-backdrop {
-  @include button-reset;
-  position: fixed;
-  inset: 0;
-  z-index: 205;
-  background: rgb(0 0 0 / 45%);
-  cursor: default;
-  animation: app-shell-backdrop-in 200ms ease;
-
-  @media (prefers-reduced-motion: reduce) {
-    animation: none;
-  }
-}
-
 .app-shell__sidebar {
   position: relative;
   display: flex;
@@ -174,7 +180,8 @@
   .sidebar-nav__chevron,
   .sidebar-nav__divider,
   .sidebar-footer__label,
-  .sidebar-footer__export-label {
+  .sidebar-footer__export-label,
+  .sidebar-footer__copyright {
     display: none;
   }
 

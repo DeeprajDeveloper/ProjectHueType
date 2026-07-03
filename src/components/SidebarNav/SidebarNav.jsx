@@ -6,23 +6,14 @@ import {
   CUSTOMIZE_NAV_ITEMS,
   PREVIEW_NAV_ITEMS,
   ARCHETYPE_NAV_META,
-  LAYOUTS_STORAGE_KEY,
+  readStoredLayoutsOpen,
+  storeLayoutsOpen,
   resolvePanelId,
 } from '../../data/sidebarNavItems';
 import { PREVIEW_ARCHETYPES } from '../PreviewComponentsPanel/previewArchetypes';
 import Icon from '../Icon/Icon';
 import { ICON_SIZE_SM } from '../Icon/iconConfig';
 import './SidebarNav.scss';
-
-function readLayoutsOpen() {
-  try {
-    const stored = localStorage.getItem(LAYOUTS_STORAGE_KEY);
-    if (stored !== null) return stored === 'true';
-  } catch {
-    // ignore
-  }
-  return true;
-}
 
 function SidebarNav({
   activePanel,
@@ -34,19 +25,11 @@ function SidebarNav({
   presetCount,
   hasActiveFilters,
   collapsed = false,
+  isCompact = false,
 }) {
-  const [layoutsOpen, setLayoutsOpen] = useState(readLayoutsOpen);
+  const [layoutsOpen, setLayoutsOpen] = useState(readStoredLayoutsOpen);
   const [openMenuId, setOpenMenuId] = useState(null);
   const menuRef = useRef(null);
-  const previousArchetypeRef = useRef(activeArchetype);
-
-  useEffect(() => {
-    if (collapsed || !activeArchetype) return;
-    if (activeArchetype === previousArchetypeRef.current) return;
-
-    setLayoutsOpen(true);
-    previousArchetypeRef.current = activeArchetype;
-  }, [activeArchetype, collapsed]);
 
   useEffect(() => {
     if (!openMenuId) return undefined;
@@ -60,9 +43,13 @@ function SidebarNav({
       if (event.key === 'Escape') setOpenMenuId(null);
     };
 
-    document.addEventListener('pointerdown', handlePointerDown);
+    const attachTimer = window.setTimeout(() => {
+      document.addEventListener('pointerdown', handlePointerDown);
+    }, 0);
+
     document.addEventListener('keydown', handleKeyDown);
     return () => {
+      window.clearTimeout(attachTimer);
       document.removeEventListener('pointerdown', handlePointerDown);
       document.removeEventListener('keydown', handleKeyDown);
     };
@@ -76,11 +63,7 @@ function SidebarNav({
 
     setLayoutsOpen((open) => {
       const next = !open;
-      try {
-        localStorage.setItem(LAYOUTS_STORAGE_KEY, String(next));
-      } catch {
-        // ignore
-      }
+      storeLayoutsOpen(next);
       return next;
     });
   };
@@ -93,6 +76,8 @@ function SidebarNav({
     setOpenMenuId(null);
     onPanelChange(resolvePanelId(item.id));
   };
+
+  const showLayoutsList = layoutsOpen || (isCompact && !collapsed);
 
   const isPanelActive = (panelId) => activePanel === panelId && panelOpen;
 
@@ -287,7 +272,7 @@ function SidebarNav({
             PREVIEW_ARCHETYPES.map((archetype) => renderArchetypeItem(archetype, { inPopover: true }))
           ))
         ) : (
-          layoutsOpen && (
+          showLayoutsList && (
             <div className="sidebar-nav__sublist">
               {PREVIEW_ARCHETYPES.map((archetype) => renderArchetypeItem(archetype))}
             </div>
@@ -295,13 +280,17 @@ function SidebarNav({
         )}
       </div>
 
-      {!collapsed && PREVIEW_NAV_ITEMS.map((item) => renderNavItem(item))}
+      {PREVIEW_NAV_ITEMS.map((item) => renderNavItem(item))}
     </div>
   );
 
   return (
     <nav
-      className={`sidebar-nav ${collapsed ? 'sidebar-nav--collapsed' : ''}`}
+      className={[
+        'sidebar-nav',
+        collapsed ? 'sidebar-nav--collapsed' : '',
+        isCompact ? 'sidebar-nav--compact' : '',
+      ].filter(Boolean).join(' ')}
       aria-label="Main navigation"
       data-tour="sidebar-nav"
     >

@@ -23,9 +23,21 @@ export function formatShortcutLabel({ alt = false, shift = false, code, key }, {
   return parts.join(mac ? '' : '+');
 }
 
+export function formatShortcutLabels(shortcut) {
+  const mac = formatShortcutLabel(shortcut, { mac: true });
+  const win = formatShortcutLabel(shortcut, { mac: false });
+  return { mac, win, unified: mac === win };
+}
+
 function isMacPlatform() {
   if (typeof navigator === 'undefined') return false;
-  return /Mac|iPhone|iPad|iPod/.test(navigator.platform);
+
+  const platform = navigator.userAgentData?.platform;
+  if (platform) {
+    return /macOS|iOS|iPadOS/i.test(platform);
+  }
+
+  return /Mac|iPhone|iPad|iPod/i.test(navigator.userAgent);
 }
 
 function codeToKeyLabel(code) {

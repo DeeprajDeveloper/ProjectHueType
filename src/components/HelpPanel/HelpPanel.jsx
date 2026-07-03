@@ -1,6 +1,27 @@
 import { SHORTCUT_SECTIONS } from '../../data/keyboardShortcuts';
-import { formatShortcutLabel } from '../../utils/keyboard';
+import { formatShortcutLabels } from '../../utils/keyboard';
 import './HelpPanel.scss';
+
+function ShortcutKeys({ shortcut }) {
+  const { mac, win, unified } = formatShortcutLabels(shortcut);
+
+  if (unified) {
+    return <kbd>{mac}</kbd>;
+  }
+
+  return (
+    <div className="help-panel__shortcut-keys">
+      <span className="help-panel__shortcut-key-group">
+        <span className="help-panel__platform">Mac</span>
+        <kbd>{mac}</kbd>
+      </span>
+      <span className="help-panel__shortcut-key-group">
+        <span className="help-panel__platform">Win</span>
+        <kbd>{win}</kbd>
+      </span>
+    </div>
+  );
+}
 
 function HelpPanel() {
   return (
@@ -9,7 +30,7 @@ function HelpPanel() {
         <h3 className="help-panel__title">Help</h3>
         <p className="help-panel__intro">
           Keyboard shortcuts work anywhere except when typing in a field.
-          Press the same panel shortcut again to close it.
+          Press the same panel shortcut again to close it. Mac uses Option (⌥); Windows uses Alt.
         </p>
       </header>
 
@@ -20,7 +41,7 @@ function HelpPanel() {
             {section.items.map((item) => (
               <div key={item.label} className="help-panel__shortcut-row">
                 <dt>{item.label}</dt>
-                <dd><kbd>{formatShortcutLabel(item.shortcut)}</kbd></dd>
+                <dd><ShortcutKeys shortcut={item.shortcut} /></dd>
               </div>
             ))}
           </dl>

@@ -291,18 +291,25 @@ function LivePreview({
             </button>
           )}
           <div className="live-preview__frame-toggle" role="group" aria-label="Preview device width">
-            {FRAME_OPTIONS.map((mode) => (
-              <button
-                key={mode}
-                type="button"
-                className={`live-preview__frame-btn ${previewMode === mode ? 'live-preview__frame-btn--active' : ''}`}
-                onClick={() => handlePreviewModeChange(mode)}
-                disabled={isMobileView && mode !== 'mobile'}
-                title={isMobileView && mode !== 'mobile' ? MOBILE_PREVIEW_DISABLED_MESSAGE : undefined}
-              >
-                {DEVICE_LABELS[mode]}
-              </button>
-            ))}
+            {FRAME_OPTIONS.map((mode) => {
+              const unavailable = isMobileView && mode !== 'mobile';
+              return (
+                <button
+                  key={mode}
+                  type="button"
+                  className={[
+                    'live-preview__frame-btn',
+                    previewMode === mode ? 'live-preview__frame-btn--active' : '',
+                    unavailable ? 'live-preview__frame-btn--unavailable' : '',
+                  ].filter(Boolean).join(' ')}
+                  onClick={() => handlePreviewModeChange(mode)}
+                  aria-disabled={unavailable || undefined}
+                  title={unavailable ? MOBILE_PREVIEW_DISABLED_MESSAGE : undefined}
+                >
+                  {DEVICE_LABELS[mode]}
+                </button>
+              );
+            })}
           </div>
           {onShuffle && (
             <button

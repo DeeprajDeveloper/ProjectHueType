@@ -1,7 +1,10 @@
 /** App build metadata — shown in Build Info panel */
 
 export const APP_VERSION = '0.3.0';
+export const APP_NAME = 'HueType';
 export const APP_SITE_URL = 'https://huetype.dev';
+export const APP_SITE_HOST = 'huetype.dev';
+export const APP_COPYRIGHT_START_YEAR = 2026;
 export const GITHUB_REPO_URL = 'https://github.com/DeeprajDeveloper/ProjectHueType';
 export const PRIVACY_POLICY_PATH = '/privacy';
 export const CONTACT_EMAIL = 'hello@huetype.dev';

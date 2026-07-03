@@ -24,19 +24,12 @@ import OptionsPanel from '../OptionsPanel/OptionsPanel';
 import Walkthrough from '../Walkthrough/Walkthrough';
 import FeedbackModal from '../FeedbackModal/FeedbackModal';
 import { submitFeedback } from '../../utils/feedback';
-import { readStoredActivePanel, storeActivePanel, resolvePanelId } from '../../data/sidebarNavItems';
-
-function getInitialPreviewMode() {
-  if (typeof window !== 'undefined' && window.matchMedia('(max-width: 639px)').matches) {
-    return 'mobile';
-  }
-  return 'desktop';
-}
+import { readStoredActivePanel, storeActivePanel, readStoredPreviewMode, storePreviewMode, resolvePanelId } from '../../data/sidebarNavItems';
 
 function AppShell() {
   const [activePanel, setActivePanelState] = useState(readStoredActivePanel);
   const [exportOpen, setExportOpen] = useState(false);
-  const [previewMode, setPreviewMode] = useState(getInitialPreviewMode);
+  const [previewMode, setPreviewMode] = useState(readStoredPreviewMode);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [originalCombo, setOriginalCombo] = useState(COMBOS[0]);
@@ -81,6 +74,8 @@ function AppShell() {
 
   const isSavedView = activePanel === 'saved';
   const filter = useComboFilter(isSavedView ? saved : COMBOS);
+  const isCompact = useIsCompactLayout();
+  const breakpoint = useBreakpoint();
 
   const setActivePanel = useCallback((panel) => {
     setActivePanelState(panel);
@@ -95,7 +90,10 @@ function AppShell() {
       setActivePanel(resolvedPanel);
       setComponentsSidebarOpen(true);
     }
-  }, [activePanel, componentsSidebarOpen, setActivePanel, setComponentsSidebarOpen]);
+    if (isCompact) {
+      setSidebarOpen(false);
+    }
+  }, [activePanel, componentsSidebarOpen, isCompact, setActivePanel, setComponentsSidebarOpen]);
 
   const handleTourStepEnter = useCallback(
     (step) => {
@@ -165,8 +163,6 @@ function AppShell() {
   );
 
   const tour = useWalkthrough({ onStepEnter: handleTourStepEnter });
-  const isCompact = useIsCompactLayout();
-  const breakpoint = useBreakpoint();
 
   useEffect(() => {
     if (breakpoint === 'mobile') {
@@ -180,6 +176,7 @@ function AppShell() {
       return;
     }
     setPreviewMode(mode);
+    storePreviewMode(mode);
   }, [breakpoint, showToast]);
 
   useEffect(() => {
@@ -334,6 +331,7 @@ function AppShell() {
               presetCount={filter.filtered.length}
               hasActiveFilters={filter.hasActiveFilters}
               collapsed={!sidebarOpen}
+              isCompact={isCompact}
             />
           </div>
 
@@ -390,7 +388,7 @@ function AppShell() {
           )}
         </main>
 
-        {isCompact && componentsSidebarOpen && (
+        {isCompact && componentsSidebarOpen && !sidebarOpen && (
           <button
             type="button"
             className="app-shell__backdrop"

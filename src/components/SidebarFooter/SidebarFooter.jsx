@@ -1,5 +1,5 @@
 import { FOOTER_LINK_ITEMS, FOOTER_NAV_ITEMS, ExportIcon } from '../../data/sidebarNavItems';
-import { APP_VERSION } from '../../data/buildInfo';
+import { APP_COPYRIGHT_START_YEAR, APP_SITE_HOST, APP_SITE_URL, APP_VERSION } from '../../data/buildInfo';
 import Icon from '../Icon/Icon';
 import { ICON_SIZE_SM } from '../Icon/iconConfig';
 import './SidebarFooter.scss';
@@ -13,6 +13,11 @@ function SidebarFooter({
   onFeedback,
   collapsed = false,
 }) {
+  const currentYear = new Date().getFullYear();
+  const copyrightYears = currentYear > APP_COPYRIGHT_START_YEAR
+    ? `${APP_COPYRIGHT_START_YEAR}–${currentYear}`
+    : String(APP_COPYRIGHT_START_YEAR);
+
   return (
     <footer className="sidebar-footer">
       <button
@@ -79,6 +84,13 @@ function SidebarFooter({
           </li>
         ))}
       </ul>
+
+      <p className="sidebar-footer__copyright">
+        © {copyrightYears}{' '}
+        <a href={APP_SITE_URL} className="sidebar-footer__copyright-link">
+          {APP_SITE_HOST}
+        </a>
+      </p>
     </footer>
   );
 }

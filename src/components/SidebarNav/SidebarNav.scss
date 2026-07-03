@@ -264,3 +264,10 @@
     overflow: visible;
   }
 }
+
+.sidebar-nav--compact.sidebar-nav--collapsed {
+  .sidebar-nav__popover {
+    z-index: 320;
+    max-width: min(280px, calc(100vw - var(--sidebar-width-collapsed) - var(--space-4)));
+  }
+}

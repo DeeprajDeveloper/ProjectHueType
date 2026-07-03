@@ -87,7 +87,7 @@
     background var(--transition-fast),
     color var(--transition-fast);
 
-  &:hover:not(:disabled) {
+  &:hover:not(:disabled):not(.live-preview__frame-btn--unavailable) {
     color: var(--text-primary);
   }
 
@@ -96,12 +96,13 @@
     color: var(--surface-base);
     font-weight: 600;
 
-    &:hover:not(:disabled) {
+    &:hover:not(:disabled):not(.live-preview__frame-btn--unavailable) {
       color: var(--accent-contrast);
     }
   }
 
-  &:disabled {
+  &:disabled,
+  &--unavailable {
     opacity: 0.45;
     cursor: not-allowed;
   }
