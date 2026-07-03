@@ -7,6 +7,7 @@ import {
 } from '@phosphor-icons/react';
 import Icon from '../Icon/Icon';
 import { ICON_SIZE, ICON_SIZE_SM } from '../Icon/iconConfig';
+import { getThemeLogoSrc } from '../../utils/themeAssets';
 import './SidebarHeader.scss';
 
 function SidebarHeader({
@@ -22,7 +23,7 @@ function SidebarHeader({
   return (
     <div className="sidebar-header">
       <div className="sidebar-header__brand">
-        <img src="/logo_light.svg" alt="HueType" className="sidebar-header__logo" />
+        <img src={getThemeLogoSrc(theme)} alt="HueType" className="sidebar-header__logo" />
         <span className="sidebar-header__name">HueType</span>
       </div>
 

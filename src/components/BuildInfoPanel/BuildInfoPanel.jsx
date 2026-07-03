@@ -1,4 +1,4 @@
-import { ArrowRightIcon, RocketLaunchIcon } from '@phosphor-icons/react';
+import { ArrowRightIcon, ArrowSquareOutIcon, GithubLogoIcon, RocketLaunchIcon } from '@phosphor-icons/react';
 import {
   APP_VERSION,
   BUILD_CHANGELOG,
@@ -6,6 +6,8 @@ import {
   BUILD_NOTES,
   BUILD_STACK,
   BUILD_SUMMARY,
+  GITHUB_REPO_URL,
+  PRIVACY_POLICY_PATH,
 } from '../../data/buildInfo';
 import Accordion from '../Accordion/Accordion';
 import Icon from '../Icon/Icon';
@@ -35,6 +37,29 @@ function BuildInfoPanel({ onStartTour }) {
               <span className="build-info-panel__stack-pill">{item}</span>
             </li>
           ))}
+        </ul>
+      </section>
+
+      <section className="build-info-panel__section" aria-labelledby="build-info-links">
+        <h4 id="build-info-links" className="build-info-panel__section-title">Links</h4>
+        <ul className="build-info-panel__external-links">
+          <li>
+            <a
+              href={GITHUB_REPO_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="build-info-panel__external-link"
+            >
+              <Icon icon={GithubLogoIcon} size={ICON_SIZE_SM} />
+              <span>GitHub repository</span>
+              <Icon icon={ArrowSquareOutIcon} size={ICON_SIZE_SM} className="build-info-panel__external-icon" />
+            </a>
+          </li>
+          <li>
+            <a href={PRIVACY_POLICY_PATH} className="build-info-panel__external-link">
+              <span>Privacy policy</span>
+            </a>
+          </li>
         </ul>
       </section>
 

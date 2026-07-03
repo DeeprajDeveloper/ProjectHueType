@@ -18,6 +18,7 @@ import {
 } from '../../data/sidebarNavItems';
 import Icon from '../Icon/Icon';
 import { ICON_SIZE, ICON_SIZE_SM } from '../Icon/iconConfig';
+import { getThemeLogoSrc } from '../../utils/themeAssets';
 import './SidebarRail.scss';
 
 const RAIL_NAV_ITEMS = [...TOP_NAV_ITEMS, PROTOTYPE_GROUP];
@@ -214,7 +215,7 @@ function SidebarRail({
       <div className="sidebar-rail__group">
         {isCompact ? (
           <div className="sidebar-rail__logo" aria-hidden="true">
-            <img src="/logo_light.svg" alt="" />
+            <img src={getThemeLogoSrc(theme)} alt="" />
           </div>
         ) : (
           <button

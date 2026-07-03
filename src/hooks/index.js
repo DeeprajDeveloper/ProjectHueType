@@ -9,6 +9,7 @@ import { NAV_PANEL_SHORTCUTS, PREVIEW_DEVICE_SHORTCUTS } from '../data/keyboardS
 import { getDefaultArchetypeParts, PREVIEW_ARCHETYPES, mergeArchetypePartsState, resolveArchetypeParts } from '../components/PreviewComponentsPanel/previewArchetypes';
 import { CHIP_BAR_ARCHETYPE_IDS } from '../data/sidebarNavItems';
 import { TYPE_BASE_PX, clampTypeBasePx, DEFAULT_SCALE_RATIO, clampScaleRatio } from '../utils/typographyScale';
+import { applyThemeBranding } from '../utils/themeAssets';
 
 export function useComboState(initialCombo) {
   const urlState = readUrlState();
@@ -214,7 +215,7 @@ export function useTheme() {
   });
 
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
+    applyThemeBranding(theme);
     localStorage.setItem('huetype-theme', theme);
   }, [theme]);
 

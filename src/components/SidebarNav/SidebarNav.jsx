@@ -38,11 +38,14 @@ function SidebarNav({
   const [layoutsOpen, setLayoutsOpen] = useState(readLayoutsOpen);
   const [openMenuId, setOpenMenuId] = useState(null);
   const menuRef = useRef(null);
+  const previousArchetypeRef = useRef(activeArchetype);
 
   useEffect(() => {
-    if (activeArchetype && !collapsed) {
-      setLayoutsOpen(true);
-    }
+    if (collapsed || !activeArchetype) return;
+    if (activeArchetype === previousArchetypeRef.current) return;
+
+    setLayoutsOpen(true);
+    previousArchetypeRef.current = activeArchetype;
   }, [activeArchetype, collapsed]);
 
   useEffect(() => {

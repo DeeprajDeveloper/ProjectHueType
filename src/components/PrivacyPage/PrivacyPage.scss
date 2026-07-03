@@ -1,0 +1,129 @@
+@use '../../styles/mixins' as *;
+
+html.route-privacy,
+body.route-privacy {
+  height: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+#root.route-privacy {
+  height: auto;
+  min-height: 100dvh;
+  max-height: none;
+  overflow: visible;
+}
+
+.privacy-page {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-base);
+  color: var(--text-primary);
+}
+
+.privacy-page__header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--surface-raised);
+}
+
+.privacy-page__back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-body);
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+
+  &:hover {
+    color: var(--text-primary);
+  }
+}
+
+.privacy-page__brand {
+  font-size: var(--text-caption);
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-decoration: none;
+
+  &:hover {
+    color: var(--text-primary);
+  }
+}
+
+.privacy-page__main {
+  flex: 1;
+  padding: var(--space-5) var(--space-4) var(--space-8);
+
+  @include respond-to(tablet) {
+    padding: var(--space-6) var(--space-5) var(--space-8);
+  }
+}
+
+.privacy-page__article {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.simple-markdown {
+  font-size: var(--text-body);
+  line-height: 1.6;
+  color: var(--text-secondary);
+
+  &__h1 {
+    margin: 0 0 var(--space-2);
+    font-size: var(--text-heading);
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.25;
+  }
+
+  &__h2 {
+    margin: var(--space-5) 0 var(--space-2);
+    font-size: var(--text-body);
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.35;
+  }
+
+  &__p {
+    margin: 0 0 var(--space-3);
+  }
+
+  &__ul {
+    margin: 0 0 var(--space-4);
+    padding-left: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  &__hr {
+    margin: var(--space-5) 0;
+    border: none;
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+
+    &:hover {
+      color: var(--accent-hover);
+    }
+  }
+
+  strong {
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+}

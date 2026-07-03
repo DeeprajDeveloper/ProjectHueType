@@ -22,7 +22,9 @@ import {
   BooksIcon,
   ChatCircleDotsIcon,
   ExportIcon,
+  ShieldCheckIcon,
 } from '@phosphor-icons/react';
+import { PRIVACY_POLICY_PATH } from './buildInfo';
 
 export const WORKSPACE_NAV_ITEMS = [
   { id: 'workspace', label: 'Preset library', icon: SquaresFourIcon },
@@ -67,6 +69,10 @@ export const FOOTER_NAV_ITEMS = [
   { id: 'build-info', label: 'Build info', icon: PackageIcon, showVersion: true },
   { id: 'feature-catalog', label: 'Feature catalog', icon: BooksIcon },
   { id: 'feedback', label: 'Feedback', icon: ChatCircleDotsIcon, action: 'feedback' },
+];
+
+export const FOOTER_LINK_ITEMS = [
+  { id: 'privacy', label: 'Privacy', href: PRIVACY_POLICY_PATH, icon: ShieldCheckIcon },
 ];
 
 export const SYSTEM_INFO_NAV_ITEMS = [

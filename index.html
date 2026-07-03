@@ -3,13 +3,39 @@
   <head>
     <meta charset="UTF-8" />
     <link id="favicon" rel="icon" type="image/svg+xml" href="/logo_light.svg" />
-    
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="HueType — pick palette and font pairings that work together" />
+    <meta name="description" content="Pick a color palette and font pairing that actually work together. Live preview on landing pages, dashboards, and more. Export to CSS or Tailwind." />
+    <link rel="canonical" href="https://huetype.dev/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="HueType" />
+    <meta property="og:url" content="https://huetype.dev/" />
+    <meta property="og:title" content="HueType | Build your custom color and font combos" />
+    <meta property="og:description" content="Pick a color palette and font pairing that actually work together. Live preview on landing pages, dashboards, and more. Export to CSS or Tailwind." />
+    <meta property="og:image" content="https://huetype.dev/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="HueType — preview color palettes and font pairings on realistic page mockups" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="HueType | Build your custom color and font combos" />
+    <meta name="twitter:description" content="Pick a color palette and font pairing that actually work together. Live preview on landing pages, dashboards, and more. Export to CSS or Tailwind." />
+    <meta name="twitter:image" content="https://huetype.dev/og-image.png" />
+    <meta name="twitter:image:alt" content="HueType — preview color palettes and font pairings on realistic page mockups" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <title>HueType | Build your custom color and font combos</title>
+    <script>
+      (function () {
+        var theme = localStorage.getItem('huetype-theme') || 'light';
+        document.documentElement.setAttribute('data-theme', theme);
+        var favicon = document.getElementById('favicon');
+        if (favicon) favicon.href = theme === 'dark' ? '/logo_dark.svg' : '/logo_light.svg';
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

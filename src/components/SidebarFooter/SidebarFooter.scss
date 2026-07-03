@@ -95,6 +95,10 @@
     font-weight: 600;
     background: var(--surface-sunken);
   }
+
+  &--link {
+    text-decoration: none;
+  }
 }
 
 .sidebar-footer__label {

@@ -1,4 +1,4 @@
-import { FOOTER_NAV_ITEMS, ExportIcon } from '../../data/sidebarNavItems';
+import { FOOTER_LINK_ITEMS, FOOTER_NAV_ITEMS, ExportIcon } from '../../data/sidebarNavItems';
 import { APP_VERSION } from '../../data/buildInfo';
 import Icon from '../Icon/Icon';
 import { ICON_SIZE_SM } from '../Icon/iconConfig';
@@ -65,6 +65,19 @@ function SidebarFooter({
             </li>
           );
         })}
+        {FOOTER_LINK_ITEMS.map((item) => (
+          <li key={item.id}>
+            <a
+              href={item.href}
+              className="sidebar-footer__item sidebar-footer__item--link"
+              data-tour={`${item.id}-footer`}
+            >
+              <Icon icon={item.icon} size={ICON_SIZE_SM} />
+              <span className="sidebar-footer__label">{item.label}</span>
+              {collapsed && <span className="sidebar-footer__tooltip" role="tooltip">{item.label}</span>}
+            </a>
+          </li>
+        ))}
       </ul>
     </footer>
   );

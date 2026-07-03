@@ -1,13 +1,16 @@
 /** App build metadata — shown in Build Info panel */
 
 export const APP_VERSION = '0.3.0';
+export const APP_SITE_URL = 'https://huetype.dev';
+export const GITHUB_REPO_URL = 'https://github.com/DeeprajDeveloper/ProjectHueType';
+export const PRIVACY_POLICY_PATH = '/privacy';
+export const CONTACT_EMAIL = 'hello@huetype.dev';
 
 export const BUILD_STACK = [
   'React 19',
   'Vite 6',
   'Phosphor Icons',
   'SCSS',
-  'Manrope',
 ];
 
 export const BUILD_SUMMARY = [
@@ -60,7 +63,7 @@ export const BUILD_CHANGELOG = [
   {
     version: '0.2.0',
     label: 'Responsive layout & prototype expansion',
-    date: '2026-06-01',
+    date: '2026-06-30',
     summary: [
       'Compact layout for tablet and mobile with slide-over options panel and locked viewport height.',
       'Six Group 2 archetypes added — auth, chat, onboarding, settings, empty state, and notifications.',
@@ -82,7 +85,7 @@ export const BUILD_CHANGELOG = [
   {
     version: '0.1.0',
     label: 'Initial prototype',
-    date: '2026-05-01',
+    date: '2026-06-29',
     summary: [
       'First public prototype with curated presets, live preview archetypes, and WCAG contrast checking.',
       'Color and typography customization with role locks and shuffle introduced the core HueType workflow.',
