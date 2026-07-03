@@ -182,6 +182,38 @@ export function getOverallContrastStatus(pairs) {
   return 'aa';
 }
 
+export const CONTRAST_STATUS_LABELS = {
+  aaa: {
+    short: 'AAA',
+    label: 'WCAG AAA',
+    description: 'All text combinations meet AAA (7:1 minimum).',
+  },
+  aa: {
+    short: 'AA',
+    label: 'WCAG AA',
+    description: 'All text combinations meet AA (4.5:1 minimum).',
+  },
+  warn: {
+    short: 'AA large text only',
+    label: 'WCAG AA large',
+    description: 'Passes for large text only — not safe for body copy (3:1).',
+  },
+  fail: {
+    short: 'Fails AA · body text',
+    label: 'WCAG fail',
+    description: 'Body text does not meet AA (4.5:1 minimum).',
+  },
+};
+
+export function getContrastStatusLabel(status, { descriptive = false } = {}) {
+  const config = CONTRAST_STATUS_LABELS[status] || CONTRAST_STATUS_LABELS.aa;
+  return descriptive ? config.short : config.label;
+}
+
+export function getContrastStatusDescription(status) {
+  return (CONTRAST_STATUS_LABELS[status] || CONTRAST_STATUS_LABELS.aa).description;
+}
+
 export function getContrastSummary(pairs) {
   const failures = pairs.filter((p) => p.status === 'fail');
   const borderline = pairs.filter((p) => p.status === 'warn');

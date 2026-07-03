@@ -1,18 +1,98 @@
 import {
-  PaletteIcon,
-  BookmarkSimpleIcon,
+  SquaresFourIcon,
+  HeartIcon,
+  SlidersHorizontalIcon,
   DropIcon,
   TextAaIcon,
   GearIcon,
   LayoutIcon,
-  FlaskIcon,
+  StorefrontIcon,
+  ChartPieIcon,
+  TagIcon,
+  ArticleIcon,
+  ShoppingBagIcon,
+  SignInIcon,
+  ChatCircleIcon,
+  PathIcon,
+  GearSixIcon,
+  CircleDashedIcon,
+  BellIcon,
+  QuestionIcon,
+  PackageIcon,
+  BooksIcon,
+  ChatCircleDotsIcon,
+  ExportIcon,
+  ShieldCheckIcon,
 } from '@phosphor-icons/react';
+import { PRIVACY_POLICY_PATH } from './buildInfo';
 
-export const TOP_NAV_ITEMS = [
-  { id: 'workspace', label: 'My Workspace', icon: PaletteIcon },
-  { id: 'saved', label: 'My Presets', icon: BookmarkSimpleIcon },
+export const WORKSPACE_NAV_ITEMS = [
+  { id: 'workspace', label: 'Preset library', icon: SquaresFourIcon },
+  { id: 'saved', label: 'Saved presets', icon: HeartIcon },
+  { id: 'customizations', label: 'My customizations', icon: SlidersHorizontalIcon, panelId: 'colors' },
+];
+
+export const CUSTOMIZE_NAV_ITEMS = [
   { id: 'colors', label: 'Colors', icon: DropIcon },
   { id: 'fonts', label: 'Fonts', icon: TextAaIcon },
+];
+
+export const PREVIEW_NAV_ITEMS = [
+  { id: 'preview-settings', label: 'Options', icon: GearIcon },
+];
+
+export const ARCHETYPE_NAV_META = {
+  marketing: { navLabel: 'Landing page', chipLabel: 'Landing page', icon: StorefrontIcon },
+  dashboard: { navLabel: 'Dashboard', chipLabel: 'Dashboard', icon: ChartPieIcon },
+  pricing: { navLabel: 'Pricing', chipLabel: 'Pricing', icon: TagIcon },
+  blog: { navLabel: 'Blog / article', chipLabel: 'Blog', icon: ArticleIcon },
+  ecommerce: { navLabel: 'E-commerce', chipLabel: 'E-commerce', icon: ShoppingBagIcon },
+  auth: { navLabel: 'Auth page', chipLabel: 'Auth', icon: SignInIcon },
+  chat: { navLabel: 'AI chat', chipLabel: 'AI chat', icon: ChatCircleIcon },
+  onboarding: { navLabel: 'Onboarding', chipLabel: 'Onboarding', icon: PathIcon },
+  settings: { navLabel: 'Settings', chipLabel: 'Settings', icon: GearSixIcon },
+  empty: { navLabel: 'Empty state', chipLabel: 'Empty state', icon: CircleDashedIcon },
+  notifications: { navLabel: 'Notifications', chipLabel: 'Notifications', icon: BellIcon },
+};
+
+export const CHIP_BAR_ARCHETYPE_IDS = [
+  'marketing',
+  'dashboard',
+  'chat',
+  'blog',
+  'ecommerce',
+  'auth',
+];
+
+export const FOOTER_NAV_ITEMS = [
+  { id: 'help', label: 'Help', icon: QuestionIcon },
+  { id: 'build-info', label: 'Build info', icon: PackageIcon, showVersion: true },
+  { id: 'feature-catalog', label: 'Feature catalog', icon: BooksIcon },
+  { id: 'feedback', label: 'Feedback', icon: ChatCircleDotsIcon, action: 'feedback' },
+];
+
+export const FOOTER_LINK_ITEMS = [
+  { id: 'privacy', label: 'Privacy', href: PRIVACY_POLICY_PATH, icon: ShieldCheckIcon },
+];
+
+export const SYSTEM_INFO_NAV_ITEMS = [
+  { id: 'build-info', label: 'Build Info', icon: PackageIcon },
+  { id: 'feature-catalog', label: 'Feature Catalog', icon: BooksIcon },
+];
+
+export const SYSTEM_INFO_GROUP = {
+  id: 'system-info',
+  label: 'System Information',
+  icon: PackageIcon,
+  children: SYSTEM_INFO_NAV_ITEMS,
+};
+
+export const SYSTEM_INFO_STORAGE_KEY = 'huetype-sidebar-system-info-open';
+
+// Legacy exports for rail / keyboard shortcuts
+export const TOP_NAV_ITEMS = [
+  ...WORKSPACE_NAV_ITEMS.filter((item) => item.id !== 'customizations'),
+  ...CUSTOMIZE_NAV_ITEMS,
 ];
 
 export const PROTOTYPE_NAV_ITEMS = [
@@ -22,17 +102,21 @@ export const PROTOTYPE_NAV_ITEMS = [
 
 export const PROTOTYPE_GROUP = {
   id: 'prototypes',
-  label: 'Prototypes',
-  icon: FlaskIcon,
+  label: 'Preview',
+  icon: LayoutIcon,
   children: PROTOTYPE_NAV_ITEMS,
 };
 
-export const PROTOTYPES_STORAGE_KEY = 'huetype-sidebar-prototypes-open';
+export const LAYOUTS_STORAGE_KEY = 'huetype-sidebar-layouts-open';
 export const ACTIVE_PANEL_STORAGE_KEY = 'huetype-active-panel';
 
 export const NAV_PANEL_IDS = [
-  ...TOP_NAV_ITEMS.map((item) => item.id),
-  ...PROTOTYPE_NAV_ITEMS.map((item) => item.id),
+  'workspace',
+  'saved',
+  'colors',
+  'fonts',
+  'preview-settings',
+  'archetypes',
   'info',
   'help',
   'build-info',
@@ -41,6 +125,12 @@ export const NAV_PANEL_IDS = [
 ];
 
 const NAV_PANEL_ID_SET = new Set(NAV_PANEL_IDS);
+
+export function resolvePanelId(navId) {
+  const workspaceItem = WORKSPACE_NAV_ITEMS.find((item) => item.id === navId);
+  if (workspaceItem?.panelId) return workspaceItem.panelId;
+  return navId;
+}
 
 export function readStoredActivePanel() {
   try {
@@ -61,6 +151,65 @@ export function storeActivePanel(panelId) {
   }
 }
 
-export function isPrototypePanelActive(activePanel, panelOpen) {
-  return panelOpen && PROTOTYPE_NAV_ITEMS.some((item) => item.id === activePanel);
+export function readStoredLayoutsOpen() {
+  try {
+    const stored = localStorage.getItem(LAYOUTS_STORAGE_KEY);
+    if (stored !== null) return stored === 'true';
+  } catch {
+    // ignore
+  }
+  return true;
 }
+
+export function storeLayoutsOpen(open) {
+  try {
+    localStorage.setItem(LAYOUTS_STORAGE_KEY, String(open));
+  } catch {
+    // ignore
+  }
+}
+
+export const PREVIEW_MODE_STORAGE_KEY = 'huetype-preview-mode';
+
+export function readStoredPreviewMode() {
+  try {
+    if (typeof window !== 'undefined' && window.matchMedia('(max-width: 639px)').matches) {
+      return 'mobile';
+    }
+    const stored = localStorage.getItem(PREVIEW_MODE_STORAGE_KEY);
+    if (stored === 'desktop' || stored === 'tablet' || stored === 'mobile') {
+      return stored;
+    }
+  } catch {
+    // ignore
+  }
+  return 'desktop';
+}
+
+export function storePreviewMode(mode) {
+  try {
+    localStorage.setItem(PREVIEW_MODE_STORAGE_KEY, mode);
+  } catch {
+    // ignore
+  }
+}
+
+export function isPreviewPanelActive(activePanel, panelOpen) {
+  return panelOpen && (
+    activePanel === 'preview-settings'
+    || activePanel === 'archetypes'
+  );
+}
+
+export function isPrototypePanelActive(activePanel, panelOpen) {
+  return isPreviewPanelActive(activePanel, panelOpen);
+}
+
+export function isSystemInfoPanelActive(activePanel, panelOpen) {
+  return panelOpen && (
+    activePanel === 'build-info'
+    || activePanel === 'feature-catalog'
+  );
+}
+
+export { ExportIcon };

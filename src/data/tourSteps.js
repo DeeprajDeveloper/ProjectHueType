@@ -4,7 +4,7 @@ export const TOUR_STEPS = [
     target: null,
     title: 'Welcome to HueType',
     content:
-      'Explore curated color and typography combos, customize them to your taste, and preview how they look on realistic UI layouts. This quick tour walks through the updated workspace.',
+      'Explore curated color and typography combos, customize them to your taste, and preview how they look on realistic UI layouts. This quick tour walks through the redesigned workspace.',
     placement: 'center',
   },
   {
@@ -12,7 +12,7 @@ export const TOUR_STEPS = [
     target: '[data-tour="sidebar-nav"]',
     title: 'Sidebar navigation',
     content:
-      'Use the left sidebar to switch sections — My Workspace, My Presets, Colors, Fonts, and Prototypes. Each selection opens its panel on the right.',
+      'The sidebar is grouped into Workspace (presets), Customize (colors & fonts), and Preview (layouts & options). Pick a section to open its panel on the right.',
     placement: 'right',
     prepare: 'sidebar-workspace',
   },
@@ -39,8 +39,8 @@ export const TOUR_STEPS = [
     target: '[data-tour="shuffle"]',
     title: 'Shuffle unlocked roles',
     content:
-      'Use the floating shuffle button on the live preview to switch presets. Lock roles in Colors or Fonts first, then shuffle the rest. Press Space anytime.',
-    placement: 'left',
+      'Use the shuffle button in the preview top bar. Lock roles in Colors or Fonts first, then shuffle the rest. Press Space anytime.',
+    placement: 'bottom',
     prepare: 'close-panels',
   },
   {
@@ -48,7 +48,7 @@ export const TOUR_STEPS = [
     target: '[data-tour="live-preview"]',
     title: 'Live preview',
     content:
-      'See your combo on realistic mockups — marketing pages, dashboards, pricing tables, and more. The info button beside the contrast badge opens WCAG details.',
+      'See your combo on realistic mockups. The WCAG pill opens contrast details; device toggles sit in the top bar.',
     placement: 'right',
     prepare: 'close-panels',
   },
@@ -62,20 +62,29 @@ export const TOUR_STEPS = [
     prepare: 'close-panels',
   },
   {
+    id: 'archetype-bar',
+    target: '[data-tour="archetype-bar"]',
+    title: 'Favorite layouts',
+    content:
+      'Pin up to eight layouts in the quick-select bar below the preview. Use the slider button to pick favorites, or the dashed hint when the bar is empty.',
+    placement: 'top',
+    prepare: 'close-panels',
+  },
+  {
     id: 'prototypes',
     target: '[data-tour="components-panel"]',
-    title: 'Prototypes & preview options',
+    title: 'Layouts & preview options',
     content:
-      'Under Prototypes, pick a layout archetype and toggle individual sections. Options lets you customize logo text shown across mockups.',
+      'Expand Layouts in the sidebar for every archetype, or pick from the favorite chip bar. Options lets you toggle sections and customize logo text.',
     placement: 'left',
     prepare: 'open-archetypes',
   },
   {
     id: 'toolbar',
-    target: '[data-tour="toolbar"]',
+    target: '[data-tour="export-footer"]',
     title: 'Save, share & export',
     content:
-      'Heart a combo to save it under My Presets, copy a shareable link, or open Export to copy or download design tokens.',
+      'Heart a combo from the header icons under the logo, copy a shareable link, or use Export in the sidebar footer to download design tokens.',
     placement: 'right',
     prepare: 'sidebar-workspace',
   },
@@ -93,13 +102,13 @@ export const TOUR_STEPS = [
     target: '[data-tour="build-info"]',
     title: 'Build Info',
     content:
-      'Version, tech stack, shipped features, and tips for getting around. You can restart this tour anytime from the button at the bottom of this panel.',
+      'Version summary, tech stack pills, feature accordions, and a changelog timeline. Expand Tips for shortcuts, or restart this tour from the button below.',
     placement: 'left',
     prepare: 'open-build-info',
   },
   {
     id: 'feature-catalog',
-    target: '[data-tour="feature-catalog"]',
+    target: '[data-tour="feature-catalog-footer"]',
     title: 'Feature Catalog',
     content:
       'Browse what is built today versus planned next — utility primitives, app features, and live preview archetypes. Filter by status to focus on the roadmap.',

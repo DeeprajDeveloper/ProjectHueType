@@ -53,19 +53,20 @@
 
   dt {
     margin: 0;
-    font-size: var(--text-caption);
+    font-size: var(--text-body);
     color: var(--text-secondary);
   }
 
   dd {
     margin: 0;
+    flex-shrink: 0;
   }
 
   kbd {
     display: inline-block;
     padding: 2px 8px;
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: var(--text-caption);
     font-weight: 500;
     color: var(--text-primary);
     background: var(--surface-base);
@@ -74,6 +75,27 @@
     line-height: 1.4;
     white-space: nowrap;
   }
+}
+
+.help-panel__shortcut-keys {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-1);
+}
+
+.help-panel__shortcut-key-group {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.help-panel__platform {
+  font-size: var(--text-micro);
+  font-weight: 600;
+  color: var(--text-tertiary);
+  min-width: 24px;
+  text-align: right;
 }
 
 .help-panel__tips {

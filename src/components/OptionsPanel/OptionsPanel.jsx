@@ -12,13 +12,13 @@ import { ARCHETYPE_PARTS, PREVIEW_ARCHETYPES, ARCHETYPE_GROUPS, getArchetypesFor
 import './OptionsPanel.scss';
 
 const PANEL_TITLES = {
-  workspace: 'My Workspace',
-  saved: 'My Presets',
-  colors: 'Colors',
-  fonts: 'Fonts',
-  'preview-settings': 'Preview settings',
-  archetypes: 'Prototypes',
-  info: 'WCAG contrast',
+  workspace: 'Theme Library & Presets',
+  saved: 'My saved combos',
+  colors: 'Colors Palette Visualizer',
+  fonts: 'Fonts Visualizer',
+  'preview-settings': 'Prototype Settings',
+  archetypes: 'Prototype Library',
+  info: 'Color & Contrast Info',
   'build-info': 'Build Info',
   'feature-catalog': 'Feature Catalog',
   help: 'Help',
