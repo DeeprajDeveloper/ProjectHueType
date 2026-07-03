@@ -26,11 +26,18 @@ import FeedbackModal from '../FeedbackModal/FeedbackModal';
 import { submitFeedback } from '../../utils/feedback';
 import { readStoredActivePanel, storeActivePanel, readStoredPreviewMode, storePreviewMode, resolvePanelId } from '../../data/sidebarNavItems';
 
+function getInitialSidebarOpen() {
+  if (typeof window !== 'undefined' && window.matchMedia('(max-width: 639px)').matches) {
+    return false;
+  }
+  return true;
+}
+
 function AppShell() {
   const [activePanel, setActivePanelState] = useState(readStoredActivePanel);
   const [exportOpen, setExportOpen] = useState(false);
   const [previewMode, setPreviewMode] = useState(readStoredPreviewMode);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(getInitialSidebarOpen);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [originalCombo, setOriginalCombo] = useState(COMBOS[0]);
 
@@ -76,6 +83,8 @@ function AppShell() {
   const filter = useComboFilter(isSavedView ? saved : COMBOS);
   const isCompact = useIsCompactLayout();
   const breakpoint = useBreakpoint();
+  const isMobile = breakpoint === 'mobile';
+  const sidebarCollapsed = isMobile || !sidebarOpen;
 
   const setActivePanel = useCallback((panel) => {
     setActivePanelState(panel);
@@ -95,47 +104,98 @@ function AppShell() {
     }
   }, [activePanel, componentsSidebarOpen, isCompact, setActivePanel, setComponentsSidebarOpen]);
 
+  useEffect(() => {
+    if (isMobile) {
+      setSidebarOpen(false);
+    }
+  }, [isMobile]);
+
   const handleTourStepEnter = useCallback(
     (step) => {
       const prepare = step?.prepare;
 
-      if (prepare === 'sidebar-workspace' || prepare === 'open-workspace') {
-        setSidebarOpen(true);
-        setActivePanel('workspace');
+      const openSlideOverPanel = (panel) => {
+        setActivePanel(panel);
         setComponentsSidebarOpen(true);
         setExportOpen(false);
+        if (isCompact) {
+          setSidebarOpen(false);
+        } else {
+          setSidebarOpen(true);
+        }
+      };
+
+      const openExpandedSidebar = () => {
+        if (isMobile) return;
+        setSidebarOpen(true);
+        setComponentsSidebarOpen(false);
+        setExportOpen(false);
+      };
+
+      const closeOverlays = () => {
+        setExportOpen(false);
+        if (isCompact) {
+          setSidebarOpen(false);
+          setComponentsSidebarOpen(false);
+        }
+      };
+
+      if (prepare === 'sidebar-workspace') {
+        if (isMobile) {
+          setComponentsSidebarOpen(false);
+          setExportOpen(false);
+          return;
+        }
+        if (isCompact) {
+          openExpandedSidebar();
+        } else {
+          setSidebarOpen(true);
+          setActivePanel('workspace');
+          setComponentsSidebarOpen(true);
+          setExportOpen(false);
+        }
+        return;
+      }
+
+      if (prepare === 'open-workspace') {
+        openSlideOverPanel('workspace');
         return;
       }
 
       if (prepare === 'open-colors') {
-        setSidebarOpen(true);
-        setActivePanel('colors');
-        setComponentsSidebarOpen(true);
-        setExportOpen(false);
+        openSlideOverPanel('colors');
         return;
       }
 
       if (prepare === 'open-archetypes') {
-        setSidebarOpen(true);
-        setActivePanel('archetypes');
-        setComponentsSidebarOpen(true);
-        setExportOpen(false);
-        window.setTimeout(() => {
-          const trigger = document.querySelector('[data-tour="nav-prototypes"]');
-          if (trigger?.getAttribute('aria-expanded') === 'false') {
-            trigger.click();
-          }
-        }, 0);
+        if (isCompact) {
+          openSlideOverPanel('preview-settings');
+        } else {
+          setSidebarOpen(true);
+          setActivePanel('archetypes');
+          setComponentsSidebarOpen(true);
+          setExportOpen(false);
+          window.setTimeout(() => {
+            const trigger = document.querySelector('[data-tour="nav-prototypes"]');
+            if (trigger?.getAttribute('aria-expanded') === 'false') {
+              trigger.click();
+            }
+          }, 0);
+        }
         return;
       }
 
       if (prepare === 'close-panels') {
-        setExportOpen(false);
+        closeOverlays();
         return;
       }
 
       if (prepare === 'open-export') {
         setExportOpen(true);
+        if (isCompact) {
+          setSidebarOpen(false);
+          setComponentsSidebarOpen(false);
+        }
         return;
       }
 
@@ -145,21 +205,15 @@ function AppShell() {
       }
 
       if (prepare === 'open-build-info') {
-        setSidebarOpen(true);
-        setActivePanel('build-info');
-        setComponentsSidebarOpen(true);
-        setExportOpen(false);
+        openSlideOverPanel('build-info');
         return;
       }
 
       if (prepare === 'open-feature-catalog') {
-        setSidebarOpen(true);
-        setActivePanel('feature-catalog');
-        setComponentsSidebarOpen(true);
-        setExportOpen(false);
+        openSlideOverPanel('feature-catalog');
       }
     },
-    [setComponentsSidebarOpen],
+    [isCompact, isMobile, setActivePanel, setComponentsSidebarOpen],
   );
 
   const tour = useWalkthrough({ onStepEnter: handleTourStepEnter });
@@ -186,20 +240,32 @@ function AppShell() {
   }, [isCompact]);
 
   useEffect(() => {
-    if (!isCompact || !componentsSidebarOpen) return undefined;
+    if (!isCompact || (!componentsSidebarOpen && !sidebarOpen)) return undefined;
 
     const html = document.documentElement;
+    const body = document.body;
     const previousHtmlOverflow = html.style.overflow;
-    const previousBodyOverflow = document.body.style.overflow;
+    const previousBodyOverflow = body.style.overflow;
+    const previousBodyPosition = body.style.position;
+    const previousBodyWidth = body.style.width;
+    const previousBodyTop = body.style.top;
+    const scrollY = window.scrollY;
 
     html.style.overflow = 'hidden';
-    document.body.style.overflow = 'hidden';
+    body.style.overflow = 'hidden';
+    body.style.position = 'fixed';
+    body.style.width = '100%';
+    body.style.top = `-${scrollY}px`;
 
     return () => {
       html.style.overflow = previousHtmlOverflow;
-      document.body.style.overflow = previousBodyOverflow;
+      body.style.overflow = previousBodyOverflow;
+      body.style.position = previousBodyPosition;
+      body.style.width = previousBodyWidth;
+      body.style.top = previousBodyTop;
+      window.scrollTo(0, scrollY);
     };
-  }, [isCompact, componentsSidebarOpen]);
+  }, [isCompact, componentsSidebarOpen, sidebarOpen]);
 
   useEffect(() => {
     if (!feedbackOpen) return undefined;
@@ -276,8 +342,9 @@ function AppShell() {
   }, []);
 
   const handleSidebarToggle = useCallback(() => {
+    if (isMobile) return;
     setSidebarOpen((open) => !open);
-  }, []);
+  }, [isMobile]);
 
   const handleResetAllColors = () => {
     resetAllColors(originalCombo);
@@ -303,12 +370,13 @@ function AppShell() {
       <div
         className={[
           'app-shell__main',
-          !sidebarOpen ? 'app-shell__main--collapsed' : '',
+          sidebarCollapsed ? 'app-shell__main--collapsed' : '',
           !componentsSidebarOpen ? 'app-shell__main--components-collapsed' : '',
           isCompact ? 'app-shell__main--compact' : '',
+          isMobile ? 'app-shell__main--mobile' : '',
         ].filter(Boolean).join(' ')}
       >
-        <aside className={`app-shell__sidebar ${!sidebarOpen ? 'app-shell__sidebar--collapsed' : ''}`}>
+        <aside className={`app-shell__sidebar ${sidebarCollapsed ? 'app-shell__sidebar--collapsed' : ''}`}>
           <SidebarHeader
             theme={theme}
             onToggleTheme={toggleTheme}
@@ -318,6 +386,7 @@ function AppShell() {
             sidebarOpen={sidebarOpen}
             onToggleSidebar={handleSidebarToggle}
             isCompact={isCompact}
+            isMobile={isMobile}
           />
 
           <div className="app-shell__sidebar-panel">
@@ -330,8 +399,9 @@ function AppShell() {
               savedCount={saved.length}
               presetCount={filter.filtered.length}
               hasActiveFilters={filter.hasActiveFilters}
-              collapsed={!sidebarOpen}
+              collapsed={sidebarCollapsed}
               isCompact={isCompact}
+              isMobile={isMobile}
             />
           </div>
 
@@ -342,11 +412,11 @@ function AppShell() {
             onExport={handleExportToggle}
             exportActive={exportOpen}
             onFeedback={handleFeedbackOpen}
-            collapsed={!sidebarOpen}
+            collapsed={sidebarCollapsed}
           />
         </aside>
 
-        {isCompact && sidebarOpen && (
+        {isCompact && !isMobile && sidebarOpen && (
           <button
             type="button"
             className="app-shell__sidebar-backdrop"
@@ -388,7 +458,7 @@ function AppShell() {
           )}
         </main>
 
-        {isCompact && componentsSidebarOpen && !sidebarOpen && (
+        {isCompact && componentsSidebarOpen && sidebarCollapsed && (
           <button
             type="button"
             className="app-shell__backdrop"

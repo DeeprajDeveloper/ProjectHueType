@@ -6,6 +6,7 @@
   gap: var(--space-2);
   flex-shrink: 0;
   padding: 8px 12px;
+  padding-bottom: max(8px, env(safe-area-inset-bottom, 0px));
   border-top: 1px solid var(--border-subtle);
   background: var(--surface-raised);
 }

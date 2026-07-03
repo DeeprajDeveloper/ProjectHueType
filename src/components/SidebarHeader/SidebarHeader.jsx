@@ -19,9 +19,10 @@ function SidebarHeader({
   sidebarOpen,
   onToggleSidebar,
   isCompact = false,
+  isMobile = false,
 }) {
   return (
-    <div className="sidebar-header">
+    <div className={`sidebar-header ${isMobile ? 'sidebar-header--mobile' : ''}`}>
       <div className="sidebar-header__brand">
         <img src={getThemeLogoSrc(theme)} alt="HueType" className="sidebar-header__logo" />
         <span className="sidebar-header__name">HueType</span>
@@ -52,15 +53,17 @@ function SidebarHeader({
         >
           <Icon icon={HeartIcon} size={ICON_SIZE_SM} active={isSaved} />
         </button>
-        <button
-          type="button"
-          className="sidebar-header__action sidebar-header__action--toggle"
-          aria-label={sidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
-          aria-expanded={sidebarOpen}
-          onClick={onToggleSidebar}
-        >
-          <Icon icon={SidebarSimpleIcon} size={ICON_SIZE} />
-        </button>
+        {!isMobile && (
+          <button
+            type="button"
+            className="sidebar-header__action sidebar-header__action--toggle"
+            aria-label={sidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
+            aria-expanded={sidebarOpen}
+            onClick={onToggleSidebar}
+          >
+            <Icon icon={SidebarSimpleIcon} size={ICON_SIZE} />
+          </button>
+        )}
       </div>
     </div>
   );

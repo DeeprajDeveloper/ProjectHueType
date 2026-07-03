@@ -1,15 +1,29 @@
 import { useEffect, useLayoutEffect, useRef, useState, useCallback } from 'react';
 import { X } from '@phosphor-icons/react';
+import { useIsCompactLayout } from '../../hooks';
 import Icon from '../Icon/Icon';
 import { ICON_SIZE } from '../Icon/iconConfig';
 import './Walkthrough.scss';
 
 const SPOTLIGHT_PADDING = 8;
 const VIEWPORT_MARGIN = 16;
+const COMPACT_VIEWPORT_MARGIN = 12;
 const POPOVER_GAP = 16;
+const COMPACT_POPOVER_GAP = 10;
+const MIN_TARGET_SIZE = 36;
 
 function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max);
+}
+
+function getViewport() {
+  const visualViewport = window.visualViewport;
+  return {
+    width: visualViewport?.width ?? window.innerWidth,
+    height: visualViewport?.height ?? window.innerHeight,
+    offsetTop: visualViewport?.offsetTop ?? 0,
+    offsetLeft: visualViewport?.offsetLeft ?? 0,
+  };
 }
 
 function getTargetRect(selector) {
@@ -26,6 +40,21 @@ function getTargetRect(selector) {
     bottom: rect.bottom + SPOTLIGHT_PADDING,
     right: rect.right + SPOTLIGHT_PADDING,
   };
+}
+
+function shouldUseCenterFallback(rect) {
+  if (!rect) return true;
+
+  const viewport = getViewport();
+  const tooSmall = rect.width < MIN_TARGET_SIZE || rect.height < MIN_TARGET_SIZE;
+  const offscreen = (
+    rect.bottom < COMPACT_VIEWPORT_MARGIN
+    || rect.top > viewport.height - COMPACT_VIEWPORT_MARGIN
+    || rect.right < COMPACT_VIEWPORT_MARGIN
+    || rect.left > viewport.width - COMPACT_VIEWPORT_MARGIN
+  );
+
+  return tooSmall || offscreen;
 }
 
 function ensureTargetExpanded(selector) {
@@ -53,44 +82,45 @@ function getPopoverRect(top, left, popoverSize) {
 
 function rectsOverlap(a, b, gap = 0) {
   return !(
-    a.right + gap <= b.left ||
-    a.left >= b.right + gap ||
-    a.bottom + gap <= b.top ||
-    a.top >= b.bottom + gap
+    a.right + gap <= b.left
+    || a.left >= b.right + gap
+    || a.bottom + gap <= b.top
+    || a.top >= b.bottom + gap
   );
 }
 
-function positionForSide(side, rect, popoverSize) {
+function positionForSide(side, rect, popoverSize, isCompact) {
   const { width: pw, height: ph } = popoverSize;
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
-  const tallTarget = rect.height > vh * 0.55;
+  const viewport = getViewport();
+  const margin = isCompact ? COMPACT_VIEWPORT_MARGIN : VIEWPORT_MARGIN;
+  const gap = isCompact ? COMPACT_POPOVER_GAP : POPOVER_GAP;
+  const tallTarget = rect.height > viewport.height * 0.55;
 
   let top;
   let left;
 
   switch (side) {
     case 'top':
-      top = rect.top - POPOVER_GAP - ph;
+      top = rect.top - gap - ph;
       left = rect.left + rect.width / 2 - pw / 2;
       break;
     case 'bottom':
-      top = rect.bottom + POPOVER_GAP;
+      top = rect.bottom + gap;
       left = rect.left + rect.width / 2 - pw / 2;
       break;
     case 'left':
       top = tallTarget ? rect.top : rect.top + rect.height / 2 - ph / 2;
-      left = rect.left - POPOVER_GAP - pw;
+      left = rect.left - gap - pw;
       break;
     case 'right':
     default:
       top = tallTarget ? rect.top : rect.top + rect.height / 2 - ph / 2;
-      left = rect.right + POPOVER_GAP;
+      left = rect.right + gap;
       break;
   }
 
-  top = clamp(top, VIEWPORT_MARGIN, vh - ph - VIEWPORT_MARGIN);
-  left = clamp(left, VIEWPORT_MARGIN, vw - pw - VIEWPORT_MARGIN);
+  top = clamp(top, margin + viewport.offsetTop, viewport.offsetTop + viewport.height - ph - margin);
+  left = clamp(left, margin + viewport.offsetLeft, viewport.offsetLeft + viewport.width - pw - margin);
 
   return {
     top: `${top}px`,
@@ -101,39 +131,46 @@ function positionForSide(side, rect, popoverSize) {
   };
 }
 
-function computePopoverPosition(rect, placement, popoverSize) {
-  if (!rect) {
+function computePopoverPosition(rect, placement, popoverSize, isCompact, compactPlacement) {
+  if (!rect || shouldUseCenterFallback(rect)) {
     return {
       top: '50%',
       left: '50%',
       transform: 'translate(-50%, -50%)',
       placement: 'center',
+      centerFallback: true,
     };
   }
 
-  const preferred = placement && placement !== 'center' ? placement : 'right';
-  const sides = [preferred, 'right', 'left', 'bottom', 'top'];
+  const basePreferred = placement && placement !== 'center' ? placement : 'right';
+  const preferred = isCompact ? (compactPlacement || basePreferred) : basePreferred;
+  const sides = isCompact
+    ? [preferred, 'bottom', 'top', 'right', 'left']
+    : [preferred, 'right', 'left', 'bottom', 'top'];
   const uniqueSides = [...new Set(sides)];
 
   let bestFallback = null;
 
   for (const side of uniqueSides) {
-    const candidate = positionForSide(side, rect, popoverSize);
+    const candidate = positionForSide(side, rect, popoverSize, isCompact);
+    const viewport = getViewport();
+    const margin = isCompact ? COMPACT_VIEWPORT_MARGIN : VIEWPORT_MARGIN;
     const fitsViewport = (
-      candidate.rect.top >= VIEWPORT_MARGIN &&
-      candidate.rect.left >= VIEWPORT_MARGIN &&
-      candidate.rect.bottom <= window.innerHeight - VIEWPORT_MARGIN &&
-      candidate.rect.right <= window.innerWidth - VIEWPORT_MARGIN
+      candidate.rect.top >= margin + viewport.offsetTop
+      && candidate.rect.left >= margin + viewport.offsetLeft
+      && candidate.rect.bottom <= viewport.offsetTop + viewport.height - margin
+      && candidate.rect.right <= viewport.offsetLeft + viewport.width - margin
     );
 
     if (!fitsViewport) continue;
 
-    if (!rectsOverlap(candidate.rect, rect, POPOVER_GAP)) {
+    if (!rectsOverlap(candidate.rect, rect, isCompact ? COMPACT_POPOVER_GAP : POPOVER_GAP)) {
       return {
         top: candidate.top,
         left: candidate.left,
         transform: candidate.transform,
         placement: candidate.placement,
+        centerFallback: false,
       };
     }
 
@@ -146,15 +183,17 @@ function computePopoverPosition(rect, placement, popoverSize) {
       left: bestFallback.left,
       transform: bestFallback.transform,
       placement: bestFallback.placement,
+      centerFallback: false,
     };
   }
 
-  const bottom = positionForSide('bottom', rect, popoverSize);
+  const bottom = positionForSide('bottom', rect, popoverSize, isCompact);
   return {
     top: bottom.top,
     left: bottom.left,
     transform: bottom.transform,
     placement: bottom.placement,
+    centerFallback: false,
   };
 }
 
@@ -168,13 +207,16 @@ function Walkthrough({
   isFirst,
   isLast,
 }) {
+  const isCompact = useIsCompactLayout();
   const popoverRef = useRef(null);
   const [spotlightRect, setSpotlightRect] = useState(null);
   const [popoverStyle, setPopoverStyle] = useState({});
   const [activePlacement, setActivePlacement] = useState(step?.placement || 'center');
+  const [centerFallback, setCenterFallback] = useState(false);
 
   const measure = useCallback(() => {
-    const rect = getTargetRect(step?.target);
+    const targetSelector = isCompact && step?.compactTarget ? step.compactTarget : step?.target;
+    const rect = getTargetRect(targetSelector);
     setSpotlightRect(rect);
 
     const popoverEl = popoverRef.current;
@@ -185,46 +227,74 @@ function Walkthrough({
       height: popoverEl.offsetHeight,
     };
 
-    const position = computePopoverPosition(rect, step?.placement || 'center', popoverSize);
+    const position = computePopoverPosition(
+      rect,
+      step?.placement || 'center',
+      popoverSize,
+      isCompact,
+      step?.compactPlacement,
+    );
     setPopoverStyle({
       top: position.top,
       left: position.left,
       transform: position.transform || 'none',
     });
     setActivePlacement(position.placement || step?.placement || 'center');
-  }, [step]);
+    setCenterFallback(Boolean(position.centerFallback));
+  }, [step, isCompact]);
 
   useLayoutEffect(() => {
-    const expanded = ensureTargetExpanded(step?.target);
+    const targetSelector = isCompact && step?.compactTarget ? step.compactTarget : step?.target;
+    const expanded = ensureTargetExpanded(targetSelector);
     measure();
 
     const delays = expanded
-      ? [50, 200, 400]
-      : step?.target
-        ? [100, 350, 600]
+      ? [50, 200, 400, 700]
+      : targetSelector
+        ? [100, 350, 600, 900]
         : [350];
     const timers = delays.map((delay) => window.setTimeout(measure, delay));
 
     return () => timers.forEach((timer) => window.clearTimeout(timer));
-  }, [measure, stepIndex, step?.target]);
+  }, [measure, stepIndex, step?.target, step?.compactTarget, isCompact]);
 
   useEffect(() => {
     const handler = () => measure();
     window.addEventListener('resize', handler);
     window.addEventListener('scroll', handler, true);
+    window.visualViewport?.addEventListener('resize', handler);
+    window.visualViewport?.addEventListener('scroll', handler);
     return () => {
       window.removeEventListener('resize', handler);
       window.removeEventListener('scroll', handler, true);
+      window.visualViewport?.removeEventListener('resize', handler);
+      window.visualViewport?.removeEventListener('scroll', handler);
     };
   }, [measure]);
 
   useEffect(() => {
-    if (!step?.target) return undefined;
-    const el = document.querySelector(step.target);
-    el?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    const targetSelector = isCompact && step?.compactTarget ? step.compactTarget : step?.target;
+    if (!targetSelector) return undefined;
+    const el = document.querySelector(targetSelector);
+    el?.scrollIntoView({ block: isCompact ? 'center' : 'nearest', behavior: 'smooth' });
     const timer = window.setTimeout(measure, 400);
     return () => window.clearTimeout(timer);
-  }, [step, measure]);
+  }, [step, measure, isCompact]);
+
+  useEffect(() => {
+    const html = document.documentElement;
+    const body = document.body;
+    const previousHtmlOverflow = html.style.overflow;
+    const previousBodyOverflow = body.style.overflow;
+
+    html.style.overflow = 'hidden';
+    body.style.overflow = 'hidden';
+
+    return () => {
+      html.style.overflow = previousHtmlOverflow;
+      body.style.overflow = previousBodyOverflow;
+    };
+  }, []);
 
   useEffect(() => {
     const handler = (e) => {
@@ -238,10 +308,11 @@ function Walkthrough({
 
   if (!step) return null;
 
-  const hasTarget = Boolean(step.target && spotlightRect);
+  const targetSelector = isCompact && step.compactTarget ? step.compactTarget : step.target;
+  const hasTarget = Boolean(targetSelector && spotlightRect && !centerFallback);
 
   return (
-    <div className="walkthrough" role="presentation">
+    <div className={`walkthrough ${isCompact ? 'walkthrough--compact' : ''}`} role="presentation">
       {hasTarget ? (
         <div
           className="walkthrough__spotlight"
@@ -259,7 +330,11 @@ function Walkthrough({
 
       <div
         ref={popoverRef}
-        className={`walkthrough__popover ${hasTarget ? `walkthrough__popover--${activePlacement}` : 'walkthrough__popover--center'}`}
+        className={[
+          'walkthrough__popover',
+          hasTarget ? `walkthrough__popover--${activePlacement}` : 'walkthrough__popover--center',
+          centerFallback ? 'walkthrough__popover--fallback' : '',
+        ].filter(Boolean).join(' ')}
         role="dialog"
         aria-modal="true"
         aria-labelledby="walkthrough-title"

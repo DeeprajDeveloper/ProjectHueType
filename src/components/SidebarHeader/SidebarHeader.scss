@@ -62,3 +62,17 @@
     margin-left: auto;
   }
 }
+
+.sidebar-header--mobile {
+  padding: 10px 8px;
+
+  .sidebar-header__brand {
+    justify-content: center;
+    margin-bottom: var(--space-2);
+  }
+
+  .sidebar-header__actions {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}

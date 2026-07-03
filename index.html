@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <link id="favicon" rel="icon" type="image/svg+xml" href="/logo_light.svg" />
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="description" content="Pick a color palette and font pairing that actually work together. Live preview on landing pages, dashboards, and more. Export to CSS or Tailwind." />
     <link rel="canonical" href="https://huetype.dev/" />
 
@@ -34,6 +34,11 @@
         document.documentElement.setAttribute('data-theme', theme);
         var favicon = document.getElementById('favicon');
         if (favicon) favicon.href = theme === 'dark' ? '/logo_dark.svg' : '/logo_light.svg';
+
+        var path = window.location.pathname;
+        if (path === '/privacy' || path === '/privacy/') {
+          document.documentElement.classList.add('route-privacy');
+        }
       })();
     </script>
   </head>

@@ -11,16 +11,17 @@
   position: absolute;
   inset: 0;
   pointer-events: auto;
+  background-color: rgb(0 0 0 / 0%);
 
   &--full {
-    background: rgba(0, 0, 0, 0.55);
+    background-color: rgb(0 0 0 / 45%);
   }
 }
 
 .walkthrough__spotlight {
   position: fixed;
   border-radius: var(--radius-md);
-  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.55);
+  box-shadow: 0 0 0 9999px rgb(0 0 0 / 45%);
   border: 2px solid var(--accent);
   pointer-events: none;
   z-index: 1;
@@ -35,14 +36,19 @@
   position: fixed;
   z-index: 2;
   width: min(360px, calc(100vw - var(--space-6) * 2));
+  max-height: min(80dvh, calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 32px));
+  overflow-y: auto;
   padding: var(--space-5);
+  padding-bottom: max(var(--space-5), env(safe-area-inset-bottom, 0px));
   background: var(--surface-raised);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
   pointer-events: auto;
+  -webkit-overflow-scrolling: touch;
 
-  &--center {
+  &--center,
+  &--fallback {
     max-width: 420px;
     width: min(420px, calc(100vw - var(--space-6) * 2));
   }
@@ -158,7 +164,72 @@
   margin-left: auto;
 }
 
+.walkthrough--compact {
+  .walkthrough__overlay--full {
+    background-color: rgb(0 0 0 / 40%);
+  }
+
+  .walkthrough__spotlight {
+    box-shadow: 0 0 0 9999px rgb(0 0 0 / 40%);
+  }
+
+  .walkthrough__popover {
+    width: min(360px, calc(100vw - var(--space-4) * 2));
+    max-height: min(72dvh, calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 24px));
+    padding: var(--space-4);
+    padding-bottom: max(var(--space-4), env(safe-area-inset-bottom, 0px));
+
+    &--center,
+    &--fallback {
+      width: min(400px, calc(100vw - var(--space-4) * 2));
+    }
+
+    &--fallback::before,
+    &--bottom::before,
+    &--top::before,
+    &--left::before,
+    &--right::before {
+      display: none;
+    }
+  }
+
+  .walkthrough__footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .walkthrough__skip {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .walkthrough__nav {
+    width: 100%;
+    margin-left: 0;
+
+    .btn {
+      flex: 1;
+      min-height: 40px;
+    }
+  }
+
+  .walkthrough__close {
+    min-width: 40px;
+    min-height: 40px;
+  }
+}
+
 @include respond-to(mobile) {
+  .walkthrough__popover {
+    width: calc(100vw - var(--space-4) * 2);
+
+    &--center,
+    &--fallback {
+      width: calc(100vw - var(--space-4) * 2);
+      max-width: none;
+    }
+  }
+
   .walkthrough__footer {
     flex-wrap: wrap;
   }
