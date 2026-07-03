@@ -10,6 +10,7 @@ import {
   useKeyboardShortcuts,
   useUiPreferences,
   useWalkthrough,
+  useWhatsNew,
   useIsCompactLayout,
   useBreakpoint,
 } from '../../hooks';
@@ -23,6 +24,8 @@ import SidebarNav from '../SidebarNav/SidebarNav';
 import OptionsPanel from '../OptionsPanel/OptionsPanel';
 import Walkthrough from '../Walkthrough/Walkthrough';
 import FeedbackModal from '../FeedbackModal/FeedbackModal';
+import WhatsNewModal from '../WhatsNewModal/WhatsNewModal';
+import { CHANGELOG_PATH } from '../../data/buildInfo';
 import { submitFeedback } from '../../utils/feedback';
 import { readStoredActivePanel, storeActivePanel, readStoredPreviewMode, storePreviewMode, resolvePanelId } from '../../data/sidebarNavItems';
 
@@ -185,6 +188,23 @@ function AppShell() {
         return;
       }
 
+      if (prepare === 'open-layouts-expanded') {
+        setExportOpen(false);
+        if (isCompact) {
+          openSlideOverPanel('archetypes');
+        } else {
+          setSidebarOpen(true);
+          setComponentsSidebarOpen(false);
+          window.setTimeout(() => {
+            const trigger = document.querySelector('[data-tour="nav-prototypes"]');
+            if (trigger?.getAttribute('aria-expanded') === 'false') {
+              trigger.click();
+            }
+          }, 0);
+        }
+        return;
+      }
+
       if (prepare === 'close-panels') {
         closeOverlays();
         return;
@@ -217,6 +237,12 @@ function AppShell() {
   );
 
   const tour = useWalkthrough({ onStepEnter: handleTourStepEnter });
+  const whatsNew = useWhatsNew({ tourActive: tour.active });
+
+  const handleWhatsNewChangelog = useCallback(() => {
+    whatsNew.dismiss();
+    window.location.href = CHANGELOG_PATH;
+  }, [whatsNew]);
 
   useEffect(() => {
     if (breakpoint === 'mobile') {
@@ -542,6 +568,13 @@ function AppShell() {
         <FeedbackModal
           onClose={() => setFeedbackOpen(false)}
           onSubmit={handleFeedbackSubmit}
+        />
+      )}
+
+      {whatsNew.open && !tour.active && (
+        <WhatsNewModal
+          onClose={whatsNew.dismiss}
+          onViewChangelog={handleWhatsNewChangelog}
         />
       )}
     </div>

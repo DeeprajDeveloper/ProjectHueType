@@ -78,11 +78,33 @@ export const TOUR_STEPS = [
     prepare: 'close-panels',
   },
   {
+    id: 'layout-groups',
+    target: '[data-tour="layout-groups"]',
+    compactTarget: '[data-tour="layout-groups-panel"]',
+    title: 'Layout groups',
+    content:
+      'Layouts are organized into four groups — core, product essentials, strong secondary, and niche surfaces. Expand a group to browse its archetypes.',
+    placement: 'right',
+    compactPlacement: 'bottom',
+    prepare: 'open-layouts-expanded',
+  },
+  {
+    id: 'layout-search',
+    target: '[data-tour="layout-search"]',
+    compactTarget: '[data-tour="layout-search-panel"]',
+    title: 'Search layouts',
+    content:
+      'Type to filter all 24 layouts instantly — match by name, description, or group. Results update as you type so you can jump to the right mockup fast.',
+    placement: 'right',
+    compactPlacement: 'bottom',
+    prepare: 'open-layouts-expanded',
+  },
+  {
     id: 'prototypes',
     target: '[data-tour="components-panel"]',
     title: 'Layouts & preview options',
     content:
-      'Expand Layouts in the sidebar for every archetype, or pick from the favorite chip bar. Options lets you toggle sections and customize logo text.',
+      'Use Options for per-layout section toggles and logo text. The sidebar and options panel share the same search and grouped layout list.',
     placement: 'left',
     compactPlacement: 'bottom',
     prepare: 'open-archetypes',

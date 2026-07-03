@@ -529,4 +529,5 @@ export function useUiPreferences() {
 }
 
 export { useWalkthrough } from './useWalkthrough';
+export { useWhatsNew } from './useWhatsNew';
 export { useBreakpoint, useIsCompactLayout } from './useBreakpoint';
