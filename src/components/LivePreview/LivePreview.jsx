@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useBreakpoint } from '../../hooks';
 import {
+  CaretRightIcon,
   DeviceRotateIcon,
   ShuffleIcon,
 } from '@phosphor-icons/react';
@@ -260,6 +261,16 @@ function LivePreview({
         ? '375px target width'
         : `${TABLET_SIZE[tabletOrientation].width} × ${TABLET_SIZE[tabletOrientation].height}px`;
 
+  const wcagStatusLabel = WCAG_STATUS_LABELS[contrastStatus] || WCAG_STATUS_LABELS.aa;
+  const wcagBadgeLabel = isMobileView
+    ? ({
+        aaa: 'AAA',
+        aa: 'AA',
+        warn: 'AA large',
+        fail: 'Fail',
+      }[contrastStatus] || 'AA')
+    : wcagStatusLabel;
+
   return (
     <div className={`live-preview ${isCompact ? 'live-preview--compact' : ''}`}>
       <div className="live-preview__topbar" data-tour="preview-controls">
@@ -271,13 +282,21 @@ function LivePreview({
             type="button"
             className="live-preview__wcag"
             onClick={onOpenContrast}
-            aria-label={`View WCAG contrast for ${combo.name}`}
+            aria-label={`Open WCAG contrast details — ${wcagStatusLabel}`}
+            title="View WCAG contrast details"
           >
-            <ContrastBadge
-              status={contrastStatus}
-              compact
-              label={WCAG_STATUS_LABELS[contrastStatus] || WCAG_STATUS_LABELS.aa}
-            />
+            <span className="live-preview__wcag-status">
+              <ContrastBadge
+                status={contrastStatus}
+                compact
+                showTitle={false}
+                label={wcagBadgeLabel}
+              />
+            </span>
+            <span className="live-preview__wcag-action" aria-hidden="true">
+              <span className="live-preview__wcag-action-text">Details</span>
+              <Icon icon={CaretRightIcon} size={ICON_SIZE_SM} weight="bold" />
+            </span>
           </button>
           {isTablet && (
             <button

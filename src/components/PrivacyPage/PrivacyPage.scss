@@ -1,23 +1,7 @@
 @use '../../styles/mixins' as *;
 
-html.route-privacy,
-body.route-privacy {
-  height: auto;
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-
-#root.route-privacy {
-  height: auto;
-  min-height: 100dvh;
-  max-height: none;
-  overflow: visible;
-}
-
 .privacy-page {
   min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
   background: var(--surface-base);
   color: var(--text-primary);
 }
@@ -60,7 +44,6 @@ body.route-privacy {
 }
 
 .privacy-page__main {
-  flex: 1;
   padding: var(--space-5) var(--space-4) var(--space-8);
 
   @include respond-to(tablet) {

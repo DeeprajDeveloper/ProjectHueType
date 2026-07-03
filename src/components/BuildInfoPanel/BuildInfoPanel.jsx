@@ -1,11 +1,11 @@
-import { ArrowRightIcon, ArrowSquareOutIcon, GithubLogoIcon, RocketLaunchIcon } from '@phosphor-icons/react';
+import { ArrowRightIcon, ArrowSquareOutIcon, ClockCounterClockwiseIcon, GithubLogoIcon, RocketLaunchIcon } from '@phosphor-icons/react';
 import {
   APP_VERSION,
-  BUILD_CHANGELOG,
   BUILD_FEATURES,
   BUILD_NOTES,
   BUILD_STACK,
   BUILD_SUMMARY,
+  CHANGELOG_PATH,
   GITHUB_REPO_URL,
   PRIVACY_POLICY_PATH,
 } from '../../data/buildInfo';
@@ -63,6 +63,17 @@ function BuildInfoPanel({ onStartTour }) {
         </ul>
       </section>
 
+      <a
+        href={CHANGELOG_PATH}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="build-info-panel__changelog-btn btn btn--secondary"
+      >
+        <Icon icon={ClockCounterClockwiseIcon} size={ICON_SIZE_SM} />
+        Changelog & release notes
+        <Icon icon={ArrowSquareOutIcon} size={ICON_SIZE_SM} />
+      </a>
+
       <Accordion
         title="In this build"
         badge={String(BUILD_FEATURES.length)}
@@ -78,51 +89,6 @@ function BuildInfoPanel({ onStartTour }) {
           ))}
         </ul>
       </Accordion>
-
-      <section className="build-info-panel__section" aria-labelledby="build-info-changelog">
-        <h4 id="build-info-changelog" className="build-info-panel__section-title">Changelog</h4>
-        <ol className="build-info-panel__timeline">
-          {BUILD_CHANGELOG.map((release, index) => (
-            <li key={release.version} className="build-info-panel__timeline-item">
-              <span className="build-info-panel__timeline-marker" aria-hidden="true" />
-              <div className="build-info-panel__timeline-body">
-                <header className="build-info-panel__release-header">
-                  <div className="build-info-panel__release-meta">
-                    <span className="build-info-panel__release-version">v{release.version}</span>
-                    {release.date && (
-                      <time className="build-info-panel__release-date" dateTime={release.date}>
-                        {release.date}
-                      </time>
-                    )}
-                  </div>
-                  <p className="build-info-panel__release-label">{release.label}</p>
-                </header>
-
-                <div className="build-info-panel__release-summary">
-                  {release.summary.map((line) => (
-                    <p key={line.slice(0, 40)}>{line}</p>
-                  ))}
-                </div>
-
-                <Accordion
-                  title="Full release notes"
-                  badge={String(release.changes.length)}
-                  variant="chrome"
-                  className="build-info-panel__accordion build-info-panel__accordion--nested"
-                  persistKey={`build-info-changelog-${release.version}`}
-                  defaultOpen={index === 0}
-                >
-                  <ul className="build-info-panel__list build-info-panel__list--changelog">
-                    {release.changes.map((change) => (
-                      <li key={change}>{change}</li>
-                    ))}
-                  </ul>
-                </Accordion>
-              </div>
-            </li>
-          ))}
-        </ol>
-      </section>
 
       <Accordion
         title="Tips"

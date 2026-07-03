@@ -1,23 +1,15 @@
-import { useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 import { ArrowLeftIcon } from '@phosphor-icons/react';
 import privacyPolicy from '../../content/privacy-policy.md?raw';
 import { APP_SITE_URL } from '../../data/buildInfo';
+import { useStandaloneRoute } from '../../hooks/useStandaloneRoute';
 import { renderSimpleMarkdown } from '../../utils/simpleMarkdown';
 import Icon from '../Icon/Icon';
 import { ICON_SIZE_SM } from '../Icon/iconConfig';
 import './PrivacyPage.scss';
 
 function PrivacyPage() {
-  useEffect(() => {
-    const root = document.getElementById('root');
-    const targets = [document.documentElement, document.body, root].filter(Boolean);
-
-    targets.forEach((node) => node.classList.add('route-privacy'));
-
-    return () => {
-      targets.forEach((node) => node.classList.remove('route-privacy'));
-    };
-  }, []);
+  useStandaloneRoute();
 
   return (
     <div className="privacy-page">

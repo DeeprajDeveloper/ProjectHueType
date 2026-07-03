@@ -1,12 +1,11 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import SegmentControl from '../SegmentControl/SegmentControl';
 import {
   TYPE_SPECIMEN_STEPS,
   TYPE_BASE_PX,
-  TYPE_BASE_MIN_PX,
-  TYPE_BASE_MAX_PX,
   SCALE_RATIO_OPTIONS,
   DEFAULT_SCALE_RATIO,
+  clampTypeBasePx,
   getSpecimenSizePx,
   buildTypeStyleCss,
 } from '../../utils/typographyScale';
@@ -30,7 +29,26 @@ function TypographyScale({
 }) {
   const [copiedId, setCopiedId] = useState(null);
   const [activeRole, setActiveRole] = useState(null);
+  const [baseDraft, setBaseDraft] = useState(() => String(basePx));
   const cardRefs = useRef({});
+
+  useEffect(() => {
+    setBaseDraft(String(basePx));
+  }, [basePx]);
+
+  const commitBasePx = () => {
+    const trimmed = baseDraft.trim();
+    if (!trimmed) {
+      setBaseDraft(String(basePx));
+      return;
+    }
+
+    const next = clampTypeBasePx(trimmed);
+    setBaseDraft(String(next));
+    if (next !== basePx) {
+      onBasePxChange?.(next);
+    }
+  };
 
   const isCustomBase = basePx !== TYPE_BASE_PX;
   const isCustomRatio = scaleRatio !== DEFAULT_SCALE_RATIO;
@@ -84,14 +102,19 @@ function TypographyScale({
           <div className="typography-scale__base-controls">
             <input
               id="type-base-px"
-              type="number"
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
               className="typography-scale__base-input"
-              value={basePx}
-              min={TYPE_BASE_MIN_PX}
-              max={TYPE_BASE_MAX_PX}
-              step={1}
-              onChange={(e) => onBasePxChange?.(e.target.value)}
+              value={baseDraft}
               aria-label="Type scale base size in pixels"
+              onChange={(e) => setBaseDraft(e.target.value)}
+              onBlur={commitBasePx}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.currentTarget.blur();
+                }
+              }}
             />
             <span className="typography-scale__base-unit">px</span>
             {(isCustomBase || isCustomRatio) && (
@@ -101,6 +124,7 @@ function TypographyScale({
                 onClick={() => {
                   onBasePxChange?.(TYPE_BASE_PX);
                   onScaleRatioChange?.(DEFAULT_SCALE_RATIO);
+                  setBaseDraft(String(TYPE_BASE_PX));
                 }}
                 aria-label="Reset base size and ratio to default"
               >

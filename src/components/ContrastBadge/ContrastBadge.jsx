@@ -21,7 +21,7 @@ const STATUS_ICONS = {
   fail: XCircle,
 };
 
-function ContrastBadge({ status, ratio, compact = false, descriptive = false, label }) {
+function ContrastBadge({ status, ratio, compact = false, descriptive = false, label, showTitle = true }) {
   const variant = STATUS_VARIANTS[status] || STATUS_VARIANTS.aa;
   const IconComponent = STATUS_ICONS[status] || STATUS_ICONS.aa;
   const displayLabel = label || getContrastStatusLabel(status, { descriptive: descriptive || compact });
@@ -33,7 +33,7 @@ function ContrastBadge({ status, ratio, compact = false, descriptive = false, la
   return (
     <span
       className={`contrast-badge contrast-badge--${variant} ${compact ? 'contrast-badge--compact' : ''} ${descriptive || compact ? 'contrast-badge--descriptive' : ''}`}
-      title={title}
+      title={showTitle ? title : undefined}
     >
       <span className="contrast-badge__icon" aria-hidden="true">
         <Icon icon={IconComponent} size={ICON_SIZE_SM} weight="bold" />

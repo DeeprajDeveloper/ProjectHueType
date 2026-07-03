@@ -14,6 +14,7 @@ export const TOUR_STEPS = [
     content:
       'The sidebar is grouped into Workspace (presets), Customize (colors & fonts), and Preview (layouts & options). Pick a section to open its panel on the right.',
     placement: 'right',
+    compactPlacement: 'bottom',
     prepare: 'sidebar-workspace',
   },
   {
@@ -21,8 +22,9 @@ export const TOUR_STEPS = [
     target: '[data-tour="presets"]',
     title: 'Browse presets',
     content:
-      'Start from a curated combo in the library. Search, filter by mood or industry, and click a card to load it into your workspace.',
+      'Start from a curated combo in the library. Search, filter by mood or industry, and tap a card to load it into your workspace.',
     placement: 'left',
+    compactPlacement: 'bottom',
     prepare: 'open-workspace',
   },
   {
@@ -32,6 +34,7 @@ export const TOUR_STEPS = [
     content:
       'Open Colors to fine-tune each role, view scales, and lock what you want to keep. The Fonts tab works the same way for heading and body pairings.',
     placement: 'left',
+    compactPlacement: 'bottom',
     prepare: 'open-colors',
   },
   {
@@ -41,6 +44,7 @@ export const TOUR_STEPS = [
     content:
       'Use the shuffle button in the preview top bar. Lock roles in Colors or Fonts first, then shuffle the rest. Press Space anytime.',
     placement: 'bottom',
+    compactPlacement: 'top',
     prepare: 'close-panels',
   },
   {
@@ -50,6 +54,7 @@ export const TOUR_STEPS = [
     content:
       'See your combo on realistic mockups. The WCAG pill opens contrast details; device toggles sit in the top bar.',
     placement: 'right',
+    compactPlacement: 'top',
     prepare: 'close-panels',
   },
   {
@@ -59,6 +64,7 @@ export const TOUR_STEPS = [
     content:
       'Switch between desktop, tablet, and mobile widths to stress-test readability and layout at different breakpoints.',
     placement: 'bottom',
+    compactPlacement: 'bottom',
     prepare: 'close-panels',
   },
   {
@@ -68,6 +74,7 @@ export const TOUR_STEPS = [
     content:
       'Pin up to eight layouts in the quick-select bar below the preview. Use the slider button to pick favorites, or the dashed hint when the bar is empty.',
     placement: 'top',
+    compactPlacement: 'top',
     prepare: 'close-panels',
   },
   {
@@ -77,6 +84,7 @@ export const TOUR_STEPS = [
     content:
       'Expand Layouts in the sidebar for every archetype, or pick from the favorite chip bar. Options lets you toggle sections and customize logo text.',
     placement: 'left',
+    compactPlacement: 'bottom',
     prepare: 'open-archetypes',
   },
   {
@@ -86,6 +94,7 @@ export const TOUR_STEPS = [
     content:
       'Heart a combo from the header icons under the logo, copy a shareable link, or use Export in the sidebar footer to download design tokens.',
     placement: 'right',
+    compactPlacement: 'top',
     prepare: 'sidebar-workspace',
   },
   {
@@ -95,6 +104,7 @@ export const TOUR_STEPS = [
     content:
       'Choose a format — CSS, SCSS, Tailwind, JSON, Style Dictionary, and more. Preview the output, copy to clipboard, or download a file with color scales included.',
     placement: 'left',
+    compactPlacement: 'bottom',
     prepare: 'open-export',
   },
   {
@@ -102,17 +112,20 @@ export const TOUR_STEPS = [
     target: '[data-tour="build-info"]',
     title: 'Build Info',
     content:
-      'Version summary, tech stack pills, feature accordions, and a changelog timeline. Expand Tips for shortcuts, or restart this tour from the button below.',
+      'Version summary, tech stack pills, and feature accordions. Open the changelog in a new tab for full release notes, expand Tips for shortcuts, or restart this tour from the button below.',
     placement: 'left',
+    compactPlacement: 'bottom',
     prepare: 'open-build-info',
   },
   {
     id: 'feature-catalog',
     target: '[data-tour="feature-catalog-footer"]',
+    compactTarget: '[data-tour="feature-catalog"]',
     title: 'Feature Catalog',
     content:
       'Browse what is built today versus planned next — utility primitives, app features, and live preview archetypes. Filter by status to focus on the roadmap.',
     placement: 'left',
+    compactPlacement: 'bottom',
     prepare: 'open-feature-catalog',
   },
   {

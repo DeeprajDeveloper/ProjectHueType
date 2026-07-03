@@ -26,10 +26,12 @@ function SidebarNav({
   hasActiveFilters,
   collapsed = false,
   isCompact = false,
+  isMobile = false,
 }) {
   const [layoutsOpen, setLayoutsOpen] = useState(readStoredLayoutsOpen);
   const [openMenuId, setOpenMenuId] = useState(null);
   const menuRef = useRef(null);
+  const navCollapsed = collapsed || isMobile;
 
   useEffect(() => {
     if (!openMenuId) return undefined;
@@ -56,7 +58,7 @@ function SidebarNav({
   }, [openMenuId]);
 
   const handleLayoutsToggle = () => {
-    if (collapsed) {
+    if (navCollapsed) {
       setOpenMenuId((id) => (id === 'layouts' ? null : 'layouts'));
       return;
     }
@@ -77,7 +79,7 @@ function SidebarNav({
     onPanelChange(resolvePanelId(item.id));
   };
 
-  const showLayoutsList = layoutsOpen || (isCompact && !collapsed);
+  const showLayoutsList = layoutsOpen || (isCompact && !navCollapsed);
 
   const isPanelActive = (panelId) => activePanel === panelId && panelOpen;
 
@@ -85,7 +87,7 @@ function SidebarNav({
     (item) => isPanelActive(resolvePanelId(item.id)),
   );
 
-  const workspaceItems = collapsed
+  const workspaceItems = navCollapsed
     ? WORKSPACE_NAV_ITEMS.filter((item) => item.id !== 'customizations')
     : WORKSPACE_NAV_ITEMS;
 
@@ -123,7 +125,7 @@ function SidebarNav({
         )}
         {badge && <span className="sidebar-nav__badge">{badge}</span>}
         {showDot && <span className="sidebar-nav__dot" aria-label="Filters active" />}
-        {collapsed && (
+        {navCollapsed && (
           <span className="sidebar-nav__tooltip" role="tooltip">{tooltip || item.label}</span>
         )}
       </button>
@@ -174,7 +176,7 @@ function SidebarNav({
   };
 
   const renderCustomizeSection = () => {
-    if (collapsed) {
+    if (navCollapsed) {
       return (
         <div className="sidebar-nav__section">
           <p className="sidebar-nav__group-label">Customize</p>
@@ -238,36 +240,36 @@ function SidebarNav({
           type="button"
           className={[
             'sidebar-nav__item',
-            collapsed ? '' : 'sidebar-nav__item--expandable',
+            navCollapsed ? '' : 'sidebar-nav__item--expandable',
             openMenuId === 'layouts' ? 'sidebar-nav__item--menu-open' : '',
-            !collapsed && layoutsOpen ? 'sidebar-nav__item--active' : '',
+            !navCollapsed && layoutsOpen ? 'sidebar-nav__item--active' : '',
           ].filter(Boolean).join(' ')}
-          aria-expanded={collapsed ? openMenuId === 'layouts' : layoutsOpen}
-          aria-haspopup={collapsed ? 'menu' : undefined}
+          aria-expanded={navCollapsed ? openMenuId === 'layouts' : layoutsOpen}
+          aria-haspopup={navCollapsed ? 'menu' : undefined}
           onClick={handleLayoutsToggle}
           data-tour="nav-prototypes"
-          aria-label={collapsed ? `Layouts, ${layoutCount} layouts` : undefined}
+          aria-label={navCollapsed ? `Layouts, ${layoutCount} layouts` : undefined}
         >
           <Icon icon={LayoutIcon} size={ICON_SIZE_SM} />
           <span className="sidebar-nav__item-label">Layouts</span>
-          {!collapsed && (
+          {!navCollapsed && (
             <span className="sidebar-nav__count" aria-label={`${layoutCount} layouts`}>
               {layoutCount}
             </span>
           )}
-          {collapsed && (
+          {navCollapsed && (
             <span className="sidebar-nav__tooltip" role="tooltip">
               Layouts · {layoutCount}
             </span>
           )}
-          {!collapsed && (
+          {!navCollapsed && (
             <span className={`sidebar-nav__chevron ${layoutsOpen ? 'sidebar-nav__chevron--open' : ''}`} aria-hidden="true">
               <Icon icon={CaretDownIcon} size={ICON_SIZE_SM} />
             </span>
           )}
         </button>
 
-        {collapsed ? (
+        {navCollapsed ? (
           renderCollapsedPopover('layouts', `Layouts (${layoutCount})`, (
             PREVIEW_ARCHETYPES.map((archetype) => renderArchetypeItem(archetype, { inPopover: true }))
           ))
@@ -288,8 +290,9 @@ function SidebarNav({
     <nav
       className={[
         'sidebar-nav',
-        collapsed ? 'sidebar-nav--collapsed' : '',
+        navCollapsed ? 'sidebar-nav--collapsed' : '',
         isCompact ? 'sidebar-nav--compact' : '',
+        isMobile ? 'sidebar-nav--mobile' : '',
       ].filter(Boolean).join(' ')}
       aria-label="Main navigation"
       data-tour="sidebar-nav"

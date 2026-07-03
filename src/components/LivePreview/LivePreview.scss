@@ -51,13 +51,77 @@
 .live-preview__wcag {
   @include button-reset;
   display: inline-flex;
+  align-items: stretch;
+  min-height: 32px;
+  max-width: 100%;
   cursor: pointer;
-  border-radius: var(--radius-full);
+  background: var(--surface-base);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--text-primary) 4%, transparent);
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+
+  &:hover {
+    background: var(--surface-sunken);
+    border-color: var(--border-default);
+    box-shadow: var(--shadow-sm);
+
+    .live-preview__wcag-action {
+      color: var(--accent);
+    }
+  }
+
+  &:active {
+    transform: translateY(1px);
+    box-shadow: none;
+  }
 
   &:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
   }
+}
+
+.live-preview__wcag-status {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  padding: 3px 6px 3px 4px;
+
+  .contrast-badge {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .contrast-badge__label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.live-preview__wcag-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  align-self: stretch;
+  padding: 0 7px 0 6px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  background: color-mix(in srgb, var(--surface-raised) 70%, var(--surface-sunken));
+  border-left: 1px solid var(--border-subtle);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  transition: color var(--transition-fast);
+}
+
+.live-preview__wcag-action-text {
+  line-height: 1;
 }
 
 .live-preview__frame-toggle {
@@ -360,6 +424,39 @@
       width: 100%;
       justify-content: space-between;
       flex-wrap: wrap;
+      gap: var(--space-2);
+    }
+
+    .live-preview__wcag {
+      flex: 1 1 auto;
+      min-width: 0;
+      min-height: 36px;
+    }
+
+    .live-preview__wcag-status {
+      flex: 1 1 auto;
+      min-width: 0;
+      padding-block: 5px;
+    }
+
+    .live-preview__wcag-action {
+      padding-inline: 10px;
+    }
+
+    .live-preview__wcag-action-text {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .live-preview__frame-toggle {
+      flex-shrink: 0;
     }
 
     .live-preview__meta {

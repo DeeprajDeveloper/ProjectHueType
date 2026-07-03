@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react';
 import AppShell from './components/AppShell/AppShell';
+import ChangelogPage from './components/ChangelogPage/ChangelogPage';
 import PrivacyPage from './components/PrivacyPage/PrivacyPage';
-import { PRIVACY_POLICY_PATH } from './data/buildInfo';
-
-function isPrivacyPath(pathname) {
-  return pathname === PRIVACY_POLICY_PATH || pathname === `${PRIVACY_POLICY_PATH}/`;
-}
+import { applyStructuredData } from './data/structuredData';
+import { isChangelogPath, isPrivacyPath } from './utils/routes';
 
 function App() {
   const [pathname, setPathname] = useState(() => window.location.pathname);
@@ -16,8 +14,16 @@ function App() {
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
+  useEffect(() => {
+    applyStructuredData(pathname);
+  }, [pathname]);
+
   if (isPrivacyPath(pathname)) {
     return <PrivacyPage />;
+  }
+
+  if (isChangelogPath(pathname)) {
+    return <ChangelogPage />;
   }
 
   return <AppShell />;
