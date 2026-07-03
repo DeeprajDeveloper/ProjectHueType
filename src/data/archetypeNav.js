@@ -6,9 +6,9 @@ const ARCHETYPE_BY_ID = Object.fromEntries(
 
 export function getArchetypeBadge(archetypeId) {
   const archetype = ARCHETYPE_BY_ID[archetypeId];
-  return archetype?.group === 'group-2' ? 'New' : undefined;
+  return archetype?.group === 'group-4' ? 'New' : undefined;
 }
 
-export function isGroup2Archetype(archetypeId) {
-  return ARCHETYPE_BY_ID[archetypeId]?.group === 'group-2';
+export function isGroup4Archetype(archetypeId) {
+  return ARCHETYPE_BY_ID[archetypeId]?.group === 'group-4';
 }

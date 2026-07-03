@@ -1,6 +1,7 @@
-import { SidebarSimpleIcon } from '@phosphor-icons/react';
+import { useState, useEffect } from 'react';
+import { CaretDownIcon, SidebarSimpleIcon } from '@phosphor-icons/react';
 import Icon from '../Icon/Icon';
-import { ICON_SIZE } from '../Icon/iconConfig';
+import { ICON_SIZE, ICON_SIZE_SM } from '../Icon/iconConfig';
 import PresetsPanel from '../PresetsPanel/PresetsPanel';
 import CustomizePanel from '../CustomizePanel/CustomizePanel';
 import ComboInfoPanel from '../ComboInfoPanel/ComboInfoPanel';
@@ -8,7 +9,7 @@ import BuildInfoPanel from '../BuildInfoPanel/BuildInfoPanel';
 import FeatureCatalogPanel from '../FeatureCatalogPanel/FeatureCatalogPanel';
 import HelpPanel from '../HelpPanel/HelpPanel';
 import ComponentToggle from '../PreviewComponentsPanel/ComponentToggle';
-import { ARCHETYPE_PARTS, PREVIEW_ARCHETYPES, ARCHETYPE_GROUPS, getArchetypesForGroup, resolveArchetypeParts } from '../PreviewComponentsPanel/previewArchetypes';
+import { ARCHETYPE_PARTS, PREVIEW_ARCHETYPES, getAvailableArchetypeGroups, getArchetypeGroupId, getArchetypesForGroup, resolveArchetypeParts } from '../PreviewComponentsPanel/previewArchetypes';
 import './OptionsPanel.scss';
 
 const PANEL_TITLES = {
@@ -78,43 +79,80 @@ function PreviewSettingsContent({
 }
 
 function ArchetypesContent({ archetype, onArchetypeChange }) {
-  const availableGroups = ARCHETYPE_GROUPS.filter(
-    (group) => getArchetypesForGroup(group.id).length > 0,
-  );
+  const layoutGroups = getAvailableArchetypeGroups();
+  const activeGroupId = getArchetypeGroupId(archetype);
+  const [expandedGroup, setExpandedGroup] = useState(activeGroupId || layoutGroups[0]?.id || null);
+
+  useEffect(() => {
+    if (activeGroupId) setExpandedGroup(activeGroupId);
+  }, [activeGroupId]);
 
   return (
     <div className="options-panel__archetypes-view">
-      {availableGroups.map((group) => (
-        <section key={group.id} className="options-panel__archetype-group">
-          <h4 className="options-panel__group-label">{group.label}</h4>
-          <p className="options-panel__group-desc">{group.description}</p>
-          <fieldset className="options-panel__archetypes">
-            <legend className="options-panel__legend">{group.label}</legend>
-          {getArchetypesForGroup(group.id).map((item) => {
-            const selected = archetype === item.id;
-            return (
-              <label
-                key={item.id}
-                className={`options-panel__option ${selected ? 'options-panel__option--selected' : ''}`}
-              >
-                <input
-                  type="radio"
-                  name="preview-archetype"
-                  value={item.id}
-                  checked={selected}
-                  onChange={() => onArchetypeChange(item.id)}
-                  className="options-panel__radio"
-                />
-                <span className="options-panel__option-body">
-                  <span className="options-panel__option-label">{item.label}</span>
-                  <span className="options-panel__option-desc">{item.description}</span>
+      <p className="options-panel__section-hint">
+        Expand a group, then pick a layout to preview. Groups mirror the sidebar Layouts menu.
+      </p>
+      {layoutGroups.map((group) => {
+        const isExpanded = expandedGroup === group.id;
+        const groupArchetypes = getArchetypesForGroup(group.id);
+        const hasActiveArchetype = groupArchetypes.some((item) => item.id === archetype);
+
+        return (
+          <section
+            key={group.id}
+            className={`options-panel__archetype-group ${isExpanded ? 'options-panel__archetype-group--expanded' : ''}`}
+          >
+            <button
+              type="button"
+              className={[
+                'options-panel__group-trigger',
+                hasActiveArchetype ? 'options-panel__group-trigger--has-active' : '',
+              ].filter(Boolean).join(' ')}
+              aria-expanded={isExpanded}
+              onClick={() => setExpandedGroup((prev) => (prev === group.id ? null : group.id))}
+            >
+              <span className="options-panel__group-trigger-text">
+                <span className="options-panel__group-label">{group.navLabel}</span>
+                <span className="options-panel__group-desc">{group.description}</span>
+              </span>
+              <span className="options-panel__group-meta">
+                <span className="options-panel__group-count">{groupArchetypes.length}</span>
+                <span className={`options-panel__group-chevron ${isExpanded ? 'options-panel__group-chevron--open' : ''}`} aria-hidden="true">
+                  <Icon icon={CaretDownIcon} size={ICON_SIZE_SM} />
                 </span>
-              </label>
-            );
-          })}
-          </fieldset>
-        </section>
-      ))}
+              </span>
+            </button>
+
+            {isExpanded && (
+              <fieldset className="options-panel__archetypes">
+                <legend className="options-panel__legend">{group.label}</legend>
+                {groupArchetypes.map((item) => {
+                  const selected = archetype === item.id;
+                  return (
+                    <label
+                      key={item.id}
+                      className={`options-panel__option ${selected ? 'options-panel__option--selected' : ''}`}
+                    >
+                      <input
+                        type="radio"
+                        name="preview-archetype"
+                        value={item.id}
+                        checked={selected}
+                        onChange={() => onArchetypeChange(item.id)}
+                        className="options-panel__radio"
+                      />
+                      <span className="options-panel__option-body">
+                        <span className="options-panel__option-label">{item.label}</span>
+                        <span className="options-panel__option-desc">{item.description}</span>
+                      </span>
+                    </label>
+                  );
+                })}
+              </fieldset>
+            )}
+          </section>
+        );
+      })}
     </div>
   );
 }

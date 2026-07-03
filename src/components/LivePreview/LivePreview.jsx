@@ -20,6 +20,18 @@ import MockupOnboarding from './MockupOnboarding';
 import MockupSettings from './MockupSettings';
 import MockupEmptyState from './MockupEmptyState';
 import MockupNotifications from './MockupNotifications';
+import MockupDocs from './MockupDocs';
+import MockupKanban from './MockupKanban';
+import MockupAnalytics from './MockupAnalytics';
+import MockupProfile from './MockupProfile';
+import MockupBilling from './MockupBilling';
+import MockupSearch from './MockupSearch';
+import MockupEmail from './MockupEmail';
+import MockupMobileApp from './MockupMobileApp';
+import MockupWaitlist from './MockupWaitlist';
+import MockupError404 from './MockupError404';
+import MockupCalendar from './MockupCalendar';
+import MockupMediaPlayer from './MockupMediaPlayer';
 import { isArchetypePreviewEmpty, getArchetypePreviewLabel, resolveArchetypeParts } from '../PreviewComponentsPanel/previewArchetypes';
 import { getContrastStatusLabel } from '../../utils/contrast';
 import { getPreviewTypeStyle } from '../../utils/typographyScale';
@@ -42,6 +54,18 @@ import './MockupOnboarding.scss';
 import './MockupSettings.scss';
 import './MockupEmptyState.scss';
 import './MockupNotifications.scss';
+import './MockupDocs.scss';
+import './MockupKanban.scss';
+import './MockupAnalytics.scss';
+import './MockupProfile.scss';
+import './MockupBilling.scss';
+import './MockupSearch.scss';
+import './MockupEmail.scss';
+import './MockupMobileApp.scss';
+import './MockupWaitlist.scss';
+import './MockupError404.scss';
+import './MockupCalendar.scss';
+import './MockupMediaPlayer.scss';
 
 const TABLET_ORIENTATION_KEY = 'huetype-tablet-orientation';
 
@@ -90,6 +114,30 @@ function renderArchetype(archetype, previewMode, parts, logoText, onFrameScrollL
       return <MockupEmptyState parts={parts} />;
     case 'notifications':
       return <MockupNotifications parts={parts} />;
+    case 'docs':
+      return <MockupDocs parts={parts} logoText={brand} />;
+    case 'kanban':
+      return <MockupKanban parts={parts} />;
+    case 'analytics':
+      return <MockupAnalytics parts={parts} />;
+    case 'profile':
+      return <MockupProfile parts={parts} />;
+    case 'billing':
+      return <MockupBilling parts={parts} />;
+    case 'search':
+      return <MockupSearch parts={parts} />;
+    case 'email':
+      return <MockupEmail parts={parts} logoText={brand} />;
+    case 'mobile-app':
+      return <MockupMobileApp parts={parts} />;
+    case 'waitlist':
+      return <MockupWaitlist parts={parts} logoText={brand} />;
+    case 'error404':
+      return <MockupError404 parts={parts} />;
+    case 'calendar':
+      return <MockupCalendar parts={parts} />;
+    case 'media-player':
+      return <MockupMediaPlayer parts={parts} />;
     case 'marketing':
     default:
       return (

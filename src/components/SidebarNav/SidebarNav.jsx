@@ -8,9 +8,15 @@ import {
   ARCHETYPE_NAV_META,
   readStoredLayoutsOpen,
   storeLayoutsOpen,
+  readStoredLayoutGroupsOpen,
+  storeLayoutGroupsOpen,
   resolvePanelId,
 } from '../../data/sidebarNavItems';
-import { PREVIEW_ARCHETYPES } from '../PreviewComponentsPanel/previewArchetypes';
+import {
+  getAvailableArchetypeGroups,
+  getArchetypeGroupId,
+  getArchetypesForGroup,
+} from '../PreviewComponentsPanel/previewArchetypes';
 import Icon from '../Icon/Icon';
 import { ICON_SIZE_SM } from '../Icon/iconConfig';
 import './SidebarNav.scss';
@@ -29,6 +35,12 @@ function SidebarNav({
   isMobile = false,
 }) {
   const [layoutsOpen, setLayoutsOpen] = useState(readStoredLayoutsOpen);
+  const [openLayoutGroups, setOpenLayoutGroups] = useState(() => {
+    const stored = readStoredLayoutGroupsOpen();
+    if (stored?.length) return stored;
+    const activeGroup = getArchetypeGroupId(activeArchetype);
+    return activeGroup ? [activeGroup] : ['group-1'];
+  });
   const [openMenuId, setOpenMenuId] = useState(null);
   const menuRef = useRef(null);
   const navCollapsed = collapsed || isMobile;
@@ -56,6 +68,29 @@ function SidebarNav({
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, [openMenuId]);
+
+  const layoutGroups = getAvailableArchetypeGroups();
+
+  useEffect(() => {
+    const activeGroup = getArchetypeGroupId(activeArchetype);
+    if (!activeGroup) return;
+    setOpenLayoutGroups((prev) => {
+      if (prev.includes(activeGroup)) return prev;
+      const next = [...prev, activeGroup];
+      storeLayoutGroupsOpen(next);
+      return next;
+    });
+  }, [activeArchetype]);
+
+  const handleLayoutGroupToggle = (groupId) => {
+    setOpenLayoutGroups((prev) => {
+      const next = prev.includes(groupId)
+        ? prev.filter((id) => id !== groupId)
+        : [...prev, groupId];
+      storeLayoutGroupsOpen(next);
+      return next;
+    });
+  };
 
   const handleLayoutsToggle = () => {
     if (navCollapsed) {
@@ -91,7 +126,10 @@ function SidebarNav({
     ? WORKSPACE_NAV_ITEMS.filter((item) => item.id !== 'customizations')
     : WORKSPACE_NAV_ITEMS;
 
-  const layoutCount = PREVIEW_ARCHETYPES.length;
+  const layoutCount = layoutGroups.reduce(
+    (total, group) => total + getArchetypesForGroup(group.id).length,
+    0,
+  );
 
   const renderNavItem = (item, { nested = false, count, badge, onClick, tooltip } = {}) => {
     const panelId = resolvePanelId(item.id);
@@ -132,14 +170,17 @@ function SidebarNav({
     );
   };
 
-  const renderArchetypeItem = (archetype, { inPopover = false } = {}) => {
+  const renderArchetypeItem = (archetype, { inPopover = false, nested = false } = {}) => {
     const meta = ARCHETYPE_NAV_META[archetype.id] || { navLabel: archetype.label, icon: null };
     const isActive = activeArchetype === archetype.id;
     const badge = getArchetypeBadge(archetype.id);
 
     const className = inPopover
       ? `sidebar-nav__popover-btn ${isActive ? 'sidebar-nav__popover-btn--active' : ''}`
-      : `sidebar-nav__sub-item ${isActive ? 'sidebar-nav__sub-item--active' : ''}`;
+      : [
+        nested ? 'sidebar-nav__nested-item' : 'sidebar-nav__sub-item',
+        isActive ? (nested ? 'sidebar-nav__nested-item--active' : 'sidebar-nav__sub-item--active') : '',
+      ].filter(Boolean).join(' ');
 
     return (
       <button
@@ -159,6 +200,45 @@ function SidebarNav({
         </span>
         {badge && <span className="sidebar-nav__badge">{badge}</span>}
       </button>
+    );
+  };
+
+  const renderLayoutGroupPopover = (group) => (
+    <div key={group.id} className="sidebar-nav__popover-section">
+      <p className="sidebar-nav__popover-section-label">{group.navLabel}</p>
+      {getArchetypesForGroup(group.id).map((archetype) => renderArchetypeItem(archetype, { inPopover: true }))}
+    </div>
+  );
+
+  const renderLayoutGroup = (group) => {
+    const groupOpen = openLayoutGroups.includes(group.id);
+    const groupArchetypes = getArchetypesForGroup(group.id);
+    const hasActiveArchetype = groupArchetypes.some((item) => item.id === activeArchetype);
+
+    return (
+      <div key={group.id} className="sidebar-nav__layout-group">
+        <button
+          type="button"
+          className={[
+            'sidebar-nav__group-item',
+            groupOpen ? 'sidebar-nav__group-item--open' : '',
+            hasActiveArchetype ? 'sidebar-nav__group-item--has-active' : '',
+          ].filter(Boolean).join(' ')}
+          aria-expanded={groupOpen}
+          onClick={() => handleLayoutGroupToggle(group.id)}
+        >
+          <span className="sidebar-nav__item-label">{group.navLabel}</span>
+          <span className="sidebar-nav__count" aria-hidden="true">{groupArchetypes.length}</span>
+          <span className={`sidebar-nav__chevron ${groupOpen ? 'sidebar-nav__chevron--open' : ''}`} aria-hidden="true">
+            <Icon icon={CaretDownIcon} size={ICON_SIZE_SM} />
+          </span>
+        </button>
+        {groupOpen && (
+          <div className="sidebar-nav__nested-list">
+            {groupArchetypes.map((archetype) => renderArchetypeItem(archetype, { nested: true }))}
+          </div>
+        )}
+      </div>
     );
   };
 
@@ -271,12 +351,12 @@ function SidebarNav({
 
         {navCollapsed ? (
           renderCollapsedPopover('layouts', `Layouts (${layoutCount})`, (
-            PREVIEW_ARCHETYPES.map((archetype) => renderArchetypeItem(archetype, { inPopover: true }))
+            layoutGroups.map((group) => renderLayoutGroupPopover(group))
           ))
         ) : (
           showLayoutsList && (
             <div className="sidebar-nav__sublist">
-              {PREVIEW_ARCHETYPES.map((archetype) => renderArchetypeItem(archetype))}
+              {layoutGroups.map((group) => renderLayoutGroup(group))}
             </div>
           )
         )}

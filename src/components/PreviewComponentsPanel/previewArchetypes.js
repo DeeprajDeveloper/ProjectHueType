@@ -76,105 +76,120 @@ export const PREVIEW_ARCHETYPES = [
     description: 'Stacked activity list with read/unread states, avatars, and timestamps.',
     group: 'group-2',
   },
+  {
+    id: 'docs',
+    label: 'Documentation / docs site',
+    previewLabel: 'Documentation',
+    description: 'Sidebar nav, markdown content, headings, and code blocks for technical reading.',
+    group: 'group-3',
+  },
+  {
+    id: 'kanban',
+    label: 'Kanban / project board',
+    previewLabel: 'Kanban board',
+    description: 'Column layout with cards and status colors — multiple accent categories side by side.',
+    group: 'group-3',
+  },
+  {
+    id: 'analytics',
+    label: 'Analytics / reports page',
+    previewLabel: 'Analytics',
+    description: 'Charts, KPI cards, data tables, and date-range selectors for data visualization.',
+    group: 'group-3',
+  },
+  {
+    id: 'profile',
+    label: 'Profile / user page',
+    previewLabel: 'Profile page',
+    description: 'Avatar, stats, activity grid, bio, and social links — common in developer tools.',
+    group: 'group-3',
+  },
+  {
+    id: 'billing',
+    label: 'Billing / upgrade page',
+    previewLabel: 'Billing',
+    description: 'Current plan summary, usage meters, and upgrade CTA — tests semantic color roles.',
+    group: 'group-3',
+  },
+  {
+    id: 'search',
+    label: 'Search results / list view',
+    previewLabel: 'Search results',
+    description: 'Filterable, sortable item list with filter chips at high density.',
+    group: 'group-3',
+  },
+  {
+    id: 'email',
+    label: 'Email template',
+    previewLabel: 'Email template',
+    description: 'Constrained 600px layout — tests how a palette renders in email clients vs. the web.',
+    group: 'group-4',
+  },
+  {
+    id: 'mobile-app',
+    label: 'Mobile app screen',
+    previewLabel: 'Mobile app',
+    description: '390px-wide screen with bottom nav and stacked content cards at phone scale.',
+    group: 'group-4',
+  },
+  {
+    id: 'waitlist',
+    label: 'Waitlist landing page',
+    previewLabel: 'Waitlist page',
+    description: 'Minimal headline, email input, and social proof — palette purity test.',
+    group: 'group-4',
+  },
+  {
+    id: 'error404',
+    label: 'Error / 404 page',
+    previewLabel: '404 page',
+    description: 'Sparse reassuring layout — emotionally different from empty state.',
+    group: 'group-4',
+  },
+  {
+    id: 'calendar',
+    label: 'Calendar / scheduler',
+    previewLabel: 'Calendar',
+    description: 'Dense grid with today highlight and event color blocks — multi-accent stress test.',
+    group: 'group-4',
+  },
+  {
+    id: 'media-player',
+    label: 'Media player / audio UI',
+    previewLabel: 'Media player',
+    description: 'Progress bar, album art, and playback controls on a visual interactive surface.',
+    group: 'group-4',
+  },
 ];
 
 export const ARCHETYPE_GROUPS = [
   {
     id: 'group-1',
     label: 'Group 1 — Core layouts',
+    navLabel: 'Core layouts',
     description: 'Landing pages, dashboards, pricing, blogs, and e-commerce.',
   },
   {
     id: 'group-2',
     label: 'Group 2 — Product essentials',
+    navLabel: 'Product essentials',
     description: 'Auth, chat, onboarding, settings, empty states, and notifications.',
   },
   {
     id: 'group-3',
     label: 'Group 3 — Strong secondary',
+    navLabel: 'Strong secondary',
     description: 'Docs, kanban, analytics, profiles, billing, and search — wider audience coverage.',
   },
   {
     id: 'group-4',
     label: 'Group 4 — Niche & differentiated',
+    navLabel: 'Niche & differentiated',
     description: 'Email, mobile app, waitlist, errors, calendar, and media — specialized real-world surfaces.',
   },
 ];
 
-export const PLANNED_PREVIEW_ARCHETYPES = [
-  {
-    id: 'docs',
-    label: 'Documentation / docs site',
-    description: 'Sidebar nav + markdown content area + in-page headings. Tests long-form technical reading with code blocks and smaller font sizes.',
-    group: 'group-3',
-  },
-  {
-    id: 'kanban',
-    label: 'Kanban / project board',
-    description: 'Column layout with cards and status colors. Tests multiple accent-color categories side by side (To Do / In Progress / Done).',
-    group: 'group-3',
-  },
-  {
-    id: 'analytics',
-    label: 'Analytics / reports page',
-    description: 'Charts, data tables, KPI cards, and date-range selectors. Tests palette on data-visualization surfaces where colors encode meaning.',
-    group: 'group-3',
-  },
-  {
-    id: 'profile',
-    label: 'Profile / user page',
-    description: 'Avatar, stats, activity grid, bio, and social links. Common in community and developer tools.',
-    group: 'group-3',
-  },
-  {
-    id: 'billing',
-    label: 'Billing / upgrade page',
-    description: 'Current plan summary, usage meters, and upgrade CTA. Tests danger, warning, and success semantic color roles.',
-    group: 'group-3',
-  },
-  {
-    id: 'search',
-    label: 'Search results / list view',
-    description: 'Filterable, sortable item list. Tests body copy legibility at high density and filter chips at real scale.',
-    group: 'group-3',
-  },
-  {
-    id: 'email',
-    label: 'Email template',
-    description: 'Constrained 600px layout without modern CSS grid. Tests how a palette renders in email clients vs. the web.',
-    group: 'group-4',
-  },
-  {
-    id: 'mobile-app',
-    label: 'Mobile app screen',
-    description: '390px-wide screen with bottom nav and stacked content cards. Tests contrast and spacing at phone scale.',
-    group: 'group-4',
-  },
-  {
-    id: 'waitlist',
-    label: 'Waitlist landing page',
-    description: 'Minimal headline, email input, and social proof. Tests whether a palette holds together with almost no content.',
-    group: 'group-4',
-  },
-  {
-    id: 'error404',
-    label: 'Error / 404 page',
-    description: 'Sparse reassuring layout — emotionally different from empty state. Tests palette with minimal promotional chrome.',
-    group: 'group-4',
-  },
-  {
-    id: 'calendar',
-    label: 'Calendar / scheduler',
-    description: 'Dense grid layout with today highlight and event color blocks. Another multi-accent-color stress test.',
-    group: 'group-4',
-  },
-  {
-    id: 'media-player',
-    label: 'Media player / audio UI',
-    description: 'Progress bar, album art, and playback controls. Tests accent color on a visual, interactive surface.',
-    group: 'group-4',
-  },
-];
+export const PLANNED_PREVIEW_ARCHETYPES = [];
 
 export function getArchetypeGroupLabel(groupId) {
   return ARCHETYPE_GROUPS.find((group) => group.id === groupId)?.label ?? null;
@@ -186,6 +201,14 @@ export function getArchetypePreviewLabel(archetypeId) {
 
 export function getArchetypesForGroup(groupId) {
   return PREVIEW_ARCHETYPES.filter((archetype) => archetype.group === groupId);
+}
+
+export function getArchetypeGroupId(archetypeId) {
+  return PREVIEW_ARCHETYPES.find((archetype) => archetype.id === archetypeId)?.group ?? null;
+}
+
+export function getAvailableArchetypeGroups() {
+  return ARCHETYPE_GROUPS.filter((group) => getArchetypesForGroup(group.id).length > 0);
 }
 
 export const ARCHETYPE_PARTS = {
@@ -263,6 +286,82 @@ export const ARCHETYPE_PARTS = {
     { id: 'filterTabs', label: 'Filter tabs' },
     { id: 'notificationList', label: 'Notification list' },
     { id: 'unreadBadges', label: 'Unread badges' },
+  ],
+  docs: [
+    { id: 'sidebarNav', label: 'Sidebar navigation' },
+    { id: 'pageHeader', label: 'Page header' },
+    { id: 'contentArea', label: 'Content area' },
+    { id: 'codeBlocks', label: 'Code blocks' },
+    { id: 'tableOfContents', label: 'Table of contents' },
+  ],
+  kanban: [
+    { id: 'boardHeader', label: 'Board header' },
+    { id: 'columns', label: 'Kanban columns' },
+    { id: 'cardDetails', label: 'Card details' },
+    { id: 'addCard', label: 'Add card actions' },
+  ],
+  analytics: [
+    { id: 'pageHeader', label: 'Page header' },
+    { id: 'dateRange', label: 'Date range selector' },
+    { id: 'kpiCards', label: 'KPI cards' },
+    { id: 'charts', label: 'Charts' },
+    { id: 'dataTable', label: 'Data table' },
+  ],
+  profile: [
+    { id: 'profileHeader', label: 'Profile header' },
+    { id: 'stats', label: 'Stats row' },
+    { id: 'bio', label: 'Bio section' },
+    { id: 'activityGrid', label: 'Activity grid' },
+    { id: 'socialLinks', label: 'Social links' },
+  ],
+  billing: [
+    { id: 'currentPlan', label: 'Current plan' },
+    { id: 'usageMeters', label: 'Usage meters' },
+    { id: 'upgradeOptions', label: 'Upgrade options' },
+    { id: 'billingHistory', label: 'Billing history' },
+  ],
+  search: [
+    { id: 'searchHeader', label: 'Search header' },
+    { id: 'filterChips', label: 'Filter chips' },
+    { id: 'sortBar', label: 'Sort bar' },
+    { id: 'resultsList', label: 'Results list' },
+  ],
+  email: [
+    { id: 'emailHeader', label: 'Email header' },
+    { id: 'heroBlock', label: 'Hero block' },
+    { id: 'contentBlocks', label: 'Content blocks' },
+    { id: 'ctaButton', label: 'CTA button' },
+    { id: 'emailFooter', label: 'Email footer' },
+  ],
+  'mobile-app': [
+    { id: 'statusBar', label: 'Status bar' },
+    { id: 'appHeader', label: 'App header' },
+    { id: 'contentCards', label: 'Content cards' },
+    { id: 'bottomNav', label: 'Bottom navigation' },
+  ],
+  waitlist: [
+    { id: 'brandMark', label: 'Brand mark' },
+    { id: 'headline', label: 'Headline & copy' },
+    { id: 'signupForm', label: 'Signup form' },
+    { id: 'socialProof', label: 'Social proof' },
+  ],
+  error404: [
+    { id: 'errorCode', label: 'Error code' },
+    { id: 'message', label: 'Message & copy' },
+    { id: 'primaryAction', label: 'Primary action' },
+    { id: 'secondaryLinks', label: 'Secondary links' },
+  ],
+  calendar: [
+    { id: 'calendarHeader', label: 'Calendar header' },
+    { id: 'monthGrid', label: 'Month grid' },
+    { id: 'eventBlocks', label: 'Event blocks' },
+    { id: 'sidebarEvents', label: 'Upcoming sidebar' },
+  ],
+  'media-player': [
+    { id: 'albumArt', label: 'Album art' },
+    { id: 'trackInfo', label: 'Track info' },
+    { id: 'progressBar', label: 'Progress bar' },
+    { id: 'playbackControls', label: 'Playback controls' },
   ],
 };
 

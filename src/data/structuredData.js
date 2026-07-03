@@ -66,7 +66,7 @@ export function getWebApplicationSchema() {
     publisher: { '@id': ORGANIZATION_ID },
     featureList: [
       'Curated color and font preset library',
-      'Live mockup preview across 12 layout archetypes',
+      'Live mockup preview across 24 layout archetypes',
       'WCAG contrast checking with fix suggestions',
       'Export to CSS, SCSS, Tailwind, and JSON tokens',
       'Shareable combo URLs and saved favorites',

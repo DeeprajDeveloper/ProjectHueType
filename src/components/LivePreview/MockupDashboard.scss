@@ -609,7 +609,21 @@
   }
 
   .mockup-dashboard__charts {
-    grid-template-columns: 1fr;
+    row-gap: 14px;
+
+    > .mockup-dash-chart {
+      flex: 1 1 calc(50% - 6px);
+      min-width: min(100%, 220px);
+    }
+
+    .mockup-dash-chart__header {
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .mockup-dash-chart__summary {
+      align-self: flex-start;
+    }
   }
 }
 
@@ -646,6 +660,48 @@
 
   .mockup-dashboard__stats {
     grid-template-columns: 1fr;
+  }
+
+  .mockup-dashboard__charts {
+    row-gap: 12px;
+    margin-bottom: 20px;
+
+    > .mockup-dash-chart {
+      flex: 1 1 100%;
+      min-width: 100%;
+      padding: 14px;
+    }
+
+    .mockup-dash-chart__canvas {
+      height: 140px;
+    }
+
+    .mockup-dash-chart__canvas--line {
+      height: 148px;
+    }
+
+    .mockup-dash-chart__svg {
+      height: 120px;
+    }
+
+    .mockup-dash-chart__bar-value {
+      font-size: preview-type-size(0.5rem);
+    }
+
+    .mockup-dash-chart__x-label,
+    .mockup-dash-chart__x-axis span {
+      font-size: preview-type-size(0.5rem);
+    }
+
+    .mockup-dash-chart--doughnut .mockup-dash-chart__doughnut-wrap {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .mockup-dash-chart__summary {
+      width: 100%;
+    }
   }
 
   .mockup-dashboard__issue {

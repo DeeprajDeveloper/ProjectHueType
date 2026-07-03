@@ -1,58 +1,89 @@
 @use '../../styles/preview-type' as *;
-@keyframes mockup-bar-pulse {
-  0%, 100% {
-    transform: scaleY(0.35);
-    opacity: 0.55;
+
+@keyframes mockup-bar-grow {
+  from {
+    transform: scaleY(0);
+    opacity: 0.5;
   }
 
-  50% {
+  to {
     transform: scaleY(1);
     opacity: 1;
   }
 }
 
-@keyframes mockup-line-draw {
-  0%, 100% {
-    stroke-dashoffset: 240;
-    opacity: 0.5;
+@keyframes mockup-line-draw-once {
+  from {
+    stroke-dashoffset: 260;
+    opacity: 0.35;
   }
 
-  50% {
+  to {
     stroke-dashoffset: 0;
     opacity: 1;
   }
 }
 
-@keyframes mockup-area-breathe {
-  0%, 100% {
-    opacity: 0.45;
-    transform: scaleY(0.92);
+@keyframes mockup-area-reveal {
+  from {
+    opacity: 0;
+    transform: scaleY(0.88);
     transform-origin: bottom center;
   }
 
-  50% {
+  to {
     opacity: 1;
     transform: scaleY(1);
     transform-origin: bottom center;
   }
 }
 
-@keyframes mockup-dot-pulse {
-  0%, 100% {
-    r: 2.5;
-    opacity: 0.4;
+@keyframes mockup-dot-in {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
   }
 
-  50% {
-    r: 4;
+  to {
     opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes mockup-ring-in {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }
 
 .mockup-dash-chart {
-  padding: 18px;
-  background: var(--preview-secondary);
-  border-radius: 4px;
+  margin: 0;
+  padding: 16px;
+  background: color-mix(in srgb, var(--preview-secondary) 45%, var(--preview-background));
+  border: 1px solid color-mix(in srgb, var(--preview-text) 8%, transparent);
+  border-radius: 6px;
+
+  &--report {
+    padding: 20px 22px;
+    background: var(--preview-background);
+    border-color: color-mix(in srgb, var(--preview-text) 12%, transparent);
+    border-radius: 4px;
+    box-shadow: 0 1px 2px color-mix(in srgb, var(--preview-text) 4%, transparent);
+  }
+}
+
+.mockup-dash-chart__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
 }
 
 .mockup-dash-chart__title {
@@ -60,13 +91,47 @@
   font-weight: 600;
   font-size: preview-type-size(0.8125rem);
   color: var(--preview-text);
-  margin-bottom: 14px;
+  margin-bottom: 2px;
+  line-height: 1.3;
+}
+
+.mockup-dash-chart--report .mockup-dash-chart__title {
+  font-size: preview-type-size(0.9375rem);
+}
+
+.mockup-dash-chart__subtitle {
+  font-size: preview-type-size(0.6875rem);
+  color: var(--preview-text);
+  opacity: 0.55;
+  margin: 0;
+}
+
+.mockup-dash-chart__summary {
+  flex-shrink: 0;
+  padding: 4px 8px;
+  font-size: preview-type-size(0.6875rem);
+  font-weight: 600;
+  color: var(--preview-accent);
+  background: color-mix(in srgb, var(--preview-accent) 10%, transparent);
+  border-radius: 4px;
+}
+
+.mockup-dash-chart__caption {
+  margin: 12px 0 0;
+  font-size: preview-type-size(0.6875rem);
+  line-height: 1.45;
+  color: var(--preview-text);
+  opacity: 0.6;
 }
 
 .mockup-dash-chart__canvas {
   display: flex;
   gap: 8px;
-  height: 140px;
+  height: 160px;
+}
+
+.mockup-dash-chart__canvas--line {
+  height: 168px;
 }
 
 .mockup-dash-chart__y-axis {
@@ -76,6 +141,7 @@
   flex-shrink: 0;
   padding-bottom: 22px;
   font-size: preview-type-size(0.625rem);
+  font-variant-numeric: tabular-nums;
   color: var(--preview-text);
   opacity: 0.45;
 }
@@ -84,6 +150,8 @@
   position: relative;
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .mockup-dash-chart__grid {
@@ -97,7 +165,7 @@
 
 .mockup-dash-chart__grid-line {
   height: 1px;
-  background: color-mix(in srgb, var(--preview-text) 12%, transparent);
+  background: color-mix(in srgb, var(--preview-text) 10%, transparent);
 }
 
 .mockup-dash-chart__bars {
@@ -105,7 +173,7 @@
   z-index: 1;
   display: flex;
   align-items: flex-end;
-  gap: 6px;
+  gap: 4px;
   height: 100%;
   padding-bottom: 22px;
 }
@@ -119,24 +187,63 @@
   min-width: 0;
 }
 
+.mockup-dash-chart__bar-value {
+  margin-bottom: 4px;
+  font-size: preview-type-size(0.5625rem);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--preview-text);
+  opacity: 0.65;
+}
+
 .mockup-dash-chart__bar {
   width: 100%;
-  max-width: 28px;
+  max-width: 32px;
   height: calc(var(--bar-height, 50) * 1%);
-  min-height: 8px;
+  min-height: 6px;
   margin-top: auto;
   transform-origin: bottom center;
-  background: var(--preview-accent);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--preview-accent) 85%, white) 0%,
+    var(--preview-accent) 100%
+  );
   border-radius: 4px 4px 0 0;
-  animation: mockup-bar-pulse 3.2s ease-in-out infinite;
+  animation: mockup-bar-grow 0.75s cubic-bezier(0.22, 1, 0.36, 1) forwards;
   animation-delay: var(--bar-delay, 0s);
+}
+
+.mockup-dash-chart--report .mockup-dash-chart__bar {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--preview-primary) 80%, white) 0%,
+    var(--preview-primary) 100%
+  );
 }
 
 .mockup-dash-chart__x-label {
   margin-top: 6px;
-  font-size: preview-type-size(0.625rem);
+  font-size: preview-type-size(0.5625rem);
   color: var(--preview-text);
   opacity: 0.55;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.mockup-dash-chart__x-axis {
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+  margin-top: 6px;
+  font-size: preview-type-size(0.5625rem);
+  color: var(--preview-text);
+  opacity: 0.5;
+
+  span {
+    flex: 1;
+    text-align: center;
+    min-width: 0;
+  }
 }
 
 .mockup-dash-chart__svg {
@@ -145,32 +252,37 @@
 }
 
 .mockup-dash-chart__svg-grid {
-  stroke: color-mix(in srgb, var(--preview-text) 12%, transparent);
+  stroke: color-mix(in srgb, var(--preview-text) 10%, transparent);
   stroke-width: 1;
 }
 
 .mockup-dash-chart__line {
-  stroke-dasharray: 240;
-  animation: mockup-line-draw 4s ease-in-out infinite;
+  stroke-dasharray: 260;
+  animation: mockup-line-draw-once 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .mockup-dash-chart__area {
-  animation: mockup-area-breathe 4s ease-in-out infinite;
+  animation: mockup-area-reveal 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .mockup-dash-chart__dot {
-  fill: var(--preview-accent);
-  animation: mockup-dot-pulse 4s ease-in-out infinite;
-  animation-delay: var(--dot-delay, 0s);
+  fill: var(--preview-background);
+  stroke: var(--preview-accent);
+  stroke-width: 2;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: mockup-dot-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--dot-delay, 0.4s);
+  opacity: 0;
 }
 
 .mockup-dash-chart__area-fill {
-  animation: mockup-area-breathe 3.6s ease-in-out infinite;
+  animation: mockup-area-reveal 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .mockup-dash-chart__area-line {
-  stroke-dasharray: 220;
-  animation: mockup-line-draw 3.6s ease-in-out infinite;
+  stroke-dasharray: 240;
+  animation: mockup-line-draw-once 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .mockup-dash-chart__doughnut-wrap {
@@ -181,23 +293,20 @@
 
 .mockup-dash-chart__doughnut {
   flex-shrink: 0;
-  width: 96px;
-  height: 96px;
+  width: 104px;
+  height: 104px;
+}
+
+.mockup-dash-chart__ring-track {
+  stroke: color-mix(in srgb, var(--preview-text) 8%, var(--preview-secondary));
+  transform-origin: center;
 }
 
 .mockup-dash-chart__ring-seg {
-  animation: mockup-seg-pulse 3.5s ease-in-out infinite;
+  transform-origin: center;
+  animation: mockup-ring-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
   animation-delay: var(--ring-delay, 0s);
-}
-
-@keyframes mockup-seg-pulse {
-  0%, 100% {
-    opacity: 0.55;
-  }
-
-  50% {
-    opacity: 1;
-  }
+  opacity: 0;
 }
 
 .mockup-dash-chart__doughnut-value {
@@ -221,20 +330,41 @@
   color: var(--preview-text);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
 
   li {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 8px;
   }
 
-  span {
+  span:first-child {
     width: 10px;
     height: 10px;
+    margin-top: 3px;
     border-radius: 2px;
     flex-shrink: 0;
   }
+}
+
+.mockup-dash-chart__legend-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.mockup-dash-chart__legend-label {
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.mockup-dash-chart__legend-detail {
+  font-size: preview-type-size(0.625rem);
+  opacity: 0.55;
+  font-variant-numeric: tabular-nums;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -246,9 +376,8 @@
   .mockup-dash-chart__area-line,
   .mockup-dash-chart__ring-seg {
     animation: none;
-  }
-
-  .mockup-dash-chart__bar {
-    animation: none;
+    opacity: 1;
+    transform: none;
+    stroke-dashoffset: 0;
   }
 }

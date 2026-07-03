@@ -1,0 +1,216 @@
+@use '../../styles/preview-type' as *;
+
+.mockup-docs {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  min-height: 100%;
+  background: var(--preview-background);
+}
+
+.mockup-docs__sidebar {
+  padding: 24px 16px;
+  border-right: 1px solid var(--preview-secondary);
+  background: color-mix(in srgb, var(--preview-secondary) 25%, var(--preview-background));
+}
+
+.mockup-docs__logo {
+  display: block;
+  font-family: var(--preview-font-heading), sans-serif;
+  font-weight: 700;
+  font-size: preview-type-size(0.9375rem);
+  color: var(--preview-text);
+  margin-bottom: 24px;
+  padding: 0 8px;
+}
+
+.mockup-docs__nav-section {
+  margin-bottom: 20px;
+}
+
+.mockup-docs__nav-title {
+  font-size: preview-type-size(0.6875rem);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--preview-text);
+  opacity: 0.5;
+  margin-bottom: 8px;
+  padding: 0 8px;
+}
+
+.mockup-docs__nav-link {
+  display: block;
+  width: 100%;
+  padding: 6px 8px;
+  font-size: preview-type-size(0.8125rem);
+  font-weight: 500;
+  text-align: left;
+  color: var(--preview-text);
+  opacity: 0.75;
+  background: none;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &--active {
+    opacity: 1;
+    font-weight: 600;
+    color: var(--preview-accent);
+    background: color-mix(in srgb, var(--preview-accent) 10%, transparent);
+  }
+
+  &:hover:not(.mockup-docs__nav-link--active) {
+    opacity: 1;
+    background: color-mix(in srgb, var(--preview-secondary) 50%, transparent);
+  }
+}
+
+.mockup-docs__main {
+  padding: 32px 40px;
+  min-width: 0;
+}
+
+.mockup-docs__header {
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--preview-secondary);
+}
+
+.mockup-docs__breadcrumb {
+  font-size: preview-type-size(0.75rem);
+  color: var(--preview-text);
+  opacity: 0.55;
+  margin-bottom: 8px;
+}
+
+.mockup-docs__title {
+  font-family: var(--preview-font-heading), sans-serif;
+  font-size: preview-type-size(1.75rem);
+  font-weight: var(--preview-font-heading-weight);
+  color: var(--preview-text);
+  margin-bottom: 10px;
+}
+
+.mockup-docs__description {
+  font-size: preview-type-size(0.9375rem);
+  line-height: 1.55;
+  color: var(--preview-text);
+  opacity: 0.7;
+  max-width: 52ch;
+}
+
+.mockup-docs__layout {
+  display: grid;
+  grid-template-columns: 1fr 160px;
+  gap: 40px;
+}
+
+.mockup-docs__content {
+  min-width: 0;
+  max-width: 640px;
+  font-size: preview-type-size(0.875rem);
+  line-height: 1.65;
+  color: var(--preview-text);
+
+  h2 {
+    font-family: var(--preview-font-heading), sans-serif;
+    font-size: preview-type-size(1.125rem);
+    font-weight: 600;
+    margin: 28px 0 12px;
+    scroll-margin-top: 16px;
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+  p {
+    margin-bottom: 14px;
+    opacity: 0.85;
+  }
+}
+
+.mockup-docs__code {
+  margin: 20px 0;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--preview-text) 12%, transparent);
+
+  figcaption {
+    padding: 8px 14px;
+    font-size: preview-type-size(0.6875rem);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--preview-text);
+    opacity: 0.55;
+    background: color-mix(in srgb, var(--preview-secondary) 40%, var(--preview-background));
+    border-bottom: 1px solid color-mix(in srgb, var(--preview-text) 8%, transparent);
+  }
+
+  pre {
+    margin: 0;
+    padding: 16px;
+    font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', monospace;
+    font-size: preview-type-size(0.75rem);
+    line-height: 1.55;
+    color: var(--preview-text);
+    background: color-mix(in srgb, var(--preview-secondary) 35%, var(--preview-background));
+    overflow-x: auto;
+  }
+}
+
+.mockup-docs__toc {
+  position: sticky;
+  top: 24px;
+  align-self: start;
+}
+
+.mockup-docs__toc-title {
+  font-size: preview-type-size(0.6875rem);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--preview-text);
+  opacity: 0.5;
+  margin-bottom: 10px;
+}
+
+.mockup-docs__toc ol {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border-left: 2px solid var(--preview-secondary);
+
+  li {
+    margin-bottom: 6px;
+  }
+
+  a {
+    display: block;
+    padding-left: 12px;
+    font-size: preview-type-size(0.75rem);
+    color: var(--preview-text);
+    opacity: 0.65;
+    text-decoration: none;
+
+    &:hover {
+      opacity: 1;
+      color: var(--preview-accent);
+    }
+  }
+}
+
+@container preview-frame (max-width: 768px) {
+  .mockup-docs {
+    grid-template-columns: 1fr;
+  }
+
+  .mockup-docs__layout {
+    grid-template-columns: 1fr;
+  }
+
+  .mockup-docs__toc {
+    display: none;
+  }
+}
