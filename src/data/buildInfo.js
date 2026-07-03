@@ -1,12 +1,13 @@
 /** App build metadata — shown in Build Info panel */
 
-export const APP_VERSION = '0.3.0';
+export const APP_VERSION = '0.3.1';
 export const APP_NAME = 'HueType';
 export const APP_SITE_URL = 'https://huetype.dev';
 export const APP_SITE_HOST = 'huetype.dev';
 export const APP_COPYRIGHT_START_YEAR = 2026;
 export const GITHUB_REPO_URL = 'https://github.com/DeeprajDeveloper/ProjectHueType';
 export const PRIVACY_POLICY_PATH = '/privacy';
+export const CHANGELOG_PATH = '/changelog';
 export const CONTACT_EMAIL = 'hello@huetype.dev';
 
 export const BUILD_STACK = [
@@ -17,28 +18,48 @@ export const BUILD_STACK = [
 ];
 
 export const BUILD_SUMMARY = [
-  'HueType v0.3.0 ships a redesigned workspace with grouped sidebar navigation, a streamlined preview top bar, and favorite layout quick-select below the live mockup.',
-  'Browse 17 curated presets, customize colors and typography with locks and shuffle, and preview 12 layout archetypes across desktop, tablet, and mobile frames.',
-  'Export design tokens in place, check WCAG contrast per combo, save favorites, share URLs, and send feedback — all from a responsive shell that works on desktop, tablet, and mobile.',
-  'This build also expands the feature catalog with planned archetypes, refreshes help shortcuts, and documents every release in the timeline below.',
+  'Pair color palettes and fonts, preview them on realistic mockups, check WCAG contrast, and export tokens — all in one workspace.',
+  'v0.3.1 tightens mobile navigation, fixes typography and standalone-page scrolling, and adds a dedicated changelog with a clearer WCAG contrast control in the preview bar.',
 ];
 
 export const BUILD_FEATURES = [
   'Grouped sidebar — Workspace, Customize, and Preview with expandable layout list',
   'Collapsed sidebar icon rail with popover menus for Customize (colors/fonts) and Layouts',
-  'Preview top bar — live label, WCAG pill, device frame toggle, and shuffle',
+  'Preview top bar — live label, WCAG contrast button with status + Details affordance, device toggle, and shuffle',
   'Favorite layout quick-select below the preview with customizable chips (up to 8)',
   '17 curated presets with mood, industry, and mode filters plus saved library',
   '12 live mockup archetypes — marketing, dashboard, auth, chat, settings, and more',
-  'Colors and fonts panels with role locks, scales, typography ratio controls, and reset',
+  'Colors and fonts panels with role locks, scales, editable typography base size, and ratio controls',
   'In-place export panel with copy, download, and mobile-friendly format tabs',
   'WCAG contrast panel with grouped results, fix suggestions, and per-role reset',
   'Save favorites, shareable combo URLs, short preset links, and feedback to hello@huetype.dev',
   'Feature catalog with built/planned filters and accordion component cards',
   'Product tour, help panel (?), keyboard shortcuts, and light/dark chrome',
+  'Standalone privacy and changelog pages with document scroll and sticky navigation',
 ];
 
 export const BUILD_CHANGELOG = [
+  {
+    version: '0.3.1',
+    label: 'Mobile polish, changelog & contrast UX',
+    date: '2026-07-03',
+    summary: [
+      'Mobile shell keeps the sidebar collapsed with slide-over panels, safe-area padding, and a mobile-aware product tour.',
+      'Typography scale base size is editable again; privacy and changelog pages scroll correctly on all devices.',
+      'WCAG contrast is easier to discover in the preview bar, and full release notes live on a dedicated changelog page.',
+    ],
+    changes: [
+      'WCAG contrast button — bordered control with status badge, Details label, and chevron; shorter labels on mobile',
+      'Typescale base px input — draft while typing, commit on blur or Enter instead of snapping to min/max',
+      'Standalone page scroll — shared document-scroll unlock for /privacy and /changelog with early route class',
+      'Changelog page at /changelog — sticky brand nav and scroll-linked version timeline',
+      'Build Info shortened — summary, stack, links, changelog button, and accordions only',
+      'Mobile viewport — sidebar locked collapsed at ≤639px, softer panel backdrop, centered toasts',
+      'Persisted layouts expand/collapse and preview device mode across sessions',
+      'Help shortcuts — Mac and Windows labels via userAgentData with userAgent fallback',
+      'Theme-aware favicons and logos; Vercel SPA rewrites for client-side routes',
+    ],
+  },
   {
     version: '0.3.0',
     label: 'Sidebar redesign & favorite layouts',
@@ -60,7 +81,7 @@ export const BUILD_CHANGELOG = [
       'Feature catalog accordions for built and planned components; Group 3 & 4 planned archetypes',
       'Nav state persistence for active panel and layout expand/collapse',
       'Right panel typography normalized to body scale across options and customize panels',
-      'Build Info panel — stack pills, summary, accordions, and changelog timeline',
+      'Build Info panel — stack pills, summary, accordions, and inline changelog timeline',
     ],
   },
   {
@@ -107,7 +128,7 @@ export const BUILD_NOTES = [
   'Sidebar groups: Workspace (presets), Customize (colors & fonts), Preview (layouts & options).',
   'When collapsed, use the Customize and Layouts icons — they open flyout menus to the right.',
   'Pin favorite layouts in the chip bar below the preview via the slider customize button.',
-  'Tap the WCAG pill in the preview top bar for contrast details on the active combo.',
+  'Tap the WCAG contrast button in the preview top bar — status on the left, Details on the right.',
   'Export lives in the sidebar footer; theme, share, and save are under the HueType logo.',
-  'Press ? for shortcuts, Space to shuffle unlocked roles, and restart the tour from Build Info below.',
+  'Press ? for shortcuts, Space to shuffle unlocked roles, and open full release notes from Build Info.',
 ];

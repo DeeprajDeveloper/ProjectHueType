@@ -36,8 +36,8 @@
         if (favicon) favicon.href = theme === 'dark' ? '/logo_dark.svg' : '/logo_light.svg';
 
         var path = window.location.pathname;
-        if (path === '/privacy' || path === '/privacy/') {
-          document.documentElement.classList.add('route-privacy');
+        if (path === '/privacy' || path === '/privacy/' || path === '/changelog' || path === '/changelog/') {
+          document.documentElement.classList.add('route-document');
         }
       })();
     </script>

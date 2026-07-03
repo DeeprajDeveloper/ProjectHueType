@@ -112,7 +112,7 @@ export const TOUR_STEPS = [
     target: '[data-tour="build-info"]',
     title: 'Build Info',
     content:
-      'Version summary, tech stack pills, feature accordions, and a changelog timeline. Expand Tips for shortcuts, or restart this tour from the button below.',
+      'Version summary, tech stack pills, and feature accordions. Open the changelog in a new tab for full release notes, expand Tips for shortcuts, or restart this tour from the button below.',
     placement: 'left',
     compactPlacement: 'bottom',
     prepare: 'open-build-info',

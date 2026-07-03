@@ -26,8 +26,8 @@ html {
   overscroll-behavior: none;
 }
 
-// Privacy is a standalone document page — undo the app viewport lock.
-html.route-privacy {
+// Standalone document pages — undo the app viewport lock.
+html.route-document {
   height: auto;
   min-height: 100%;
   max-height: none;
@@ -36,7 +36,7 @@ html.route-privacy {
   overscroll-behavior: auto;
 }
 
-body.route-privacy {
+body.route-document {
   height: auto;
   min-height: 100%;
   max-height: none;
@@ -47,7 +47,7 @@ body.route-privacy {
   top: auto;
 }
 
-#root.route-privacy {
+#root.route-document {
   height: auto;
   min-height: 100dvh;
   max-height: none;
