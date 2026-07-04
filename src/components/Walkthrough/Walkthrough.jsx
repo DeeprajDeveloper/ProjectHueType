@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState, useCallback } from 'react';
-import { X } from '@phosphor-icons/react';
+import { XIcon } from '@phosphor-icons/react';
 import { useIsCompactLayout } from '../../hooks';
 import Icon from '../Icon/Icon';
 import { ICON_SIZE } from '../Icon/iconConfig';
@@ -347,11 +347,11 @@ function Walkthrough({
           </p>
           <button
             type="button"
-            className="walkthrough__close"
+            className="walkthrough__close btn btn--secondary btn--sm"
             onClick={onSkip}
             aria-label="Close tour"
           >
-            <Icon icon={X} size={ICON_SIZE} />
+            <Icon icon={XIcon} size={ICON_SIZE} />
           </button>
         </header>
 

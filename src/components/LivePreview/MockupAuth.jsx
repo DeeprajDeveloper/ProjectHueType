@@ -49,10 +49,10 @@ function MockupAuth({ parts = {}, logoText = DEFAULT_PREVIEW_LOGO }) {
 
         {show('authForm') && (
           <div className="mockup-auth-page__panel">
-            <h2 className="mockup-auth-page__title">
+            <h2 className="mockup-auth-page__title" data-inspect="form-heading">
               {formCopy.title}
             </h2>
-            <p className="mockup-auth-page__subtitle">
+            <p className="mockup-auth-page__subtitle" data-inspect="form-subheading">
               {formCopy.subtitle}
             </p>
 
@@ -64,8 +64,8 @@ function MockupAuth({ parts = {}, logoText = DEFAULT_PREVIEW_LOGO }) {
                 </div>
               )}
               <div className="mockup-auth-page__field">
-                <label className="mockup-auth-page__label" htmlFor="mockup-auth-email">{copy.form.fields.email.label}</label>
-                <input id="mockup-auth-email" type="email" className="mockup-auth-page__input" placeholder={copy.form.fields.email.placeholder} />
+                <label className="mockup-auth-page__label" htmlFor="mockup-auth-email" data-inspect="input-label">{copy.form.fields.email.label}</label>
+                <input id="mockup-auth-email" type="email" className="mockup-auth-page__input" placeholder={copy.form.fields.email.placeholder} data-inspect="input-field" />
               </div>
               <div className="mockup-auth-page__field">
                 <label className="mockup-auth-page__label" htmlFor="mockup-auth-password">{copy.form.fields.password.label}</label>
@@ -79,7 +79,7 @@ function MockupAuth({ parts = {}, logoText = DEFAULT_PREVIEW_LOGO }) {
                 </label>
               )}
 
-              <button type="submit" className="mockup-auth-page__submit">
+              <button type="submit" className="mockup-auth-page__submit" data-inspect="submit-button">
                 {isLogin ? copy.form.submit.login : copy.form.submit.signup}
               </button>
             </form>

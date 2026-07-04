@@ -13,12 +13,13 @@ function MockupSettings({ parts = {}, logoText = DEFAULT_PREVIEW_LOGO }) {
         <aside className="mockup-settings__nav" aria-label="Settings navigation">
           <span className="mockup-settings__logo">{logoText}</span>
           <nav>
-            {copy.nav.tabs.map((tab) => (
+            {copy.nav.tabs.map((tab, index) => (
               <button
                 key={tab.id}
                 type="button"
                 className={`mockup-settings__nav-btn ${activeTab === tab.id ? 'mockup-settings__nav-btn--active' : ''}`}
                 onClick={() => setActiveTab(tab.id)}
+                data-inspect={index === 0 ? 'settings-nav-item' : undefined}
               >
                 {tab.label}
               </button>
@@ -35,7 +36,7 @@ function MockupSettings({ parts = {}, logoText = DEFAULT_PREVIEW_LOGO }) {
 
         {show('profileSection') && activeTab === 'profile' && (
           <section className="mockup-settings__section">
-            <h2 className="mockup-settings__section-title">{copy.profile.sectionTitle}</h2>
+            <h2 className="mockup-settings__section-title" data-inspect="section-heading">{copy.profile.sectionTitle}</h2>
             <div className="mockup-settings__field">
               <label className="mockup-settings__label" htmlFor="settings-name">{copy.profile.fields.displayName.label}</label>
               <input id="settings-name" type="text" className="mockup-settings__input" defaultValue={copy.profile.fields.displayName.value} />
@@ -51,8 +52,8 @@ function MockupSettings({ parts = {}, logoText = DEFAULT_PREVIEW_LOGO }) {
         {show('preferences') && activeTab === 'preferences' && (
           <section className="mockup-settings__section">
             <h2 className="mockup-settings__section-title">{copy.preferences.sectionTitle}</h2>
-            {copy.preferences.items.map((pref) => (
-              <label key={pref.id} className="mockup-settings__toggle-row">
+            {copy.preferences.items.map((pref, index) => (
+              <label key={pref.id} className="mockup-settings__toggle-row" data-inspect={index === 0 ? 'preference-toggle' : undefined}>
                 <span className="mockup-settings__toggle-copy">
                   <span className="mockup-settings__toggle-label">{pref.label}</span>
                   <span className="mockup-settings__toggle-desc">{pref.desc}</span>
@@ -69,7 +70,7 @@ function MockupSettings({ parts = {}, logoText = DEFAULT_PREVIEW_LOGO }) {
             <p className="mockup-settings__danger-copy">
               {copy.dangerZone.copy}
             </p>
-            <button type="button" className="mockup-settings__danger-btn">{copy.dangerZone.delete}</button>
+            <button type="button" className="mockup-settings__danger-btn" data-inspect="danger-button">{copy.dangerZone.delete}</button>
           </section>
         )}
       </main>

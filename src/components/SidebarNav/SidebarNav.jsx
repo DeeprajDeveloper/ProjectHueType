@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { CaretDownIcon, LayoutIcon, SlidersHorizontalIcon } from '@phosphor-icons/react';
-import { getArchetypeBadge } from '../../data/archetypeNav';
+import { getArchetypeBadge, getArchetypeGroupBadge } from '../../data/archetypeNav';
 import {
   WORKSPACE_NAV_ITEMS,
   CUSTOMIZE_NAV_ITEMS,
@@ -8,11 +8,19 @@ import {
   ARCHETYPE_NAV_META,
   readStoredLayoutsOpen,
   storeLayoutsOpen,
+  readStoredLayoutGroupsOpen,
+  storeLayoutGroupsOpen,
   resolvePanelId,
 } from '../../data/sidebarNavItems';
-import { PREVIEW_ARCHETYPES } from '../PreviewComponentsPanel/previewArchetypes';
+import {
+  getAvailableArchetypeGroups,
+  getArchetypeGroupId,
+  getArchetypesForGroup,
+} from '../PreviewComponentsPanel/previewArchetypes';
 import Icon from '../Icon/Icon';
 import { ICON_SIZE_SM } from '../Icon/iconConfig';
+import LayoutSearchField from '../LayoutSearchField/LayoutSearchField';
+import { searchLayouts } from '../../utils/layoutSearch';
 import './SidebarNav.scss';
 
 function SidebarNav({
@@ -29,7 +37,14 @@ function SidebarNav({
   isMobile = false,
 }) {
   const [layoutsOpen, setLayoutsOpen] = useState(readStoredLayoutsOpen);
+  const [openLayoutGroups, setOpenLayoutGroups] = useState(() => {
+    const stored = readStoredLayoutGroupsOpen();
+    if (stored?.length) return stored;
+    const activeGroup = getArchetypeGroupId(activeArchetype);
+    return activeGroup ? [activeGroup] : ['group-1'];
+  });
   const [openMenuId, setOpenMenuId] = useState(null);
+  const [layoutSearchQuery, setLayoutSearchQuery] = useState('');
   const menuRef = useRef(null);
   const navCollapsed = collapsed || isMobile;
 
@@ -56,6 +71,33 @@ function SidebarNav({
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, [openMenuId]);
+
+  const layoutGroups = getAvailableArchetypeGroups();
+  const layoutSearch = useMemo(
+    () => searchLayouts(layoutSearchQuery, layoutGroups),
+    [layoutSearchQuery, layoutGroups],
+  );
+
+  useEffect(() => {
+    const activeGroup = getArchetypeGroupId(activeArchetype);
+    if (!activeGroup) return;
+    setOpenLayoutGroups((prev) => {
+      if (prev.includes(activeGroup)) return prev;
+      const next = [...prev, activeGroup];
+      storeLayoutGroupsOpen(next);
+      return next;
+    });
+  }, [activeArchetype]);
+
+  const handleLayoutGroupToggle = (groupId) => {
+    setOpenLayoutGroups((prev) => {
+      const next = prev.includes(groupId)
+        ? prev.filter((id) => id !== groupId)
+        : [...prev, groupId];
+      storeLayoutGroupsOpen(next);
+      return next;
+    });
+  };
 
   const handleLayoutsToggle = () => {
     if (navCollapsed) {
@@ -91,7 +133,10 @@ function SidebarNav({
     ? WORKSPACE_NAV_ITEMS.filter((item) => item.id !== 'customizations')
     : WORKSPACE_NAV_ITEMS;
 
-  const layoutCount = PREVIEW_ARCHETYPES.length;
+  const layoutCount = layoutGroups.reduce(
+    (total, group) => total + getArchetypesForGroup(group.id).length,
+    0,
+  );
 
   const renderNavItem = (item, { nested = false, count, badge, onClick, tooltip } = {}) => {
     const panelId = resolvePanelId(item.id);
@@ -132,14 +177,17 @@ function SidebarNav({
     );
   };
 
-  const renderArchetypeItem = (archetype, { inPopover = false } = {}) => {
+  const renderArchetypeItem = (archetype, { inPopover = false, nested = false } = {}) => {
     const meta = ARCHETYPE_NAV_META[archetype.id] || { navLabel: archetype.label, icon: null };
     const isActive = activeArchetype === archetype.id;
     const badge = getArchetypeBadge(archetype.id);
 
     const className = inPopover
       ? `sidebar-nav__popover-btn ${isActive ? 'sidebar-nav__popover-btn--active' : ''}`
-      : `sidebar-nav__sub-item ${isActive ? 'sidebar-nav__sub-item--active' : ''}`;
+      : [
+        nested ? 'sidebar-nav__nested-item' : 'sidebar-nav__sub-item',
+        isActive ? (nested ? 'sidebar-nav__nested-item--active' : 'sidebar-nav__sub-item--active') : '',
+      ].filter(Boolean).join(' ');
 
     return (
       <button
@@ -161,6 +209,128 @@ function SidebarNav({
       </button>
     );
   };
+
+  const renderArchetypeSearchResult = (archetype, group, { inPopover = false } = {}) => {
+    const meta = ARCHETYPE_NAV_META[archetype.id] || { navLabel: archetype.label, icon: null };
+    const isActive = activeArchetype === archetype.id;
+    const badge = getArchetypeBadge(archetype.id);
+
+    return (
+      <button
+        key={`${group.id}-${archetype.id}`}
+        type="button"
+        className={[
+          inPopover ? 'sidebar-nav__popover-btn' : 'sidebar-nav__nested-item',
+          isActive ? (inPopover ? 'sidebar-nav__popover-btn--active' : 'sidebar-nav__nested-item--active') : '',
+        ].filter(Boolean).join(' ')}
+        onClick={() => {
+          setOpenMenuId(null);
+          onArchetypeChange(archetype.id);
+        }}
+        aria-pressed={isActive}
+        role={inPopover ? 'menuitem' : undefined}
+      >
+        {meta.icon && <Icon icon={meta.icon} size={ICON_SIZE_SM} active={isActive} />}
+        <span className={inPopover ? 'sidebar-nav__popover-label' : 'sidebar-nav__item-label'}>
+          <span className="sidebar-nav__search-result-label">{meta.navLabel}</span>
+          <span className="sidebar-nav__search-result-group">{group.navLabel}</span>
+        </span>
+        {badge && <span className="sidebar-nav__badge">{badge}</span>}
+      </button>
+    );
+  };
+
+  const renderLayoutsSearchField = (className) => (
+    <LayoutSearchField
+      value={layoutSearchQuery}
+      onChange={setLayoutSearchQuery}
+      className={className}
+      dataTour="layout-search"
+    />
+  );
+
+  const renderLayoutSearchResults = ({ inPopover = false } = {}) => (
+    <div
+      className={inPopover ? 'sidebar-nav__popover-search-results' : 'sidebar-nav__search-results'}
+      data-tour={layoutSearch.isSearching ? undefined : 'layout-groups'}
+    >
+      {layoutSearch.flatResults.length > 0 ? (
+        layoutSearch.flatResults.map(({ archetype, group }) => (
+          renderArchetypeSearchResult(archetype, group, { inPopover })
+        ))
+      ) : (
+        <p className="sidebar-nav__search-empty">No layouts match your search</p>
+      )}
+    </div>
+  );
+
+  const renderExpandedLayoutsList = () => {
+    if (layoutSearch.isSearching) {
+      return renderLayoutSearchResults();
+    }
+
+    return (
+      <div className="sidebar-nav__sublist" data-tour="layout-groups">
+        {layoutSearch.groups.map(({ group, archetypes }) => {
+          const groupOpen = openLayoutGroups.includes(group.id);
+          const hasActiveArchetype = archetypes.some((item) => item.id === activeArchetype);
+          const groupBadge = getArchetypeGroupBadge(group.id);
+
+          return (
+            <div key={group.id} className="sidebar-nav__layout-group">
+              <button
+                type="button"
+                className={[
+                  'sidebar-nav__group-item',
+                  groupOpen ? 'sidebar-nav__group-item--open' : '',
+                  hasActiveArchetype ? 'sidebar-nav__group-item--has-active' : '',
+                ].filter(Boolean).join(' ')}
+                aria-expanded={groupOpen}
+                onClick={() => handleLayoutGroupToggle(group.id)}
+              >
+                <span className="sidebar-nav__item-label">{group.navLabel}</span>
+                {groupBadge && <span className="sidebar-nav__badge">{groupBadge}</span>}
+                <span className="sidebar-nav__count" aria-hidden="true">{archetypes.length}</span>
+                <span className={`sidebar-nav__chevron ${groupOpen ? 'sidebar-nav__chevron--open' : ''}`} aria-hidden="true">
+                  <Icon icon={CaretDownIcon} size={ICON_SIZE_SM} />
+                </span>
+              </button>
+              {groupOpen && (
+                <div className="sidebar-nav__nested-list">
+                  {archetypes.map((archetype) => renderArchetypeItem(archetype, { nested: true }))}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
+  const renderCollapsedLayoutsPopover = () => (
+    <>
+      {renderLayoutsSearchField('layout-search-field--popover')}
+      {layoutSearch.isSearching ? (
+        renderLayoutSearchResults({ inPopover: true })
+      ) : (
+        <div data-tour="layout-groups">
+          {layoutGroups.map((group) => renderLayoutGroupPopover(group))}
+        </div>
+      )}
+    </>
+  );
+
+  const renderLayoutGroupPopover = (group) => (
+    <div key={group.id} className="sidebar-nav__popover-section">
+      <p className="sidebar-nav__popover-section-label">
+        {group.navLabel}
+        {getArchetypeGroupBadge(group.id) && (
+          <span className="sidebar-nav__badge sidebar-nav__badge--inline">{getArchetypeGroupBadge(group.id)}</span>
+        )}
+      </p>
+      {getArchetypesForGroup(group.id).map((archetype) => renderArchetypeItem(archetype, { inPopover: true }))}
+    </div>
+  );
 
   const renderCollapsedPopover = (menuId, title, children) => {
     if (openMenuId !== menuId) return null;
@@ -270,13 +440,12 @@ function SidebarNav({
         </button>
 
         {navCollapsed ? (
-          renderCollapsedPopover('layouts', `Layouts (${layoutCount})`, (
-            PREVIEW_ARCHETYPES.map((archetype) => renderArchetypeItem(archetype, { inPopover: true }))
-          ))
+          renderCollapsedPopover('layouts', `Layouts (${layoutCount})`, renderCollapsedLayoutsPopover())
         ) : (
           showLayoutsList && (
-            <div className="sidebar-nav__sublist">
-              {PREVIEW_ARCHETYPES.map((archetype) => renderArchetypeItem(archetype))}
+            <div className="sidebar-nav__layouts-panel">
+              {renderLayoutsSearchField('layout-search-field--sidebar')}
+              {renderExpandedLayoutsList()}
             </div>
           )
         )}

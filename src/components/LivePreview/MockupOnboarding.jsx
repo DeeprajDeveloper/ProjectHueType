@@ -18,7 +18,7 @@ function MockupOnboarding({ parts = {}, logoText = DEFAULT_PREVIEW_LOGO }) {
             <div className="mockup-onboarding__progress-track">
               <div className="mockup-onboarding__progress-fill" style={{ width: `${progress}%` }} />
             </div>
-            <span className="mockup-onboarding__progress-label">
+            <span className="mockup-onboarding__progress-label" data-inspect="progress-label">
               {formatMockupCopy(copy.progressLabel, { step: step + 1, total: steps.length })}
             </span>
           </div>
@@ -38,8 +38,8 @@ function MockupOnboarding({ parts = {}, logoText = DEFAULT_PREVIEW_LOGO }) {
 
           {show('stepContent') && (
             <div className="mockup-onboarding__content">
-              <h1 className="mockup-onboarding__title">{current.title}</h1>
-              <p className="mockup-onboarding__copy">{current.copy}</p>
+              <h1 className="mockup-onboarding__title" data-inspect="step-title">{current.title}</h1>
+              <p className="mockup-onboarding__copy" data-inspect="step-body">{current.copy}</p>
 
               {step === 1 && current.chips && (
                 <div className="mockup-onboarding__choices">
@@ -65,6 +65,7 @@ function MockupOnboarding({ parts = {}, logoText = DEFAULT_PREVIEW_LOGO }) {
             <button
               type="button"
               className="mockup-onboarding__next"
+              data-inspect="next-button"
               onClick={() => setStep((s) => Math.min(steps.length - 1, s + 1))}
             >
               {step === steps.length - 1 ? copy.nav.getStarted : copy.nav.continue}

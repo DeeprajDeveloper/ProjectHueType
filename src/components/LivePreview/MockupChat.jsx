@@ -7,6 +7,8 @@ import { MOCKUP_COPY, DEFAULT_PREVIEW_LOGO } from '../../data/mockupCopy';
 function MockupChat({ parts = {}, logoText = DEFAULT_PREVIEW_LOGO }) {
   const copy = MOCKUP_COPY.chat;
   const show = (id) => parts[id] !== false;
+  const firstUserId = copy.messages.find((m) => m.role === 'user')?.id;
+  const firstAssistantId = copy.messages.find((m) => m.role === 'assistant')?.id;
 
   return (
     <div className="mockup-chat">
@@ -37,7 +39,7 @@ function MockupChat({ parts = {}, logoText = DEFAULT_PREVIEW_LOGO }) {
       <section className="mockup-chat__main">
         {show('chatHeader') && (
           <header className="mockup-chat__header">
-            <h1 className="mockup-chat__header-title">{copy.header.title}</h1>
+            <h1 className="mockup-chat__header-title" data-inspect="assistant-header">{copy.header.title}</h1>
             <span className="mockup-chat__model">{copy.header.model}</span>
           </header>
         )}
@@ -52,7 +54,16 @@ function MockupChat({ parts = {}, logoText = DEFAULT_PREVIEW_LOGO }) {
                 <div className="mockup-chat__avatar" aria-hidden="true">
                   {msg.role === 'user' ? copy.avatars.user : copy.avatars.assistant}
                 </div>
-                <div className="mockup-chat__bubble">
+                <div
+                  className="mockup-chat__bubble"
+                  data-inspect={
+                    msg.id === firstUserId
+                      ? 'user-bubble'
+                      : msg.id === firstAssistantId
+                        ? 'assistant-bubble'
+                        : undefined
+                  }
+                >
                   <p>{msg.text}</p>
                   {msg.code && (
                     <pre className="mockup-chat__code"><code>{msg.code}</code></pre>
@@ -73,8 +84,9 @@ function MockupChat({ parts = {}, logoText = DEFAULT_PREVIEW_LOGO }) {
               className="mockup-chat__input"
               placeholder={copy.input.placeholder}
               aria-label="Message input"
+              data-inspect="message-input"
             />
-            <button type="button" className="mockup-chat__send">{copy.input.send}</button>
+            <button type="button" className="mockup-chat__send" data-inspect="send-button">{copy.input.send}</button>
           </footer>
         )}
       </section>

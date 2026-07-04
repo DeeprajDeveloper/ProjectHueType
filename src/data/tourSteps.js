@@ -52,10 +52,21 @@ export const TOUR_STEPS = [
     target: '[data-tour="live-preview"]',
     title: 'Live preview',
     content:
-      'See your combo on realistic mockups. The WCAG pill opens contrast details; device toggles sit in the top bar.',
+      'See your combo on realistic mockups. The WCAG pill opens contrast details; device toggles and Inspect sit in the top bar.',
     placement: 'right',
     compactPlacement: 'top',
     prepare: 'close-panels',
+  },
+  {
+    id: 'inspector',
+    target: '[data-tour="inspector-popup"]',
+    compactTarget: '[data-tour="inspect"]',
+    title: 'Style inspector',
+    content:
+      'Turn on Inspect (or press I) to place dots on key elements. Click a dot to open this panel — read typography and colors, check WCAG contrast, apply fix chips, and copy CSS or Tailwind. Drag the header to reposition the panel.',
+    placement: 'left',
+    compactPlacement: 'bottom',
+    prepare: 'open-inspector-demo',
   },
   {
     id: 'preview-controls',
@@ -78,11 +89,33 @@ export const TOUR_STEPS = [
     prepare: 'close-panels',
   },
   {
+    id: 'layout-groups',
+    target: '[data-tour="layout-groups"]',
+    compactTarget: '[data-tour="layout-groups-panel"]',
+    title: 'Layout groups',
+    content:
+      'Layouts are organized into four groups — core, product essentials, strong secondary, and niche surfaces. Expand a group to browse its archetypes.',
+    placement: 'right',
+    compactPlacement: 'bottom',
+    prepare: 'open-layouts-expanded',
+  },
+  {
+    id: 'layout-search',
+    target: '[data-tour="layout-search"]',
+    compactTarget: '[data-tour="layout-search-panel"]',
+    title: 'Search layouts',
+    content:
+      'Type to filter all 24 layouts instantly — match by name, description, or group. Results update as you type so you can jump to the right mockup fast.',
+    placement: 'right',
+    compactPlacement: 'bottom',
+    prepare: 'open-layouts-expanded',
+  },
+  {
     id: 'prototypes',
     target: '[data-tour="components-panel"]',
     title: 'Layouts & preview options',
     content:
-      'Expand Layouts in the sidebar for every archetype, or pick from the favorite chip bar. Options lets you toggle sections and customize logo text.',
+      'Use Options for per-layout section toggles and logo text. The sidebar and options panel share the same search and grouped layout list.',
     placement: 'left',
     compactPlacement: 'bottom',
     prepare: 'open-archetypes',
@@ -133,7 +166,7 @@ export const TOUR_STEPS = [
     target: null,
     title: "You're all set",
     content:
-      'Build Info and Feature Catalog live in the sidebar footer. Press ? for shortcuts, Space to shuffle, and export when you are ready to ship tokens.',
+      'Build Info and Feature Catalog live in the sidebar footer. Press ? for shortcuts, I to inspect, Space to shuffle, and export when you are ready to ship tokens.',
     placement: 'center',
     prepare: 'close-export',
   },

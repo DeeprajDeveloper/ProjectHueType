@@ -1,0 +1,190 @@
+@use '../../styles/mixins' as *;
+
+.whats-new-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 450;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+}
+
+.whats-new-modal__backdrop {
+  @include button-reset;
+  position: absolute;
+  inset: 0;
+  background: rgb(0 0 0 / 45%);
+  cursor: default;
+}
+
+.whats-new-modal__dialog {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 560px);
+  max-height: min(100dvh - var(--space-8), 640px);
+  overflow: hidden;
+  background: var(--surface-raised);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+
+  @include respond-to(desktop) {
+    width: min(100%, 760px);
+    max-height: min(100dvh - var(--space-8), 520px);
+  }
+}
+
+.whats-new-modal__layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-height: inherit;
+  min-height: 0;
+
+  @include respond-to(desktop) {
+    flex-direction: row;
+  }
+}
+
+.whats-new-modal__illustration {
+  display: none;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: var(--surface-base);
+  border-right: 1px solid var(--border-subtle);
+
+  @include respond-to(desktop) {
+    display: block;
+    width: 280px;
+    align-self: stretch;
+  }
+
+  @include respond-to(mobile) {
+    display: none;
+  }
+}
+
+.whats-new-modal__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.whats-new-modal__main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  padding: var(--space-5);
+}
+
+.whats-new-modal__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.whats-new-modal__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--accent-subtle);
+  border-radius: 999px;
+}
+
+.whats-new-modal__close {
+  @include button-reset;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  color: var(--text-secondary);
+  border-radius: var(--radius-sm);
+  transition: background var(--transition-fast), color var(--transition-fast);
+
+  &:hover {
+    background: var(--surface-sunken);
+    color: var(--text-primary);
+  }
+}
+
+.whats-new-modal__body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: var(--space-1);
+
+  @include scrollbar-thin;
+}
+
+.whats-new-modal__title {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-heading);
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+.whats-new-modal__intro {
+  margin: 0 0 var(--space-4);
+  font-size: var(--text-body);
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+.whats-new-modal__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.whats-new-modal__item {
+  padding: var(--space-3);
+  background: var(--surface-base);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.whats-new-modal__item-title {
+  margin: 0 0 var(--space-1);
+  font-size: var(--text-body);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.whats-new-modal__item-body {
+  margin: 0;
+  font-size: var(--text-caption);
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.whats-new-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  padding-top: var(--space-1);
+}
+
+.whats-new-modal__changelog-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}

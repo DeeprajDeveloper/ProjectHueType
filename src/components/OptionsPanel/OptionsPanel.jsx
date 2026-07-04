@@ -1,6 +1,7 @@
-import { SidebarSimpleIcon } from '@phosphor-icons/react';
+import { useState, useEffect, useMemo } from 'react';
+import { CaretDownIcon, SidebarSimpleIcon } from '@phosphor-icons/react';
 import Icon from '../Icon/Icon';
-import { ICON_SIZE } from '../Icon/iconConfig';
+import { ICON_SIZE, ICON_SIZE_SM } from '../Icon/iconConfig';
 import PresetsPanel from '../PresetsPanel/PresetsPanel';
 import CustomizePanel from '../CustomizePanel/CustomizePanel';
 import ComboInfoPanel from '../ComboInfoPanel/ComboInfoPanel';
@@ -8,7 +9,10 @@ import BuildInfoPanel from '../BuildInfoPanel/BuildInfoPanel';
 import FeatureCatalogPanel from '../FeatureCatalogPanel/FeatureCatalogPanel';
 import HelpPanel from '../HelpPanel/HelpPanel';
 import ComponentToggle from '../PreviewComponentsPanel/ComponentToggle';
-import { ARCHETYPE_PARTS, PREVIEW_ARCHETYPES, ARCHETYPE_GROUPS, getArchetypesForGroup, resolveArchetypeParts } from '../PreviewComponentsPanel/previewArchetypes';
+import { ARCHETYPE_PARTS, PREVIEW_ARCHETYPES, getAvailableArchetypeGroups, getArchetypeGroupId, getArchetypesForGroup, resolveArchetypeParts } from '../PreviewComponentsPanel/previewArchetypes';
+import { getArchetypeBadge, getArchetypeGroupBadge } from '../../data/archetypeNav';
+import LayoutSearchField from '../LayoutSearchField/LayoutSearchField';
+import { searchLayouts } from '../../utils/layoutSearch';
 import './OptionsPanel.scss';
 
 const PANEL_TITLES = {
@@ -78,43 +82,141 @@ function PreviewSettingsContent({
 }
 
 function ArchetypesContent({ archetype, onArchetypeChange }) {
-  const availableGroups = ARCHETYPE_GROUPS.filter(
-    (group) => getArchetypesForGroup(group.id).length > 0,
+  const layoutGroups = getAvailableArchetypeGroups();
+  const activeGroupId = getArchetypeGroupId(archetype);
+  const [expandedGroup, setExpandedGroup] = useState(activeGroupId || layoutGroups[0]?.id || null);
+  const [layoutSearchQuery, setLayoutSearchQuery] = useState('');
+  const layoutSearch = useMemo(
+    () => searchLayouts(layoutSearchQuery, layoutGroups),
+    [layoutSearchQuery, layoutGroups],
   );
+
+  useEffect(() => {
+    if (activeGroupId) setExpandedGroup(activeGroupId);
+  }, [activeGroupId]);
 
   return (
     <div className="options-panel__archetypes-view">
-      {availableGroups.map((group) => (
-        <section key={group.id} className="options-panel__archetype-group">
-          <h4 className="options-panel__group-label">{group.label}</h4>
-          <p className="options-panel__group-desc">{group.description}</p>
-          <fieldset className="options-panel__archetypes">
-            <legend className="options-panel__legend">{group.label}</legend>
-          {getArchetypesForGroup(group.id).map((item) => {
-            const selected = archetype === item.id;
+      <LayoutSearchField
+        value={layoutSearchQuery}
+        onChange={setLayoutSearchQuery}
+        className="layout-search-field--panel"
+        dataTour="layout-search-panel"
+      />
+      <p className="options-panel__section-hint">
+        {layoutSearch.isSearching
+          ? `${layoutSearch.flatResults.length} layout${layoutSearch.flatResults.length === 1 ? '' : 's'} found`
+          : 'Expand a group, then pick a layout to preview. Groups mirror the sidebar Layouts menu.'}
+      </p>
+      {layoutSearch.isSearching ? (
+        <div className="options-panel__search-results">
+          {layoutSearch.flatResults.length > 0 ? (
+            <fieldset className="options-panel__archetypes">
+              <legend className="options-panel__legend">Search results</legend>
+              {layoutSearch.flatResults.map(({ archetype: item, group }) => {
+                const selected = archetype === item.id;
+                const badge = getArchetypeBadge(item.id);
+                return (
+                  <label
+                    key={item.id}
+                    className={`options-panel__option ${selected ? 'options-panel__option--selected' : ''}`}
+                  >
+                    <input
+                      type="radio"
+                      name="preview-archetype"
+                      value={item.id}
+                      checked={selected}
+                      onChange={() => onArchetypeChange(item.id)}
+                      className="options-panel__radio"
+                    />
+                    <span className="options-panel__option-body">
+                      <span className="options-panel__option-label">
+                        {item.label}
+                        {badge && <span className="options-panel__badge">{badge}</span>}
+                      </span>
+                      <span className="options-panel__option-desc">{group.navLabel}</span>
+                    </span>
+                  </label>
+                );
+              })}
+            </fieldset>
+          ) : (
+            <p className="options-panel__search-empty">No layouts match your search</p>
+          )}
+        </div>
+      ) : (
+        <div data-tour="layout-groups-panel">
+          {layoutSearch.groups.map(({ group, archetypes: groupArchetypes }) => {
+            const isExpanded = expandedGroup === group.id;
+            const hasActiveArchetype = groupArchetypes.some((item) => item.id === archetype);
+
             return (
-              <label
-                key={item.id}
-                className={`options-panel__option ${selected ? 'options-panel__option--selected' : ''}`}
+              <section
+                key={group.id}
+                className={`options-panel__archetype-group ${isExpanded ? 'options-panel__archetype-group--expanded' : ''}`}
               >
-                <input
-                  type="radio"
-                  name="preview-archetype"
-                  value={item.id}
-                  checked={selected}
-                  onChange={() => onArchetypeChange(item.id)}
-                  className="options-panel__radio"
-                />
-                <span className="options-panel__option-body">
-                  <span className="options-panel__option-label">{item.label}</span>
-                  <span className="options-panel__option-desc">{item.description}</span>
-                </span>
-              </label>
+                <button
+                  type="button"
+                  className={[
+                    'options-panel__group-trigger',
+                    hasActiveArchetype ? 'options-panel__group-trigger--has-active' : '',
+                  ].filter(Boolean).join(' ')}
+                  aria-expanded={isExpanded}
+                  onClick={() => setExpandedGroup((prev) => (prev === group.id ? null : group.id))}
+                >
+                  <span className="options-panel__group-trigger-text">
+                    <span className="options-panel__group-label">
+                      {group.navLabel}
+                      {getArchetypeGroupBadge(group.id) && (
+                        <span className="options-panel__badge">{getArchetypeGroupBadge(group.id)}</span>
+                      )}
+                    </span>
+                    <span className="options-panel__group-desc">{group.description}</span>
+                  </span>
+                  <span className="options-panel__group-meta">
+                    <span className="options-panel__group-count">{groupArchetypes.length}</span>
+                    <span className={`options-panel__group-chevron ${isExpanded ? 'options-panel__group-chevron--open' : ''}`} aria-hidden="true">
+                      <Icon icon={CaretDownIcon} size={ICON_SIZE_SM} />
+                    </span>
+                  </span>
+                </button>
+
+                {isExpanded && (
+                  <fieldset className="options-panel__archetypes">
+                    <legend className="options-panel__legend">{group.label}</legend>
+                    {groupArchetypes.map((item) => {
+                      const selected = archetype === item.id;
+                      const badge = getArchetypeBadge(item.id);
+                      return (
+                        <label
+                          key={item.id}
+                          className={`options-panel__option ${selected ? 'options-panel__option--selected' : ''}`}
+                        >
+                          <input
+                            type="radio"
+                            name="preview-archetype"
+                            value={item.id}
+                            checked={selected}
+                            onChange={() => onArchetypeChange(item.id)}
+                            className="options-panel__radio"
+                          />
+                          <span className="options-panel__option-body">
+                            <span className="options-panel__option-label">
+                              {item.label}
+                              {badge && <span className="options-panel__badge">{badge}</span>}
+                            </span>
+                            <span className="options-panel__option-desc">{item.description}</span>
+                          </span>
+                        </label>
+                      );
+                    })}
+                  </fieldset>
+                )}
+              </section>
             );
           })}
-          </fieldset>
-        </section>
-      ))}
+        </div>
+      )}
     </div>
   );
 }

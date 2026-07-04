@@ -33,7 +33,7 @@ function MockupFooter({ logoText = DEFAULT_PREVIEW_LOGO }) {
       </div>
 
       <div className="mockup-footer__bottom">
-        <span className="mockup-footer__copy">
+        <span className="mockup-footer__copy" data-inspect="footer-text">
           {formatMockupCopy(copy.copyright, { brand: logoText })}
         </span>
         <div className="mockup-footer__legal">

@@ -3,11 +3,14 @@ import { useBreakpoint } from '../../hooks';
 import {
   CaretRightIcon,
   DeviceRotateIcon,
+  EyeIcon,
   ShuffleIcon,
+  EyeSlashIcon,
 } from '@phosphor-icons/react';
 import ContrastBadge from '../ContrastBadge/ContrastBadge';
 import Icon from '../Icon/Icon';
 import { ICON_SIZE_SM } from '../Icon/iconConfig';
+import InspectorOverlay from '../InspectorOverlay/InspectorOverlay';
 import ArchetypeQuickSelect from '../ArchetypeQuickSelect/ArchetypeQuickSelect';
 import MockupMarketing from './MockupMarketing';
 import MockupDashboard from './MockupDashboard';
@@ -20,6 +23,18 @@ import MockupOnboarding from './MockupOnboarding';
 import MockupSettings from './MockupSettings';
 import MockupEmptyState from './MockupEmptyState';
 import MockupNotifications from './MockupNotifications';
+import MockupDocs from './MockupDocs';
+import MockupKanban from './MockupKanban';
+import MockupAnalytics from './MockupAnalytics';
+import MockupProfile from './MockupProfile';
+import MockupBilling from './MockupBilling';
+import MockupSearch from './MockupSearch';
+import MockupEmail from './MockupEmail';
+import MockupMobileApp from './MockupMobileApp';
+import MockupWaitlist from './MockupWaitlist';
+import MockupError404 from './MockupError404';
+import MockupCalendar from './MockupCalendar';
+import MockupMediaPlayer from './MockupMediaPlayer';
 import { isArchetypePreviewEmpty, getArchetypePreviewLabel, resolveArchetypeParts } from '../PreviewComponentsPanel/previewArchetypes';
 import { getContrastStatusLabel } from '../../utils/contrast';
 import { getPreviewTypeStyle } from '../../utils/typographyScale';
@@ -42,6 +57,18 @@ import './MockupOnboarding.scss';
 import './MockupSettings.scss';
 import './MockupEmptyState.scss';
 import './MockupNotifications.scss';
+import './MockupDocs.scss';
+import './MockupKanban.scss';
+import './MockupAnalytics.scss';
+import './MockupProfile.scss';
+import './MockupBilling.scss';
+import './MockupSearch.scss';
+import './MockupEmail.scss';
+import './MockupMobileApp.scss';
+import './MockupWaitlist.scss';
+import './MockupError404.scss';
+import './MockupCalendar.scss';
+import './MockupMediaPlayer.scss';
 
 const TABLET_ORIENTATION_KEY = 'huetype-tablet-orientation';
 
@@ -90,6 +117,30 @@ function renderArchetype(archetype, previewMode, parts, logoText, onFrameScrollL
       return <MockupEmptyState parts={parts} />;
     case 'notifications':
       return <MockupNotifications parts={parts} />;
+    case 'docs':
+      return <MockupDocs parts={parts} logoText={brand} />;
+    case 'kanban':
+      return <MockupKanban parts={parts} />;
+    case 'analytics':
+      return <MockupAnalytics parts={parts} />;
+    case 'profile':
+      return <MockupProfile parts={parts} />;
+    case 'billing':
+      return <MockupBilling parts={parts} />;
+    case 'search':
+      return <MockupSearch parts={parts} />;
+    case 'email':
+      return <MockupEmail parts={parts} logoText={brand} />;
+    case 'mobile-app':
+      return <MockupMobileApp parts={parts} />;
+    case 'waitlist':
+      return <MockupWaitlist parts={parts} logoText={brand} />;
+    case 'error404':
+      return <MockupError404 parts={parts} />;
+    case 'calendar':
+      return <MockupCalendar parts={parts} />;
+    case 'media-player':
+      return <MockupMediaPlayer parts={parts} />;
     case 'marketing':
     default:
       return (
@@ -129,6 +180,7 @@ function LivePreview({
   contrastStatus,
   onOpenContrast,
   onShuffle,
+  onColorChange,
   lockedCount = 0,
   isCompact = false,
   onShowToast,
@@ -146,6 +198,7 @@ function LivePreview({
   const activeParts = resolveArchetypeParts(archetype, archetypeParts[archetype]);
   const previewEmpty = isArchetypePreviewEmpty(archetype, activeParts);
   const [frameScrollLocked, setFrameScrollLocked] = useState(false);
+  const [inspectorOpen, setInspectorOpen] = useState(false);
   const frameWrapRef = useRef(null);
   const frameRef = useRef(null);
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
@@ -172,7 +225,29 @@ function LivePreview({
 
   useEffect(() => {
     setFrameScrollLocked(false);
+    setInspectorOpen(false);
   }, [archetype]);
+
+  const toggleInspector = useCallback(() => {
+    setInspectorOpen((open) => !open);
+  }, []);
+
+  useEffect(() => {
+    const handler = (event) => {
+      if (event.target instanceof HTMLElement) {
+        const tag = event.target.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || event.target.isContentEditable) {
+          return;
+        }
+      }
+      if (event.key === 'i' || event.key === 'I') {
+        event.preventDefault();
+        toggleInspector();
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [toggleInspector]);
 
   useEffect(() => {
     const el = frameWrapRef.current;
@@ -220,6 +295,11 @@ function LivePreview({
     return () => observer.disconnect();
   }, [previewMode, tabletOrientation, containerWidth, containerHeight, archetype, frameWidth, frameHeight]);
 
+  const frameShellStyle = {
+    ...(frameWidth != null ? { width: `${frameWidth}px` } : {}),
+    ...(frameHeight != null ? { height: `${frameHeight}px` } : {}),
+  };
+
   const previewStyle = {
     ...getPreviewTypeStyle(typeBasePx, typeScaleRatio),
     '--preview-primary': combo.colors.primary,
@@ -231,8 +311,8 @@ function LivePreview({
     '--preview-font-body': combo.fonts.body.family,
     '--preview-font-heading-weight': combo.fonts.heading.weight,
     '--preview-font-body-weight': combo.fonts.body.weight,
-    ...(frameWidth != null ? { width: `${frameWidth}px` } : {}),
-    ...(frameHeight != null ? { height: `${frameHeight}px` } : {}),
+    width: '100%',
+    height: '100%',
   };
 
   const frameClassName = [
@@ -298,6 +378,20 @@ function LivePreview({
               <Icon icon={CaretRightIcon} size={ICON_SIZE_SM} weight="bold" />
             </span>
           </button>
+          <button
+            type="button"
+            className={`live-preview__inspect ${inspectorOpen ? 'live-preview__inspect--active' : ''}`}
+            data-tour="inspect"
+            onClick={toggleInspector}
+            aria-pressed={inspectorOpen}
+            aria-label={inspectorOpen ? 'Turn off style inspector' : 'Turn on style inspector'}
+            title="Inspect element styles (I)"
+          >
+            {!inspectorOpen ? 
+            <Icon icon={EyeSlashIcon} size={ICON_SIZE_SM} weight="fill" /> : <Icon icon={EyeIcon} size={ICON_SIZE_SM} weight="fill" />}
+            
+            <span className="live-preview__inspect-label">Inspect</span>
+          </button>
           {isTablet && (
             <button
               type="button"
@@ -357,21 +451,34 @@ function LivePreview({
       </p>
 
       <div className={frameWrapClassName} ref={frameWrapRef} data-tour="live-preview">
-        <div
-          ref={frameRef}
-          className={frameClassName}
-          style={previewStyle}
-        >
-          {fontsLoading && (
-            <div className="live-preview__loading">Loading fonts…</div>
-          )}
-          {previewEmpty ? (
-            <div className="live-preview__empty">
-              <p>All preview parts are hidden.</p>
-              <p className="live-preview__empty-hint">Turn sections on in Preview → Options.</p>
-            </div>
-          ) : (
-            renderArchetype(archetype, previewMode, activeParts, previewLogoText, setFrameScrollLocked)
+        <div className="live-preview__frame-shell" style={frameShellStyle}>
+          <div
+            ref={frameRef}
+            className={frameClassName}
+            style={previewStyle}
+          >
+            {fontsLoading && (
+              <div className="live-preview__loading">Loading fonts…</div>
+            )}
+            {previewEmpty ? (
+              <div className="live-preview__empty">
+                <p>All preview parts are hidden.</p>
+                <p className="live-preview__empty-hint">Turn sections on in Preview → Options.</p>
+              </div>
+            ) : (
+              renderArchetype(archetype, previewMode, activeParts, previewLogoText, setFrameScrollLocked)
+            )}
+          </div>
+          {inspectorOpen && !previewEmpty && (
+            <InspectorOverlay
+              frameRef={frameRef}
+              archetype={archetype}
+              parts={activeParts}
+              paletteColors={combo.colors}
+              previewMode={previewMode}
+              onShowToast={onShowToast}
+              onColorChange={onColorChange}
+            />
           )}
         </div>
       </div>

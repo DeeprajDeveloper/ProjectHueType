@@ -13,7 +13,7 @@ function MockupNavbar({ compactNav = false, onOpenAuth, logoText = DEFAULT_PREVI
 
   return (
     <nav className="mockup-navbar" aria-label="Preview navigation">
-      <span className="mockup-navbar__logo">{logoText}</span>
+      <span className="mockup-navbar__logo" data-inspect="nav-logo">{logoText}</span>
 
       {compactNav ? (
         <>
@@ -35,11 +35,12 @@ function MockupNavbar({ compactNav = false, onOpenAuth, logoText = DEFAULT_PREVI
                 onClick={() => setMenuOpen(false)}
               />
               <div className="mockup-navbar__drawer">
-                {copy.links.map((link) => (
+                {copy.links.map((link, index) => (
                   <a
                     key={link}
                     href="#preview"
                     className="mockup-navbar__drawer-link"
+                    data-inspect={index === 0 ? 'nav-link' : undefined}
                     onClick={() => setMenuOpen(false)}
                   >
                     {link}
@@ -49,7 +50,7 @@ function MockupNavbar({ compactNav = false, onOpenAuth, logoText = DEFAULT_PREVI
                   <button type="button" className="mockup-navbar__login" onClick={() => handleAuth('login')}>
                     {copy.login}
                   </button>
-                  <button type="button" className="mockup-navbar__cta" onClick={() => handleAuth('signup')}>
+                  <button type="button" className="mockup-navbar__cta" data-inspect="nav-cta" onClick={() => handleAuth('signup')}>
                     {copy.signup}
                   </button>
                 </div>
@@ -60,15 +61,15 @@ function MockupNavbar({ compactNav = false, onOpenAuth, logoText = DEFAULT_PREVI
       ) : (
         <>
           <div className="mockup-navbar__links">
-            {copy.links.map((link) => (
-              <a key={link} href="#preview" className="mockup-navbar__link">{link}</a>
+            {copy.links.map((link, index) => (
+              <a key={link} href="#preview" className="mockup-navbar__link" data-inspect={index === 0 ? 'nav-link' : undefined}>{link}</a>
             ))}
           </div>
           <div className="mockup-navbar__actions">
             <button type="button" className="mockup-navbar__login" onClick={() => handleAuth('login')}>
               {copy.login}
             </button>
-            <button type="button" className="mockup-navbar__cta" onClick={() => handleAuth('signup')}>
+            <button type="button" className="mockup-navbar__cta" data-inspect="nav-cta" onClick={() => handleAuth('signup')}>
               {copy.signup}
             </button>
           </div>

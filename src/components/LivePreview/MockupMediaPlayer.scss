@@ -1,0 +1,176 @@
+@use '../../styles/preview-type' as *;
+
+.mockup-media-player {
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 24px;
+  background: linear-gradient(
+    160deg,
+    color-mix(in srgb, var(--preview-primary) 18%, var(--preview-background)) 0%,
+    var(--preview-background) 45%,
+    color-mix(in srgb, var(--preview-accent) 12%, var(--preview-background)) 100%
+  );
+}
+
+.mockup-media-player__panel {
+  width: 100%;
+  max-width: 360px;
+  padding: 28px 24px 24px;
+  background: color-mix(in srgb, var(--preview-secondary) 25%, var(--preview-background));
+  border: 1px solid color-mix(in srgb, var(--preview-text) 8%, transparent);
+  border-radius: 16px;
+  box-shadow: 0 12px 40px color-mix(in srgb, var(--preview-text) 10%, transparent);
+}
+
+.mockup-media-player__art {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  margin-bottom: 24px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--preview-secondary);
+  transition: transform 0.3s ease;
+
+  &--playing {
+    animation: mockup-media-player-pulse 3s ease-in-out infinite;
+  }
+}
+
+@keyframes mockup-media-player-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
+.mockup-media-player__art-gradient {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    145deg,
+    var(--preview-primary) 0%,
+    color-mix(in srgb, var(--preview-accent) 70%, var(--preview-primary)) 55%,
+    var(--preview-accent) 100%
+  );
+}
+
+.mockup-media-player__track {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.mockup-media-player__title {
+  font-family: var(--preview-font-heading), sans-serif;
+  font-size: preview-type-size(1.25rem);
+  font-weight: 700;
+  color: var(--preview-text);
+  margin-bottom: 4px;
+}
+
+.mockup-media-player__artist {
+  font-size: preview-type-size(0.9375rem);
+  font-weight: 500;
+  color: var(--preview-accent);
+  margin-bottom: 2px;
+}
+
+.mockup-media-player__album {
+  font-size: preview-type-size(0.75rem);
+  color: var(--preview-text);
+  opacity: 0.5;
+  margin: 0;
+}
+
+.mockup-media-player__progress {
+  margin-bottom: 20px;
+}
+
+.mockup-media-player__progress-track {
+  position: relative;
+  height: 6px;
+  margin-bottom: 8px;
+  background: color-mix(in srgb, var(--preview-text) 12%, var(--preview-secondary));
+  border-radius: 999px;
+  cursor: pointer;
+  touch-action: none;
+}
+
+.mockup-media-player__progress-fill {
+  height: 100%;
+  background: var(--preview-accent);
+  border-radius: 999px;
+}
+
+.mockup-media-player__progress-thumb {
+  position: absolute;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  margin-left: -7px;
+  background: var(--preview-accent);
+  border: 2px solid var(--preview-background);
+  border-radius: 50%;
+  transform: translateY(-50%);
+  box-shadow: 0 1px 4px color-mix(in srgb, var(--preview-text) 20%, transparent);
+  pointer-events: none;
+  transition: transform 0.1s;
+
+  &--dragging {
+    transform: translateY(-50%) scale(1.2);
+  }
+}
+
+.mockup-media-player__times {
+  display: flex;
+  justify-content: space-between;
+  font-size: preview-type-size(0.6875rem);
+  font-variant-numeric: tabular-nums;
+  color: var(--preview-text);
+  opacity: 0.55;
+}
+
+.mockup-media-player__controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.mockup-media-player__control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  color: var(--preview-text);
+  opacity: 0.55;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s, color 0.15s;
+
+  &:hover {
+    opacity: 1;
+    color: var(--preview-accent);
+  }
+
+  &--active {
+    opacity: 1;
+    color: var(--preview-accent);
+  }
+}
+
+.mockup-media-player__play {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  color: var(--preview-background);
+  background: var(--preview-accent);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--preview-accent) 40%, transparent);
+}

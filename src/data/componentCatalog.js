@@ -15,6 +15,18 @@ const BUILT_ARCHETYPE_DESCRIPTIONS = {
   settings: 'Tabbed layout, dense form fields, toggles, and a destructive action zone.',
   empty: 'Sparse layout with icon, headline, and single CTA — palette purity test.',
   notifications: 'Stacked activity list with read/unread states, avatars, and timestamps.',
+  docs: 'Sidebar nav, markdown content, headings, and code blocks for technical reading.',
+  kanban: 'Column layout with cards and status colors — multiple accent categories side by side.',
+  analytics: 'Charts, KPI cards, data tables, and date-range selectors for data visualization.',
+  profile: 'Avatar, stats, activity grid, bio, and social links — common in developer tools.',
+  billing: 'Current plan summary, usage meters, and upgrade CTA — tests semantic color roles.',
+  search: 'Filterable, sortable item list with filter chips at high density.',
+  email: 'Constrained 600px email layout — tests palette in a different medium than the web.',
+  'mobile-app': '390px phone screen with bottom nav and stacked content cards.',
+  waitlist: 'Minimal headline, email signup, and social proof — palette purity test.',
+  error404: 'Reassuring sparse error page — emotionally different from empty state.',
+  calendar: 'Month grid with today highlight and multi-color event blocks.',
+  'media-player': 'Album art, progress bar, and playback controls on a visual surface.',
 };
 
 const BUILT_ARCHETYPE_CATALOG = PREVIEW_ARCHETYPES.map((archetype) => ({

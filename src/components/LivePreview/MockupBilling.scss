@@ -1,0 +1,285 @@
+@use '../../styles/preview-type' as *;
+
+.mockup-billing {
+  min-height: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 24px;
+  background: var(--preview-background);
+}
+
+.mockup-billing__section-title {
+  font-size: preview-type-size(0.875rem);
+  font-weight: 600;
+  color: var(--preview-text);
+  margin-bottom: 14px;
+}
+
+.mockup-billing__plan,
+.mockup-billing__usage,
+.mockup-billing__upgrade,
+.mockup-billing__history {
+  margin-bottom: 32px;
+}
+
+.mockup-billing__plan-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px;
+  background: color-mix(in srgb, var(--preview-primary) 8%, var(--preview-background));
+  border: 1px solid color-mix(in srgb, var(--preview-primary) 25%, var(--preview-secondary));
+  border-radius: 8px;
+}
+
+.mockup-billing__plan-name {
+  display: block;
+  font-size: preview-type-size(0.75rem);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--preview-primary);
+  margin-bottom: 6px;
+}
+
+.mockup-billing__plan-price {
+  margin-bottom: 4px;
+}
+
+.mockup-billing__plan-amount {
+  font-family: var(--preview-font-heading), sans-serif;
+  font-size: preview-type-size(1.75rem);
+  font-weight: 700;
+  color: var(--preview-text);
+}
+
+.mockup-billing__plan-period {
+  font-size: preview-type-size(0.875rem);
+  color: var(--preview-text);
+  opacity: 0.6;
+}
+
+.mockup-billing__plan-renewal {
+  font-size: preview-type-size(0.8125rem);
+  color: var(--preview-text);
+  opacity: 0.55;
+}
+
+.mockup-billing__manage {
+  padding: 8px 16px;
+  font-size: preview-type-size(0.8125rem);
+  font-weight: 600;
+  color: var(--preview-text);
+  background: var(--preview-background);
+  border: 1px solid color-mix(in srgb, var(--preview-text) 18%, transparent);
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.mockup-billing__meters {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.mockup-billing__meter-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.mockup-billing__meter-label {
+  font-size: preview-type-size(0.8125rem);
+  font-weight: 500;
+  color: var(--preview-text);
+}
+
+.mockup-billing__meter-value {
+  font-size: preview-type-size(0.75rem);
+  color: var(--preview-text);
+  opacity: 0.55;
+}
+
+.mockup-billing__meter-track {
+  height: 8px;
+  background: color-mix(in srgb, var(--preview-secondary) 60%, var(--preview-background));
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.mockup-billing__meter-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--preview-accent);
+
+  &--ok {
+    background: color-mix(in srgb, var(--preview-accent) 70%, #16a34a);
+  }
+
+  &--warning {
+    background: color-mix(in srgb, var(--preview-accent) 40%, #f59e0b);
+  }
+}
+
+.mockup-billing__plans {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.mockup-billing__plan-option {
+  position: relative;
+  padding: 18px;
+  background: var(--preview-background);
+  border: 1px solid var(--preview-secondary);
+  border-radius: 8px;
+
+  &--current {
+    border-color: color-mix(in srgb, var(--preview-primary) 40%, var(--preview-secondary));
+    background: color-mix(in srgb, var(--preview-primary) 5%, var(--preview-background));
+  }
+
+  &--recommended {
+    border-color: var(--preview-accent);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--preview-accent) 30%, transparent);
+  }
+}
+
+.mockup-billing__recommended {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 2px 10px;
+  font-size: preview-type-size(0.625rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--preview-background);
+  background: var(--preview-accent);
+  border-radius: 999px;
+}
+
+.mockup-billing__option-name {
+  font-size: preview-type-size(1rem);
+  font-weight: 600;
+  color: var(--preview-text);
+  margin-bottom: 6px;
+}
+
+.mockup-billing__option-price {
+  font-family: var(--preview-font-heading), sans-serif;
+  font-size: preview-type-size(1.25rem);
+  font-weight: 700;
+  color: var(--preview-text);
+  margin-bottom: 12px;
+
+  span {
+    font-size: preview-type-size(0.75rem);
+    font-weight: 500;
+    opacity: 0.6;
+  }
+}
+
+.mockup-billing__features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 16px;
+
+  li {
+    font-size: preview-type-size(0.75rem);
+    color: var(--preview-text);
+    opacity: 0.75;
+    padding: 4px 0;
+    padding-left: 14px;
+    position: relative;
+
+    &::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: var(--preview-accent);
+      font-weight: 700;
+    }
+  }
+}
+
+.mockup-billing__upgrade-btn {
+  width: 100%;
+  padding: 10px;
+  font-size: preview-type-size(0.8125rem);
+  font-weight: 600;
+  color: var(--preview-background);
+  background: var(--preview-accent);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.mockup-billing__contact-btn,
+.mockup-billing__current-badge {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  font-size: preview-type-size(0.8125rem);
+  font-weight: 600;
+  text-align: center;
+  border-radius: 6px;
+}
+
+.mockup-billing__contact-btn {
+  color: var(--preview-text);
+  background: none;
+  border: 1px solid color-mix(in srgb, var(--preview-text) 18%, transparent);
+  cursor: pointer;
+}
+
+.mockup-billing__current-badge {
+  color: var(--preview-primary);
+  background: color-mix(in srgb, var(--preview-primary) 10%, transparent);
+}
+
+.mockup-billing__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: preview-type-size(0.8125rem);
+
+  td {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--preview-secondary);
+    color: var(--preview-text);
+  }
+}
+
+.mockup-billing__invoice-id {
+  font-weight: 600;
+}
+
+.mockup-billing__status {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: preview-type-size(0.6875rem);
+  font-weight: 700;
+  border-radius: 4px;
+
+  &--paid {
+    color: var(--preview-background);
+    background: color-mix(in srgb, var(--preview-accent) 65%, #16a34a);
+  }
+}
+
+@container preview-frame (max-width: 640px) {
+  .mockup-billing__plans {
+    grid-template-columns: 1fr;
+  }
+
+  .mockup-billing__plan-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

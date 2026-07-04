@@ -18,14 +18,14 @@ function MockupNotifications({ parts = {} }) {
     <div className="mockup-notifications">
       {show('feedHeader') && (
         <header className="mockup-notifications__header">
-          <h1 className="mockup-notifications__title">{copy.header.title}</h1>
+          <h1 className="mockup-notifications__title" data-inspect="feed-heading">{copy.header.title}</h1>
           <button type="button" className="mockup-notifications__mark-read">{copy.header.markAllRead}</button>
         </header>
       )}
 
       {show('filterTabs') && (
         <div className="mockup-notifications__filters" role="tablist" aria-label="Filter notifications">
-          {copy.filters.map((tab) => (
+          {copy.filters.map((tab, index) => (
             <button
               key={tab}
               type="button"
@@ -33,10 +33,11 @@ function MockupNotifications({ parts = {} }) {
               aria-selected={filter === tab}
               className={`mockup-notifications__filter ${filter === tab ? 'mockup-notifications__filter--active' : ''}`}
               onClick={() => setFilter(tab)}
+              data-inspect={index === 0 ? 'filter-tab' : undefined}
             >
               {tab}
               {showBadges && tab === 'Unread' && (
-                <span className="mockup-notifications__badge">{copy.unreadBadge}</span>
+                <span className="mockup-notifications__badge" data-inspect="unread-badge">{copy.unreadBadge}</span>
               )}
             </button>
           ))}
@@ -45,10 +46,11 @@ function MockupNotifications({ parts = {} }) {
 
       {show('notificationList') && (
         <ul className="mockup-notifications__list">
-          {filtered.map((item) => (
+          {filtered.map((item, index) => (
             <li key={item.id}>
               <article
                 className={`mockup-notifications__item ${item.unread ? 'mockup-notifications__item--unread' : ''}`}
+                data-inspect={index === 0 ? 'notification-item' : undefined}
               >
                 <div className="mockup-notifications__avatar" aria-hidden="true">{item.avatar}</div>
                 <div className="mockup-notifications__body">

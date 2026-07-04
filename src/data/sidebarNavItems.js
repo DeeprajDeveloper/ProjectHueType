@@ -17,6 +17,18 @@ import {
   GearSixIcon,
   CircleDashedIcon,
   BellIcon,
+  BookOpenTextIcon,
+  KanbanIcon,
+  ChartLineUpIcon,
+  UserCircleIcon,
+  CreditCardIcon,
+  ListMagnifyingGlassIcon,
+  EnvelopeSimpleIcon,
+  DeviceMobileIcon,
+  RocketLaunchIcon,
+  WarningCircleIcon,
+  CalendarBlankIcon,
+  MusicNotesIcon,
   QuestionIcon,
   PackageIcon,
   BooksIcon,
@@ -53,6 +65,18 @@ export const ARCHETYPE_NAV_META = {
   settings: { navLabel: 'Settings', chipLabel: 'Settings', icon: GearSixIcon },
   empty: { navLabel: 'Empty state', chipLabel: 'Empty state', icon: CircleDashedIcon },
   notifications: { navLabel: 'Notifications', chipLabel: 'Notifications', icon: BellIcon },
+  docs: { navLabel: 'Documentation', chipLabel: 'Docs', icon: BookOpenTextIcon },
+  kanban: { navLabel: 'Kanban board', chipLabel: 'Kanban', icon: KanbanIcon },
+  analytics: { navLabel: 'Analytics', chipLabel: 'Analytics', icon: ChartLineUpIcon },
+  profile: { navLabel: 'Profile page', chipLabel: 'Profile', icon: UserCircleIcon },
+  billing: { navLabel: 'Billing', chipLabel: 'Billing', icon: CreditCardIcon },
+  search: { navLabel: 'Search results', chipLabel: 'Search', icon: ListMagnifyingGlassIcon },
+  email: { navLabel: 'Email template', chipLabel: 'Email', icon: EnvelopeSimpleIcon },
+  'mobile-app': { navLabel: 'Mobile app', chipLabel: 'Mobile app', icon: DeviceMobileIcon },
+  waitlist: { navLabel: 'Waitlist page', chipLabel: 'Waitlist', icon: RocketLaunchIcon },
+  error404: { navLabel: '404 page', chipLabel: '404', icon: WarningCircleIcon },
+  calendar: { navLabel: 'Calendar', chipLabel: 'Calendar', icon: CalendarBlankIcon },
+  'media-player': { navLabel: 'Media player', chipLabel: 'Media', icon: MusicNotesIcon },
 };
 
 export const CHIP_BAR_ARCHETYPE_IDS = [
@@ -108,6 +132,7 @@ export const PROTOTYPE_GROUP = {
 };
 
 export const LAYOUTS_STORAGE_KEY = 'huetype-sidebar-layouts-open';
+export const LAYOUT_GROUPS_STORAGE_KEY = 'huetype-sidebar-layout-groups-open';
 export const ACTIVE_PANEL_STORAGE_KEY = 'huetype-active-panel';
 
 export const NAV_PANEL_IDS = [
@@ -164,6 +189,28 @@ export function readStoredLayoutsOpen() {
 export function storeLayoutsOpen(open) {
   try {
     localStorage.setItem(LAYOUTS_STORAGE_KEY, String(open));
+  } catch {
+    // ignore
+  }
+}
+
+export function readStoredLayoutGroupsOpen() {
+  try {
+    const stored = localStorage.getItem(LAYOUT_GROUPS_STORAGE_KEY);
+    if (!stored) return null;
+    const parsed = JSON.parse(stored);
+    if (Array.isArray(parsed) && parsed.every((id) => typeof id === 'string')) {
+      return parsed;
+    }
+  } catch {
+    // ignore
+  }
+  return null;
+}
+
+export function storeLayoutGroupsOpen(groupIds) {
+  try {
+    localStorage.setItem(LAYOUT_GROUPS_STORAGE_KEY, JSON.stringify(groupIds));
   } catch {
     // ignore
   }

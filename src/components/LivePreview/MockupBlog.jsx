@@ -49,7 +49,7 @@ function MockupBlog({ parts = {}, logoText = DEFAULT_PREVIEW_LOGO }) {
           <aside className="mockup-blog__rail mockup-blog__rail--left" aria-label="Author">
             <div className="mockup-blog__author-sticky">
               <div className="mockup-blog__author-avatar" aria-hidden="true">{copy.author.initials}</div>
-              <span className="mockup-blog__author-name">{copy.author.name}</span>
+              <span className="mockup-blog__author-name" data-inspect="author-name">{copy.author.name}</span>
               <button type="button" className="mockup-blog__follow">{copy.author.follow}</button>
             </div>
           </aside>
@@ -58,11 +58,11 @@ function MockupBlog({ parts = {}, logoText = DEFAULT_PREVIEW_LOGO }) {
         <article className="mockup-blog__article">
           {show('articleHeader') && (
             <header className="mockup-blog__header">
-              <span className="mockup-blog__category">{copy.article.category}</span>
-              <h1 className="mockup-blog__title">
+              <span className="mockup-blog__category" data-inspect="category-badge">{copy.article.category}</span>
+              <h1 className="mockup-blog__title" data-inspect="article-heading">
                 {copy.article.title}
               </h1>
-              <p className="mockup-blog__meta">
+              <p className="mockup-blog__meta" data-inspect="caption-meta">
                 {copy.article.meta}
               </p>
             </header>
@@ -70,7 +70,7 @@ function MockupBlog({ parts = {}, logoText = DEFAULT_PREVIEW_LOGO }) {
 
           {show('articleBody') && (
             <div className="mockup-blog__body">
-              <p className="mockup-blog__lead">
+              <p className="mockup-blog__lead" data-inspect="article-body">
                 {copy.article.lead}
               </p>
 
@@ -78,12 +78,12 @@ function MockupBlog({ parts = {}, logoText = DEFAULT_PREVIEW_LOGO }) {
                 {copy.article.body.paragraph1}
               </p>
 
-              <h2>{copy.article.body.heading1}</h2>
+              <h2 data-inspect="article-subheading">{copy.article.body.heading1}</h2>
               <p>
                 {copy.article.body.paragraph2}
               </p>
 
-              <blockquote>
+              <blockquote data-inspect="blockquote">
                 &ldquo;{copy.article.body.blockquote}&rdquo;
               </blockquote>
 
