@@ -1,5 +1,7 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { XIcon } from '@phosphor-icons/react';
+import Accordion from '../Accordion/Accordion';
+import AccordionStack from '../Accordion/AccordionStack';
 import Icon from '../Icon/Icon';
 import { ICON_SIZE_SM } from '../Icon/iconConfig';
 import {
@@ -38,22 +40,16 @@ function StyleRow({ row, onCopyHex }) {
   );
 }
 
-function WcagSection({ assessment, onFixClick }) {
+function WcagContent({ assessment, onFixClick }) {
   if (!assessment) return null;
 
   if (assessment.kind === 'decorative') {
-    return (
-      <section className="inspector-popup__wcag" aria-label="Accessibility">
-        <h3 className="inspector-popup__wcag-title">Accessibility</h3>
-        <p className="inspector-popup__wcag-note">{assessment.message}</p>
-      </section>
-    );
+    return <p className="inspector-popup__wcag-note">{assessment.message}</p>;
   }
 
   if (assessment.kind === 'non-text') {
     return (
-      <section className="inspector-popup__wcag" aria-label="Accessibility">
-        <h3 className="inspector-popup__wcag-title">Accessibility</h3>
+      <>
         <p className="inspector-popup__wcag-ratio">{assessment.ratio.toFixed(2)} : 1</p>
         <div className="inspector-popup__badges">
           <span className={`inspector-popup__badge ${assessment.pass ? 'inspector-popup__badge--pass' : 'inspector-popup__badge--fail'}`}>
@@ -63,15 +59,14 @@ function WcagSection({ assessment, onFixClick }) {
         </div>
         <p className="inspector-popup__wcag-note">{assessment.note}</p>
         <p className="inspector-popup__wcag-caption">Checked at this element&apos;s actual size and weight</p>
-      </section>
+      </>
     );
   }
 
   const { badges, ratio, note, fixes } = assessment;
 
   return (
-    <section className="inspector-popup__wcag" aria-label="Accessibility">
-      <h3 className="inspector-popup__wcag-title">Accessibility</h3>
+    <>
       <p className="inspector-popup__wcag-ratio">{ratio.toFixed(2)} : 1</p>
       <div className="inspector-popup__badges">
         <span className={`inspector-popup__badge ${badges.aa ? 'inspector-popup__badge--pass' : 'inspector-popup__badge--fail'}`}>
@@ -102,8 +97,25 @@ function WcagSection({ assessment, onFixClick }) {
         </div>
       )}
       <p className="inspector-popup__wcag-caption">Checked at this element&apos;s actual size and weight</p>
-    </section>
+    </>
   );
+}
+
+function getWcagBadgeMeta(assessment) {
+  if (!assessment) return null;
+  if (assessment.kind === 'decorative') {
+    return { label: 'N/A', tone: 'muted' };
+  }
+  if (assessment.kind === 'non-text') {
+    return {
+      label: assessment.pass ? '3:1 ✓' : '3:1 ✗',
+      tone: assessment.pass ? 'pass' : 'fail',
+    };
+  }
+  return {
+    label: assessment.passAa ? 'AA ✓' : 'AA ✗',
+    tone: assessment.passAa ? 'pass' : 'fail',
+  };
 }
 
 function InspectorPopup({
@@ -111,6 +123,7 @@ function InspectorPopup({
   element,
   paletteColors,
   width,
+  isCompactPopup = false,
   isDragging = false,
   onHeaderPointerDown,
   onClose,
@@ -127,6 +140,7 @@ function InspectorPopup({
   const styles = extractElementStyles(element, paletteColors);
   const wcag = getWcagAssessment({ wcagType: entry.wcagType, styles });
   const code = format === 'css' ? buildCssSnippet(styles) : buildTailwindSnippet(styles);
+  const wcagBadge = getWcagBadgeMeta(wcag);
 
   useEffect(() => {
     closeRef.current?.focus();
@@ -175,6 +189,7 @@ function InspectorPopup({
       ref={popupRef}
       className={[
         'inspector-popup',
+        isCompactPopup ? 'inspector-popup--compact' : '',
         isDragging ? 'inspector-popup--dragging' : '',
       ].filter(Boolean).join(' ')}
       role="dialog"
@@ -202,52 +217,91 @@ function InspectorPopup({
         </button>
       </header>
 
-      <div className="inspector-popup__rows">
-        {styles.typography.map((row) => (
-          <StyleRow key={row.label} row={row} onCopyHex={handleCopyHex} />
-        ))}
-        {styles.colors.length > 0 && <div className="inspector-popup__divider" aria-hidden="true" />}
-        {styles.colors.map((row) => (
-          <StyleRow key={row.label} row={row} onCopyHex={handleCopyHex} />
-        ))}
-      </div>
-
-      {swatchCopied && (
-        <p className="inspector-popup__swatch-toast" aria-live="polite">Copied {swatchCopied}</p>
-      )}
-
-      <WcagSection assessment={wcag} onFixClick={handleFixClick} />
-
-      <div className="inspector-popup__format-tabs" role="tablist" aria-label="Export format">
-        <button
-          type="button"
-          role="tab"
-          aria-selected={format === 'css'}
-          className={`inspector-popup__format-tab ${format === 'css' ? 'inspector-popup__format-tab--active' : ''}`}
-          onClick={() => setFormat('css')}
+      <AccordionStack key={entry.inspectId} className="inspector-popup__stack">
+        <Accordion
+          title="Styles"
+          stackId="styles"
+          defaultOpen={!isCompactPopup}
+          variant="chrome"
+          className="inspector-popup__accordion"
         >
-          CSS
-        </button>
-        <button
-          type="button"
-          role="tab"
-          aria-selected={format === 'tailwind'}
-          className={`inspector-popup__format-tab ${format === 'tailwind' ? 'inspector-popup__format-tab--active' : ''}`}
-          onClick={() => setFormat('tailwind')}
+          <div className="inspector-popup__rows">
+            {styles.typography.map((row) => (
+              <StyleRow key={row.label} row={row} onCopyHex={handleCopyHex} />
+            ))}
+            {styles.colors.length > 0 && <div className="inspector-popup__divider" aria-hidden="true" />}
+            {styles.colors.map((row) => (
+              <StyleRow key={row.label} row={row} onCopyHex={handleCopyHex} />
+            ))}
+          </div>
+          {swatchCopied && (
+            <p className="inspector-popup__swatch-toast" aria-live="polite">Copied {swatchCopied}</p>
+          )}
+        </Accordion>
+
+        {wcag && (
+          <Accordion
+            title="Accessibility"
+            stackId="accessibility"
+            defaultOpen={false}
+            badge={wcagBadge ? (
+              <span className={`inspector-popup__wcag-badge inspector-popup__wcag-badge--${wcagBadge.tone}`}>
+                {wcagBadge.label}
+              </span>
+            ) : null}
+            variant="chrome"
+            className="inspector-popup__accordion"
+          >
+            <WcagContent assessment={wcag} onFixClick={handleFixClick} />
+          </Accordion>
+        )}
+
+        <Accordion
+          title="Export code"
+          stackId="export"
+          defaultOpen={false}
+          badge={(
+            <span className="inspector-popup__format-badge">
+              {format === 'css' ? 'CSS' : 'Tailwind'}
+            </span>
+          )}
+          variant="chrome"
+          className="inspector-popup__accordion"
         >
-          Tailwind
-        </button>
-      </div>
+          <div className="inspector-popup__export">
+            <div className="inspector-popup__format-tabs" role="tablist" aria-label="Export format">
+              <button
+                type="button"
+                role="tab"
+                aria-selected={format === 'css'}
+                className={`inspector-popup__format-tab ${format === 'css' ? 'inspector-popup__format-tab--active' : ''}`}
+                onClick={() => setFormat('css')}
+              >
+                CSS
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={format === 'tailwind'}
+                className={`inspector-popup__format-tab ${format === 'tailwind' ? 'inspector-popup__format-tab--active' : ''}`}
+                onClick={() => setFormat('tailwind')}
+              >
+                Tailwind
+              </button>
+            </div>
 
-      <pre className="inspector-popup__code"><code>{code}</code></pre>
+            <pre className="inspector-popup__code"><code>{code}</code></pre>
 
-      <button
-        type="button"
-        className={`inspector-popup__copy-all btn btn--primary ${copied ? 'inspector-popup__copy-all--copied' : ''}`}
-        onClick={handleCopyAll}
-      >
-        {copied ? '✓ Copied!' : 'Copy all styles'}
-      </button>
+            <button
+              type="button"
+              className={`inspector-popup__copy-all btn btn--primary ${copied ? 'inspector-popup__copy-all--copied' : ''}`}
+              onClick={handleCopyAll}
+            >
+              {copied ? '✓ Copied!' : 'Copy all styles'}
+            </button>
+          </div>
+        </Accordion>
+      </AccordionStack>
     </div>
   );
 }

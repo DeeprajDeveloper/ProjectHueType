@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useBreakpoint } from '../../hooks';
 import { getInspectableElements } from '../../data/inspectorRegistry';
 import {
   clampPopupInFrame,
@@ -39,6 +40,8 @@ function InspectorOverlay({
   const [flashingId, setFlashingId] = useState(null);
   const [showHint, setShowHint] = useState(() => !readHintSeen());
   const [isDraggingPopup, setIsDraggingPopup] = useState(false);
+  const breakpoint = useBreakpoint();
+  const isCompactPopup = previewMode === 'mobile' || breakpoint === 'mobile';
   const popupMeasureRef = useRef(null);
   const measureRafRef = useRef(null);
   const dragStateRef = useRef(null);
@@ -405,6 +408,7 @@ function InspectorOverlay({
             element={activeDot.element}
             paletteColors={paletteColors}
             width={popupPosition.width}
+            isCompactPopup={isCompactPopup}
             isDragging={isDraggingPopup}
             onHeaderPointerDown={handlePopupDragStart}
             onClose={() => setActiveId(null)}
