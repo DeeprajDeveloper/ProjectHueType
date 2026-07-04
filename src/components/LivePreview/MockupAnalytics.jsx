@@ -17,7 +17,7 @@ function MockupAnalytics({ parts = {} }) {
         <header className="mockup-analytics__masthead">
           <div className="mockup-analytics__masthead-main">
             <p className="mockup-analytics__report-type">Analytics report</p>
-            <h1 className="mockup-analytics__title">{copy.header.title}</h1>
+            <h1 className="mockup-analytics__title" data-inspect="report-title">{copy.header.title}</h1>
             <p className="mockup-analytics__subtitle">{copy.header.subtitle}</p>
           </div>
           <div className="mockup-analytics__meta-block">
@@ -49,7 +49,7 @@ function MockupAnalytics({ parts = {} }) {
       {show('kpiCards') && (
         <section className="mockup-analytics__summary" aria-label="Executive summary">
           <h2 className="mockup-analytics__section-heading">{copy.executiveSummary.title}</h2>
-          <p className="mockup-analytics__summary-body">{copy.executiveSummary.body}</p>
+          <p className="mockup-analytics__summary-body" data-inspect="summary-text">{copy.executiveSummary.body}</p>
           <div className="mockup-analytics__metric-strip">
             {copy.kpis.map((kpi) => (
               <div key={kpi.label} className="mockup-analytics__metric">
@@ -88,12 +88,12 @@ function MockupAnalytics({ parts = {} }) {
       {show('dataTable') && (
         <section className="mockup-analytics__table-section">
           <h2 className="mockup-analytics__section-heading">{copy.table.title}</h2>
-          <p className="mockup-analytics__table-caption">{copy.table.caption}</p>
+          <p className="mockup-analytics__table-caption" data-inspect="figure-caption">{copy.table.caption}</p>
           <div className="mockup-analytics__table-wrap">
             <table className="mockup-analytics__table">
               <thead>
                 <tr>
-                  <th scope="col">{copy.table.columns.preset}</th>
+                  <th scope="col" data-inspect="table-header">{copy.table.columns.preset}</th>
                   <th scope="col">{copy.table.columns.views}</th>
                   <th scope="col">{copy.table.columns.saves}</th>
                   <th scope="col">{copy.table.columns.exports}</th>

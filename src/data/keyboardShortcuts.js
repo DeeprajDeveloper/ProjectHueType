@@ -24,6 +24,11 @@ export const PREVIEW_DEVICE_SHORTCUTS = [
   { id: 'mobile', label: 'Mobile preview', shortcut: { alt: true, code: 'KeyM' } },
 ];
 
+export const INSPECTOR_SHORTCUT = {
+  label: 'Toggle style inspector',
+  shortcut: { code: 'KeyI' },
+};
+
 export const SHUFFLE_SHORTCUT = {
   label: 'Shuffle unlocked roles',
   shortcut: { code: 'Space' },
@@ -33,7 +38,7 @@ export const SHORTCUT_SECTIONS = [
   {
     id: 'actions',
     title: 'Actions',
-    items: [SHUFFLE_SHORTCUT],
+    items: [SHUFFLE_SHORTCUT, INSPECTOR_SHORTCUT],
   },
   {
     id: 'navigation',

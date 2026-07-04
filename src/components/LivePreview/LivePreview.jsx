@@ -3,11 +3,14 @@ import { useBreakpoint } from '../../hooks';
 import {
   CaretRightIcon,
   DeviceRotateIcon,
+  EyeIcon,
   ShuffleIcon,
+  EyeSlashIcon,
 } from '@phosphor-icons/react';
 import ContrastBadge from '../ContrastBadge/ContrastBadge';
 import Icon from '../Icon/Icon';
 import { ICON_SIZE_SM } from '../Icon/iconConfig';
+import InspectorOverlay from '../InspectorOverlay/InspectorOverlay';
 import ArchetypeQuickSelect from '../ArchetypeQuickSelect/ArchetypeQuickSelect';
 import MockupMarketing from './MockupMarketing';
 import MockupDashboard from './MockupDashboard';
@@ -177,6 +180,7 @@ function LivePreview({
   contrastStatus,
   onOpenContrast,
   onShuffle,
+  onColorChange,
   lockedCount = 0,
   isCompact = false,
   onShowToast,
@@ -194,6 +198,7 @@ function LivePreview({
   const activeParts = resolveArchetypeParts(archetype, archetypeParts[archetype]);
   const previewEmpty = isArchetypePreviewEmpty(archetype, activeParts);
   const [frameScrollLocked, setFrameScrollLocked] = useState(false);
+  const [inspectorOpen, setInspectorOpen] = useState(false);
   const frameWrapRef = useRef(null);
   const frameRef = useRef(null);
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
@@ -220,7 +225,29 @@ function LivePreview({
 
   useEffect(() => {
     setFrameScrollLocked(false);
+    setInspectorOpen(false);
   }, [archetype]);
+
+  const toggleInspector = useCallback(() => {
+    setInspectorOpen((open) => !open);
+  }, []);
+
+  useEffect(() => {
+    const handler = (event) => {
+      if (event.target instanceof HTMLElement) {
+        const tag = event.target.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || event.target.isContentEditable) {
+          return;
+        }
+      }
+      if (event.key === 'i' || event.key === 'I') {
+        event.preventDefault();
+        toggleInspector();
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [toggleInspector]);
 
   useEffect(() => {
     const el = frameWrapRef.current;
@@ -268,6 +295,11 @@ function LivePreview({
     return () => observer.disconnect();
   }, [previewMode, tabletOrientation, containerWidth, containerHeight, archetype, frameWidth, frameHeight]);
 
+  const frameShellStyle = {
+    ...(frameWidth != null ? { width: `${frameWidth}px` } : {}),
+    ...(frameHeight != null ? { height: `${frameHeight}px` } : {}),
+  };
+
   const previewStyle = {
     ...getPreviewTypeStyle(typeBasePx, typeScaleRatio),
     '--preview-primary': combo.colors.primary,
@@ -279,8 +311,8 @@ function LivePreview({
     '--preview-font-body': combo.fonts.body.family,
     '--preview-font-heading-weight': combo.fonts.heading.weight,
     '--preview-font-body-weight': combo.fonts.body.weight,
-    ...(frameWidth != null ? { width: `${frameWidth}px` } : {}),
-    ...(frameHeight != null ? { height: `${frameHeight}px` } : {}),
+    width: '100%',
+    height: '100%',
   };
 
   const frameClassName = [
@@ -346,6 +378,20 @@ function LivePreview({
               <Icon icon={CaretRightIcon} size={ICON_SIZE_SM} weight="bold" />
             </span>
           </button>
+          <button
+            type="button"
+            className={`live-preview__inspect ${inspectorOpen ? 'live-preview__inspect--active' : ''}`}
+            data-tour="inspect"
+            onClick={toggleInspector}
+            aria-pressed={inspectorOpen}
+            aria-label={inspectorOpen ? 'Turn off style inspector' : 'Turn on style inspector'}
+            title="Inspect element styles (I)"
+          >
+            {!inspectorOpen ? 
+            <Icon icon={EyeSlashIcon} size={ICON_SIZE_SM} weight="fill" /> : <Icon icon={EyeIcon} size={ICON_SIZE_SM} weight="fill" />}
+            
+            <span className="live-preview__inspect-label">Inspect</span>
+          </button>
           {isTablet && (
             <button
               type="button"
@@ -405,21 +451,34 @@ function LivePreview({
       </p>
 
       <div className={frameWrapClassName} ref={frameWrapRef} data-tour="live-preview">
-        <div
-          ref={frameRef}
-          className={frameClassName}
-          style={previewStyle}
-        >
-          {fontsLoading && (
-            <div className="live-preview__loading">Loading fonts…</div>
-          )}
-          {previewEmpty ? (
-            <div className="live-preview__empty">
-              <p>All preview parts are hidden.</p>
-              <p className="live-preview__empty-hint">Turn sections on in Preview → Options.</p>
-            </div>
-          ) : (
-            renderArchetype(archetype, previewMode, activeParts, previewLogoText, setFrameScrollLocked)
+        <div className="live-preview__frame-shell" style={frameShellStyle}>
+          <div
+            ref={frameRef}
+            className={frameClassName}
+            style={previewStyle}
+          >
+            {fontsLoading && (
+              <div className="live-preview__loading">Loading fonts…</div>
+            )}
+            {previewEmpty ? (
+              <div className="live-preview__empty">
+                <p>All preview parts are hidden.</p>
+                <p className="live-preview__empty-hint">Turn sections on in Preview → Options.</p>
+              </div>
+            ) : (
+              renderArchetype(archetype, previewMode, activeParts, previewLogoText, setFrameScrollLocked)
+            )}
+          </div>
+          {inspectorOpen && !previewEmpty && (
+            <InspectorOverlay
+              frameRef={frameRef}
+              archetype={archetype}
+              parts={activeParts}
+              paletteColors={combo.colors}
+              previewMode={previewMode}
+              onShowToast={onShowToast}
+              onColorChange={onColorChange}
+            />
           )}
         </div>
       </div>

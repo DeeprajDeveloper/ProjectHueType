@@ -19,7 +19,7 @@ function MockupPricing({ parts = {}, logoText = DEFAULT_PREVIEW_LOGO }) {
     <section className="mockup-pricing">
       {show('topNav') && (
         <header className="mockup-pricing__nav">
-          <span className="mockup-pricing__logo">{logoText}</span>
+          <span className="mockup-pricing__logo" data-inspect="pricing-nav-logo">{logoText}</span>
           <nav className="mockup-pricing__nav-links" aria-label="Pricing navigation">
             {copy.nav.links.map((link) => (
               <a key={link} href={`#${link.toLowerCase()}`}>{link}</a>
@@ -31,7 +31,7 @@ function MockupPricing({ parts = {}, logoText = DEFAULT_PREVIEW_LOGO }) {
 
       {show('pageHeader') && (
         <header className="mockup-pricing__header" id="plans">
-          <h1 className="mockup-pricing__title">{copy.header.title}</h1>
+          <h1 className="mockup-pricing__title" data-inspect="pricing-heading">{copy.header.title}</h1>
           <p className="mockup-pricing__subtitle">
             {copy.header.subtitle}
           </p>
@@ -48,20 +48,21 @@ function MockupPricing({ parts = {}, logoText = DEFAULT_PREVIEW_LOGO }) {
               {tier.highlighted && tier.badge && (
                 <span className="mockup-pricing__badge">{tier.badge}</span>
               )}
-              <h2 className="mockup-pricing__tier-name">{tier.name}</h2>
+              <h2 className="mockup-pricing__tier-name" data-inspect={tier.highlighted ? 'tier-name' : undefined}>{tier.name}</h2>
               <p className="mockup-pricing__tier-desc">{tier.description}</p>
-              <p className="mockup-pricing__price">
+              <p className="mockup-pricing__price" data-inspect={tier.highlighted ? 'tier-price' : undefined}>
                 <span className="mockup-pricing__price-amount">{tier.price}</span>
                 <span className="mockup-pricing__price-period">{copy.period}</span>
               </p>
               <ul className="mockup-pricing__features">
-                {tier.features.map((feature) => (
-                  <li key={feature} className="mockup-pricing__feature">{feature}</li>
+                {tier.features.map((feature, featureIndex) => (
+                  <li key={feature} className="mockup-pricing__feature" data-inspect={tier.highlighted && featureIndex === 0 ? 'tier-feature' : undefined}>{feature}</li>
                 ))}
               </ul>
               <button
                 type="button"
                 className={`mockup-pricing__cta ${tier.highlighted ? 'mockup-pricing__cta--primary' : ''}`}
+                data-inspect={tier.highlighted ? 'tier-cta' : undefined}
               >
                 {copy.cta}
               </button>

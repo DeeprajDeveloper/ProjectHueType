@@ -41,13 +41,13 @@ function MockupMobileApp({ parts = {} }) {
 
   const renderHome = () => (
     <ul className="mockup-mobile-app__cards">
-      {copy.screens.home.cards.map((card) => (
+      {copy.screens.home.cards.map((card, index) => (
         <li key={card.id}>
           <article className="mockup-mobile-app__card">
             <div className="mockup-mobile-app__card-art" aria-hidden="true" />
             <div className="mockup-mobile-app__card-body">
               <div className="mockup-mobile-app__card-top">
-                <h2 className="mockup-mobile-app__card-title">{card.title}</h2>
+                <h2 className="mockup-mobile-app__card-title" data-inspect={index === 0 ? 'mobile-card-title' : undefined}>{card.title}</h2>
                 {card.tag && <span className="mockup-mobile-app__card-tag">{card.tag}</span>}
               </div>
               <p className="mockup-mobile-app__card-meta">{card.meta}</p>
@@ -153,7 +153,7 @@ function MockupMobileApp({ parts = {} }) {
         <div className="mockup-mobile-app__profile-header">
           <span className="mockup-mobile-app__avatar">{profile.user.initials}</span>
           <div>
-            <h2 className="mockup-mobile-app__profile-name">{profile.user.name}</h2>
+            <h2 className="mockup-mobile-app__profile-name" data-inspect="profile-name">{profile.user.name}</h2>
             <p className="mockup-mobile-app__profile-email">{profile.user.email}</p>
           </div>
         </div>
@@ -197,7 +197,7 @@ function MockupMobileApp({ parts = {} }) {
 
         {show('appHeader') && (
           <header className="mockup-mobile-app__header">
-            <h1 className="mockup-mobile-app__title">{screen.title}</h1>
+            <h1 className="mockup-mobile-app__title" data-inspect="mobile-header-title">{screen.title}</h1>
             {activeTab !== 'profile' && (
               <button type="button" className="mockup-mobile-app__action">{screen.action}</button>
             )}
@@ -217,13 +217,14 @@ function MockupMobileApp({ parts = {} }) {
 
         {show('bottomNav') && (
           <nav className="mockup-mobile-app__nav" aria-label="App navigation">
-            {copy.nav.map((item) => (
+            {copy.nav.map((item, index) => (
               <button
                 key={item.id}
                 type="button"
                 className={`mockup-mobile-app__nav-btn ${activeTab === item.id ? 'mockup-mobile-app__nav-btn--active' : ''}`}
                 aria-current={activeTab === item.id ? 'page' : undefined}
                 onClick={() => setActiveTab(item.id)}
+                data-inspect={index === 0 ? 'mobile-nav-btn' : undefined}
               >
                 <span className="mockup-mobile-app__nav-dot" aria-hidden="true" />
                 {item.label}

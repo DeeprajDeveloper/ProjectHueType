@@ -16,12 +16,13 @@ function MockupDocs({ parts = {}, logoText = DEFAULT_PREVIEW_LOGO }) {
             <div key={section.title} className="mockup-docs__nav-section">
               <h2 className="mockup-docs__nav-title">{section.title}</h2>
               <nav>
-                {section.links.map((link) => (
+                {section.links.map((link, linkIndex) => (
                   <button
                     key={link.id}
                     type="button"
                     className={`mockup-docs__nav-link ${activeLink === link.id ? 'mockup-docs__nav-link--active' : ''}`}
                     onClick={() => setActiveLink(link.id)}
+                    data-inspect={linkIndex === 0 && section === copy.nav.sections[0] ? 'docs-nav-link' : undefined}
                   >
                     {link.label}
                   </button>
@@ -36,7 +37,7 @@ function MockupDocs({ parts = {}, logoText = DEFAULT_PREVIEW_LOGO }) {
         {show('pageHeader') && (
           <header className="mockup-docs__header">
             <p className="mockup-docs__breadcrumb">{copy.header.breadcrumb}</p>
-            <h1 className="mockup-docs__title">{copy.header.title}</h1>
+            <h1 className="mockup-docs__title" data-inspect="docs-page-heading">{copy.header.title}</h1>
             <p className="mockup-docs__description">{copy.header.description}</p>
           </header>
         )}
@@ -45,13 +46,13 @@ function MockupDocs({ parts = {}, logoText = DEFAULT_PREVIEW_LOGO }) {
           {show('contentArea') && (
             <article className="mockup-docs__content">
               <h2 id="overview">Overview</h2>
-              <p>{copy.content.overview}</p>
+              <p data-inspect="docs-body-paragraph">{copy.content.overview}</p>
 
               <h2 id="concepts">{copy.content.conceptsHeading}</h2>
               <p>{copy.content.concepts}</p>
 
               {show('codeBlocks') && (
-                <figure className="mockup-docs__code">
+                <figure className="mockup-docs__code" data-inspect="docs-code-block">
                   <figcaption>{copy.code.label}</figcaption>
                   <pre><code>{copy.code.snippet}</code></pre>
                 </figure>

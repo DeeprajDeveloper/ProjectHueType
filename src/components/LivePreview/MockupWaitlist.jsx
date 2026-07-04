@@ -23,8 +23,8 @@ function MockupWaitlist({ parts = {}, logoText = DEFAULT_PREVIEW_LOGO }) {
 
         {show('headline') && (
           <div className="mockup-waitlist__text">
-            <h1 className="mockup-waitlist__title">{copy.headline}</h1>
-            <p className="mockup-waitlist__subhead">{copy.subhead}</p>
+            <h1 className="mockup-waitlist__title" data-inspect="waitlist-headline">{copy.headline}</h1>
+            <p className="mockup-waitlist__subhead" data-inspect="waitlist-subhead">{copy.subhead}</p>
           </div>
         )}
 
@@ -45,7 +45,7 @@ function MockupWaitlist({ parts = {}, logoText = DEFAULT_PREVIEW_LOGO }) {
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
-              <button type="submit" className="mockup-waitlist__submit">{copy.form.submit}</button>
+              <button type="submit" className="mockup-waitlist__submit" data-inspect="waitlist-submit">{copy.form.submit}</button>
               <p className="mockup-waitlist__hint">{copy.form.hint}</p>
             </form>
           )

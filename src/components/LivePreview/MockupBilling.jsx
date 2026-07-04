@@ -16,8 +16,8 @@ function MockupBilling({ parts = {} }) {
           <h2 className="mockup-billing__section-title">{copy.currentPlan.title}</h2>
           <div className="mockup-billing__plan-card">
             <div>
-              <span className="mockup-billing__plan-name">{copy.currentPlan.name}</span>
-              <p className="mockup-billing__plan-price">
+              <span className="mockup-billing__plan-name" data-inspect="plan-name">{copy.currentPlan.name}</span>
+              <p className="mockup-billing__plan-price" data-inspect="plan-price">
                 <span className="mockup-billing__plan-amount">{copy.currentPlan.price}</span>
                 <span className="mockup-billing__plan-period">{copy.currentPlan.period}</span>
               </p>
@@ -32,12 +32,12 @@ function MockupBilling({ parts = {} }) {
         <section className="mockup-billing__usage">
           <h2 className="mockup-billing__section-title">{copy.usage.title}</h2>
           <ul className="mockup-billing__meters">
-            {copy.usage.items.map((item) => {
+            {copy.usage.items.map((item, index) => {
               const pct = usagePercent(item.used, item.limit);
               return (
                 <li key={item.label} className="mockup-billing__meter">
                   <div className="mockup-billing__meter-header">
-                    <span className="mockup-billing__meter-label">{item.label}</span>
+                    <span className="mockup-billing__meter-label" data-inspect={index === 0 ? 'usage-label' : undefined}>{item.label}</span>
                     <span className="mockup-billing__meter-value">
                       {item.used.toLocaleString()} / {item.limit.toLocaleString()}
                     </span>
@@ -84,7 +84,7 @@ function MockupBilling({ parts = {} }) {
                 {plan.current ? (
                   <span className="mockup-billing__current-badge">Current plan</span>
                 ) : plan.recommended ? (
-                  <button type="button" className="mockup-billing__upgrade-btn">{copy.upgrade.cta}</button>
+                  <button type="button" className="mockup-billing__upgrade-btn" data-inspect="upgrade-cta">{copy.upgrade.cta}</button>
                 ) : (
                   <button type="button" className="mockup-billing__contact-btn">Contact sales</button>
                 )}

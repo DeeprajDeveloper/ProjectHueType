@@ -67,8 +67,8 @@ function MockupMediaPlayer({ parts = {} }) {
 
         {show('trackInfo') && (
           <div className="mockup-media-player__track">
-            <h1 className="mockup-media-player__title">{copy.track.title}</h1>
-            <p className="mockup-media-player__artist">{copy.track.artist}</p>
+            <h1 className="mockup-media-player__title" data-inspect="player-title">{copy.track.title}</h1>
+            <p className="mockup-media-player__artist" data-inspect="player-artist">{copy.track.artist}</p>
             <p className="mockup-media-player__album">{copy.track.album}</p>
           </div>
         )}
@@ -84,6 +84,7 @@ function MockupMediaPlayer({ parts = {} }) {
               aria-valuemax={100}
               aria-valuenow={Math.round(progress)}
               aria-valuetext={`${formatTime(currentSeconds)} of ${formatTime(totalSeconds)}`}
+              data-inspect="player-progress"
               onPointerDown={handleTrackPointerDown}
               onPointerMove={handleTrackPointerMove}
               onPointerUp={handleTrackPointerUp}
@@ -125,6 +126,7 @@ function MockupMediaPlayer({ parts = {} }) {
               className="mockup-media-player__play"
               aria-label={isPlaying ? 'Pause' : 'Play'}
               aria-pressed={isPlaying}
+              data-inspect="player-play-btn"
               onClick={() => setIsPlaying((v) => !v)}
             >
               <Icon icon={isPlaying ? PauseIcon : PlayIcon} size={ICON_SIZE} weight="fill" />

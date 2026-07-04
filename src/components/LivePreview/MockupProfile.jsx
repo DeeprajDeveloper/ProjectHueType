@@ -16,9 +16,9 @@ function MockupProfile({ parts = {} }) {
     <div className="mockup-profile">
       {show('profileHeader') && (
         <header className="mockup-profile__header">
-          <div className="mockup-profile__avatar" aria-hidden="true">{copy.header.avatar}</div>
+          <div className="mockup-profile__avatar" aria-hidden="true" data-inspect="profile-avatar">{copy.header.avatar}</div>
           <div className="mockup-profile__identity">
-            <h1 className="mockup-profile__name">{copy.header.name}</h1>
+            <h1 className="mockup-profile__name" data-inspect="profile-name">{copy.header.name}</h1>
             <p className="mockup-profile__handle">{copy.header.handle}</p>
             <p className="mockup-profile__meta">
               {copy.header.location} · {copy.header.joined}
@@ -30,9 +30,9 @@ function MockupProfile({ parts = {} }) {
 
       {show('stats') && (
         <div className="mockup-profile__stats">
-          {copy.stats.map((stat) => (
+          {copy.stats.map((stat, index) => (
             <article key={stat.label} className="mockup-profile__stat">
-              <span className="mockup-profile__stat-value">{stat.value}</span>
+              <span className="mockup-profile__stat-value" data-inspect={index === 0 ? 'profile-stat-value' : undefined}>{stat.value}</span>
               <span className="mockup-profile__stat-label">{stat.label}</span>
             </article>
           ))}
@@ -43,7 +43,7 @@ function MockupProfile({ parts = {} }) {
         {show('bio') && (
           <section className="mockup-profile__section">
             <h2 className="mockup-profile__section-title">{copy.bio.title}</h2>
-            <p className="mockup-profile__bio">{copy.bio.text}</p>
+            <p className="mockup-profile__bio" data-inspect="profile-bio">{copy.bio.text}</p>
           </section>
         )}
 

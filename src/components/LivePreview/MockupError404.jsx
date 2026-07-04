@@ -31,13 +31,13 @@ function MockupError404({ parts = {} }) {
 
         {show('message') && (
           <div className="mockup-error404__text">
-            <h1 className="mockup-error404__title">{copy.title}</h1>
-            <p className="mockup-error404__body">{copy.body}</p>
+            <h1 className="mockup-error404__title" data-inspect="error-title">{copy.title}</h1>
+            <p className="mockup-error404__body" data-inspect="error-body">{copy.body}</p>
           </div>
         )}
 
         {show('primaryAction') && (
-          <button type="button" className="mockup-error404__primary">{copy.primary}</button>
+          <button type="button" className="mockup-error404__primary" data-inspect="error-primary">{copy.primary}</button>
         )}
 
         {show('secondaryLinks') && (

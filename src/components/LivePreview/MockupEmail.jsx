@@ -15,15 +15,15 @@ function MockupEmail({ parts = {}, logoText = DEFAULT_PREVIEW_LOGO }) {
       <div className="mockup-email__frame">
         {show('emailHeader') && (
           <header className="mockup-email__header">
-            <span className="mockup-email__brand">{brand}</span>
+            <span className="mockup-email__brand" data-inspect="email-brand">{brand}</span>
             <span className="mockup-email__tagline">{copy.header.tagline}</span>
           </header>
         )}
 
         {show('heroBlock') && (
           <section className="mockup-email__hero">
-            <h1 className="mockup-email__title">{copy.hero.title}</h1>
-            <p className="mockup-email__body">{copy.hero.body}</p>
+            <h1 className="mockup-email__title" data-inspect="email-hero-title">{copy.hero.title}</h1>
+            <p className="mockup-email__body" data-inspect="email-body">{copy.hero.body}</p>
           </section>
         )}
 
@@ -43,6 +43,7 @@ function MockupEmail({ parts = {}, logoText = DEFAULT_PREVIEW_LOGO }) {
             <button
               type="button"
               className={`mockup-email__cta ${ctaClicked ? 'mockup-email__cta--clicked' : ''}`}
+              data-inspect="email-cta"
               onClick={() => setCtaClicked(true)}
             >
               {ctaClicked ? 'Opening…' : copy.cta}

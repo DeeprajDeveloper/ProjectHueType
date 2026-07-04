@@ -19,15 +19,15 @@ function MockupEmptyState({ parts = {} }) {
 
         {show('headline') && (
           <div className="mockup-empty__text">
-            <h1 className="mockup-empty__title">{copy.title}</h1>
-            <p className="mockup-empty__desc">
+            <h1 className="mockup-empty__title" data-inspect="empty-headline">{copy.title}</h1>
+            <p className="mockup-empty__desc" data-inspect="empty-body">
               {copy.description}
             </p>
           </div>
         )}
 
         {show('primaryCta') && (
-          <button type="button" className="mockup-empty__cta">{copy.cta}</button>
+          <button type="button" className="mockup-empty__cta" data-inspect="empty-cta">{copy.cta}</button>
         )}
 
         {show('secondaryHint') && (

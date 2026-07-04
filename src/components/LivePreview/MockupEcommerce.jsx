@@ -58,7 +58,7 @@ function MockupEcommerce({ parts = {}, logoText = DEFAULT_PREVIEW_LOGO }) {
           <div className="mockup-ecommerce__hero-content">
             <span className="mockup-ecommerce__hero-tag">{copy.hero.tag}</span>
             <h1 className="mockup-ecommerce__hero-title">{copy.hero.title}</h1>
-            <p className="mockup-ecommerce__hero-desc">
+            <p className="mockup-ecommerce__hero-desc" data-inspect="product-description">
               {copy.hero.description}
             </p>
             <button type="button" className="mockup-ecommerce__hero-cta">{copy.hero.cta}</button>
@@ -85,12 +85,12 @@ function MockupEcommerce({ parts = {}, logoText = DEFAULT_PREVIEW_LOGO }) {
 
         {show('productCards') && (
           <div className="mockup-ecommerce__grid">
-            {copy.products.map((product) => (
+            {copy.products.map((product, index) => (
               <article key={product.name} className="mockup-ecommerce__card">
                 <div className="mockup-ecommerce__image-wrap">
                   <div className="mockup-ecommerce__image" aria-hidden="true">
                     {product.tag && (
-                      <span className="mockup-ecommerce__tag">{product.tag}</span>
+                      <span className="mockup-ecommerce__tag" data-inspect={index === 0 ? 'product-badge' : undefined}>{product.tag}</span>
                     )}
                   </div>
                   <button type="button" className="mockup-ecommerce__wishlist" aria-label="Add to wishlist">
@@ -101,16 +101,16 @@ function MockupEcommerce({ parts = {}, logoText = DEFAULT_PREVIEW_LOGO }) {
                   <div className="mockup-ecommerce__rating" aria-label={`${product.rating} out of 5 stars`}>
                     {'★'.repeat(Math.floor(product.rating))}
                     <span className="mockup-ecommerce__rating-num">{product.rating}</span>
-                    <span className="mockup-ecommerce__reviews">({product.reviews})</span>
+                    <span className="mockup-ecommerce__reviews" data-inspect={index === 0 ? 'review-text' : undefined}>({product.reviews})</span>
                   </div>
-                  <h3 className="mockup-ecommerce__name">{product.name}</h3>
+                  <h3 className="mockup-ecommerce__name" data-inspect={index === 0 ? 'product-name' : undefined}>{product.name}</h3>
                   <p className="mockup-ecommerce__price-row">
-                    <span className="mockup-ecommerce__price">{product.price}</span>
+                    <span className="mockup-ecommerce__price" data-inspect={index === 0 ? 'product-price' : undefined}>{product.price}</span>
                     {product.compareAt && (
                       <span className="mockup-ecommerce__compare">{product.compareAt}</span>
                     )}
                   </p>
-                  <button type="button" className="mockup-ecommerce__cta">
+                  <button type="button" className="mockup-ecommerce__cta" data-inspect={index === 0 ? 'add-to-cart' : undefined}>
                     {copy.productCta}
                   </button>
                 </div>

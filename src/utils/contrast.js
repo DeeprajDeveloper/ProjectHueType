@@ -31,6 +31,11 @@ export function contrastRatio(foreground, background) {
   return (lighter + 0.05) / (darker + 0.05);
 }
 
+export function isLargeText(fontSizePx, fontWeight) {
+  const weight = Number(fontWeight) || 400;
+  return fontSizePx >= 24 || (fontSizePx >= 18.67 && weight >= 700);
+}
+
 export function getContrastLevel(ratio, isLargeText = false) {
   if (ratio >= 7) return { level: 'AAA', status: 'pass' };
   if (ratio >= 4.5) return { level: 'AA', status: 'pass' };

@@ -21,16 +21,66 @@
 .whats-new-modal__dialog {
   position: relative;
   z-index: 1;
-  display: flex;
-  flex-direction: column;
   width: min(100%, 560px);
   max-height: min(100dvh - var(--space-8), 640px);
   overflow: hidden;
-  padding: var(--space-5);
   background: var(--surface-raised);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
+
+  @include respond-to(desktop) {
+    width: min(100%, 760px);
+    max-height: min(100dvh - var(--space-8), 520px);
+  }
+}
+
+.whats-new-modal__layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-height: inherit;
+  min-height: 0;
+
+  @include respond-to(desktop) {
+    flex-direction: row;
+  }
+}
+
+.whats-new-modal__illustration {
+  display: none;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: var(--surface-base);
+  border-right: 1px solid var(--border-subtle);
+
+  @include respond-to(desktop) {
+    display: block;
+    width: 280px;
+    align-self: stretch;
+  }
+
+  @include respond-to(mobile) {
+    display: none;
+  }
+}
+
+.whats-new-modal__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.whats-new-modal__main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  padding: var(--space-5);
 }
 
 .whats-new-modal__header {

@@ -52,10 +52,21 @@ export const TOUR_STEPS = [
     target: '[data-tour="live-preview"]',
     title: 'Live preview',
     content:
-      'See your combo on realistic mockups. The WCAG pill opens contrast details; device toggles sit in the top bar.',
+      'See your combo on realistic mockups. The WCAG pill opens contrast details; device toggles and Inspect sit in the top bar.',
     placement: 'right',
     compactPlacement: 'top',
     prepare: 'close-panels',
+  },
+  {
+    id: 'inspector',
+    target: '[data-tour="inspector-popup"]',
+    compactTarget: '[data-tour="inspect"]',
+    title: 'Style inspector',
+    content:
+      'Turn on Inspect (or press I) to place dots on key elements. Click a dot to open this panel — read typography and colors, check WCAG contrast, apply fix chips, and copy CSS or Tailwind. Drag the header to reposition the panel.',
+    placement: 'left',
+    compactPlacement: 'bottom',
+    prepare: 'open-inspector-demo',
   },
   {
     id: 'preview-controls',
@@ -155,7 +166,7 @@ export const TOUR_STEPS = [
     target: null,
     title: "You're all set",
     content:
-      'Build Info and Feature Catalog live in the sidebar footer. Press ? for shortcuts, Space to shuffle, and export when you are ready to ship tokens.',
+      'Build Info and Feature Catalog live in the sidebar footer. Press ? for shortcuts, I to inspect, Space to shuffle, and export when you are ready to ship tokens.',
     placement: 'center',
     prepare: 'close-export',
   },

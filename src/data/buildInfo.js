@@ -1,6 +1,6 @@
 /** App build metadata — shown in Build Info panel */
 
-export const APP_VERSION = '0.3.2';
+export const APP_VERSION = '1.0.0';
 export const APP_NAME = 'HueType';
 export const APP_SITE_URL = 'https://huetype.dev';
 export const APP_SITE_HOST = 'huetype.dev';
@@ -19,36 +19,38 @@ export const BUILD_STACK = [
 
 export const BUILD_SUMMARY = [
   'Pair color palettes and fonts, preview them on realistic mockups, check WCAG contrast, and export tokens — all in one workspace.',
-  'v0.3.2 ships 12 new layout archetypes across Groups 3 and 4 — docs, kanban, email, mobile app, calendar, and more — with interactive mockups and grouped sidebar navigation.',
+  'v1.0 is the first major release: inspect any element in the live preview, search layouts instantly, and explore 24 interactive archetypes with a clearer, more intuitive shell.',
 ];
 
 export const WHATS_NEW_HIGHLIGHTS = {
-  title: '12 new layout archetypes',
-  intro: 'Groups 3 and 4 are live with interactive previews — drag cards on the kanban board, browse tabs in the mobile app, scrub the media player, and more.',
+  title: 'HueType 1.0 — built for everyday use',
+  intro: 'This major release focuses on discoverability and hands-on exploration — find layouts faster, inspect real styles on the canvas, and lift CSS straight into your project.',
   items: [
     {
-      title: 'Group 3 — Strong secondary',
-      body: 'Documentation, kanban board, analytics report, profile, billing, and search results — each with toggleable preview sections.',
+      title: 'Style inspector',
+      body: 'Toggle Inspect in the preview bar (or press I) to place dots on key elements. Click any dot for typography, colors, palette roles, WCAG contrast, and copy-ready CSS or Tailwind.',
     },
     {
-      title: 'Group 4 — Niche & differentiated',
-      body: 'Email template, mobile app, waitlist, 404 page, calendar, and media player — specialized surfaces with buttons, filters, and live interactions.',
+      title: 'Draggable inspect popup',
+      body: 'Drag the inspector panel by its header to reposition it in the preview. A live connector line links the panel to the element you are inspecting.',
     },
     {
-      title: 'Grouped layout navigation',
-      body: 'Layouts in the sidebar now expand by group with nested archetypes, persisted open state, and New badges on Groups 3 and 4.',
+      title: 'Layout search',
+      body: 'Search all 24 archetypes from the sidebar or Preview → Layouts — filter by name, group, or keyword without expanding every group.',
     },
     {
-      title: 'Richer dashboard & analytics',
-      body: 'Animated chart load-ins, a report-style analytics layout, and responsive chart grids for tablet and mobile preview frames.',
+      title: '24 interactive layouts',
+      body: 'Groups 1–4 cover marketing through niche surfaces — kanban drag-and-drop, mobile app tabs, calendar picker, media scrubber, and more — with grouped navigation and New badges on recent additions.',
     },
   ],
 };
 
 export const BUILD_FEATURES = [
-  'Grouped sidebar — Workspace, Customize, and Preview with expandable layout groups',
+  'Grouped sidebar — Workspace, Customize, and Preview with expandable layout groups and layout search',
   'Collapsed sidebar icon rail with popover menus for Customize (colors/fonts) and Layouts',
-  'Preview top bar — live label, WCAG contrast button with status + Details affordance, device toggle, and shuffle',
+  'Style inspector — dot markers on preview elements with typography, color, WCAG, and CSS/Tailwind copy',
+  'Draggable inspector popup with connector line; press I to toggle inspect mode',
+  'Preview top bar — live label, WCAG contrast button, Inspect toggle, device frame, and shuffle',
   'Favorite layout quick-select below the preview with customizable chips (up to 8)',
   '17 curated presets with mood, industry, and mode filters plus saved library',
   '24 live mockup archetypes — marketing, dashboard, kanban, email, mobile app, calendar, and more',
@@ -64,47 +66,35 @@ export const BUILD_FEATURES = [
 
 export const BUILD_CHANGELOG = [
   {
-    version: '0.3.2',
-    label: '12 new archetypes & interactive previews',
+    version: '1.0.0',
+    label: 'Major release — inspector, layouts & intuitive exploration',
     date: '2026-07-03',
     summary: [
-      'Groups 3 and 4 add 12 layout archetypes — docs, kanban, analytics, profile, billing, search, email, mobile app, waitlist, 404, calendar, and media player.',
-      'Mockups are interactive where it matters: kanban drag-and-drop, mobile browse/saved/profile tabs, calendar day selection, and a draggable media scrubber.',
-      'Sidebar layouts use three-level grouped navigation with New badges; returning users see a what\'s new modal after completing the product tour.',
+      'HueType 1.0 is the first major release — focused on making the product feel usable and intuitive from the first session.',
+      'A style inspector lets you click any tagged element in the live preview, read computed styles, check WCAG contrast, apply fix chips, and copy CSS or Tailwind.',
+      'Twelve new layout archetypes in Groups 3 and 4 join the existing set — 24 interactive previews in total, with kanban, mobile app, calendar, media player, and more.',
+      'Layout search, grouped sidebar navigation, mobile shell polish, a dedicated changelog page, and a refreshed what\'s new modal round out the release.',
     ],
     changes: [
+      'Style inspector overlay — Inspect toggle and I shortcut; accent dots on major elements across all 24 archetypes',
+      'Inspection popup — typography, colors, palette role labels, WCAG AA/AAA badges, and one-click copy for CSS or Tailwind',
+      'WCAG fix chips in the inspector — darken text or lighten background to pass AA without leaving the preview',
+      'Draggable inspector popup — reposition by dragging the header; animated connector line links dot to panel',
+      'Scrollable preview support — dots track elements in nested scroll areas as you move through long layouts',
+      'Layout search — filter archetypes by name or keyword in the sidebar (expanded and collapsed) and Preview → Layouts',
       'Group 3 archetypes — documentation, kanban, analytics report, profile, billing, and search results',
       'Group 4 archetypes — email, mobile app, waitlist, 404, calendar, and media player',
-      'Kanban — drag cards between columns, inline add card, hover delete',
-      'Analytics — report-style layout with executive summary, figures, and findings',
+      'Interactive mockups — kanban drag-and-drop, mobile app tabs, calendar day picker, draggable media scrubber',
       'Dashboard charts — on-load animations, richer data labels, responsive flex grid',
-      'Mobile app — Home, Browse, Saved, and Profile tabs with filters and toggles',
-      'Calendar — full-height month grid, day selection, compact mobile layout with event dots',
-      'Media player — draggable progress slider with live timestamps; play, shuffle, repeat toggles',
-      'Grouped sidebar layouts — expandable groups with nested archetypes and persisted open state',
-      'New badges on Group 3 and Group 4 layouts in sidebar and quick-select',
-      'What\'s new modal — shown once per release for users who completed the product tour',
-    ],
-  },
-  {
-    version: '0.3.1',
-    label: 'Mobile polish, changelog & contrast UX',
-    date: '2026-07-03',
-    summary: [
-      'Mobile shell keeps the sidebar collapsed with slide-over panels, safe-area padding, and a mobile-aware product tour.',
-      'Typography scale base size is editable again; privacy and changelog pages scroll correctly on all devices.',
-      'WCAG contrast is easier to discover in the preview bar, and full release notes live on a dedicated changelog page.',
-    ],
-    changes: [
-      'WCAG contrast button — bordered control with status badge, Details label, and chevron; shorter labels on mobile',
-      'Typescale base px input — draft while typing, commit on blur or Enter instead of snapping to min/max',
-      'Standalone page scroll — shared document-scroll unlock for /privacy and /changelog with early route class',
+      'Grouped sidebar layouts — expandable groups with nested archetypes, persisted open state, and New badges',
+      'Product tour — steps for grouped layout navigation and layout search',
+      'What\'s new modal — desktop illustration, release highlights, and changelog link for returning users',
+      'WCAG contrast button — bordered control with status badge, Details label, and chevron in the preview bar',
+      'Typescale base px input — draft while typing, commit on blur or Enter',
       'Changelog page at /changelog — sticky brand nav and scroll-linked version timeline',
-      'Build Info shortened — summary, stack, links, changelog button, and accordions only',
-      'Mobile viewport — sidebar locked collapsed at ≤639px, softer panel backdrop, centered toasts',
-      'Persisted layouts expand/collapse and preview device mode across sessions',
-      'Help shortcuts — Mac and Windows labels via userAgentData with userAgent fallback',
-      'Theme-aware favicons and logos; Vercel SPA rewrites for client-side routes',
+      'Mobile viewport — sidebar locked collapsed at ≤639px, safe-area padding, softer panel backdrop, centered toasts',
+      'Standalone page scroll for /privacy and /changelog; persisted layout expand/collapse and preview device mode',
+      'Help shortcuts — Mac and Windows labels; theme-aware favicons and logos',
     ],
   },
   {
@@ -172,6 +162,8 @@ export const BUILD_CHANGELOG = [
 ];
 
 export const BUILD_NOTES = [
+  'Press I or click Inspect in the preview bar to turn on the style inspector — click any dot to read styles and copy CSS.',
+  'Search layouts from the sidebar or Preview → Layouts to jump to an archetype without expanding every group.',
   'Sidebar groups: Workspace (presets), Customize (colors & fonts), Preview (layouts & options).',
   'When collapsed, use the Customize and Layouts icons — they open flyout menus to the right.',
   'Expand Layouts to browse Groups 1–4 — Groups 3 and 4 are marked New.',

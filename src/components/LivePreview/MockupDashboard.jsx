@@ -34,6 +34,7 @@ function MockupDashboard({ parts = {}, logoText = DEFAULT_PREVIEW_LOGO, onFrameS
   const showTable = show('dataTable') && (activeNav === 'dashboard' || activeNav === 'customers');
   const showProfile = show('profileSettings') && activeNav === 'profile';
   const showTopBar = show('topBar');
+  const firstNonActiveNavId = copy.nav.items.find((item) => activeNav !== item.id)?.id;
 
   return (
     <div className={`mockup-dashboard ${!hasSidebar ? 'mockup-dashboard--no-sidebar' : ''}`}>
@@ -47,6 +48,13 @@ function MockupDashboard({ parts = {}, logoText = DEFAULT_PREVIEW_LOGO, onFrameS
                   key={item.id}
                   type="button"
                   className={`mockup-dashboard__nav-link ${activeNav === item.id ? 'mockup-dashboard__nav-link--active' : ''}`}
+                  data-inspect={
+                    activeNav === item.id
+                      ? 'sidebar-nav-active'
+                      : item.id === firstNonActiveNavId
+                        ? 'sidebar-nav-default'
+                        : undefined
+                  }
                   onClick={() => setActiveNav(item.id)}
                 >
                   {item.label}
@@ -95,7 +103,7 @@ function MockupDashboard({ parts = {}, logoText = DEFAULT_PREVIEW_LOGO, onFrameS
         <div className="mockup-dashboard__content">
           {showHeader && (
             <header className="mockup-dashboard__header">
-              <h1 className="mockup-dashboard__title">{copy.pageTitles[activeNav]}</h1>
+              <h1 className="mockup-dashboard__title" data-inspect="page-heading">{copy.pageTitles[activeNav]}</h1>
               <p className="mockup-dashboard__subtitle">
                 {copy.subtitles[activeNav]}
               </p>
@@ -104,10 +112,10 @@ function MockupDashboard({ parts = {}, logoText = DEFAULT_PREVIEW_LOGO, onFrameS
 
           {showStats && (
             <div className="mockup-dashboard__stats">
-              {copy.stats.map((stat) => (
+              {copy.stats.map((stat, index) => (
                 <article key={stat.label} className="mockup-dashboard__stat">
-                  <span className="mockup-dashboard__stat-label">{stat.label}</span>
-                  <span className="mockup-dashboard__stat-value">{stat.value}</span>
+                  <span className="mockup-dashboard__stat-label" data-inspect={index === 0 ? 'stat-label' : undefined}>{stat.label}</span>
+                  <span className="mockup-dashboard__stat-value" data-inspect={index === 0 ? 'stat-value' : undefined}>{stat.value}</span>
                   <span className="mockup-dashboard__stat-change">{stat.change}</span>
                 </article>
               ))}
@@ -153,19 +161,22 @@ function MockupDashboard({ parts = {}, logoText = DEFAULT_PREVIEW_LOGO, onFrameS
               <table className="mockup-dashboard__table">
                 <thead>
                   <tr>
-                    <th scope="col">{copy.table.columns.account}</th>
+                    <th scope="col" data-inspect="table-heading">{copy.table.columns.account}</th>
                     <th scope="col">{copy.table.columns.plan}</th>
                     <th scope="col">{copy.table.columns.status}</th>
                     <th scope="col">{copy.table.columns.mrr}</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {copy.table.rows.map((row) => (
+                  {copy.table.rows.map((row, rowIndex) => (
                     <tr key={row.name}>
-                      <td>{row.name}</td>
+                      <td data-inspect={rowIndex === 0 ? 'table-cell' : undefined}>{row.name}</td>
                       <td>{row.plan}</td>
                       <td>
-                        <span className={`mockup-dashboard__status mockup-dashboard__status--${row.status.toLowerCase()}`}>
+                        <span
+                          className={`mockup-dashboard__status mockup-dashboard__status--${row.status.toLowerCase()}`}
+                          data-inspect={rowIndex === 0 ? 'table-badge' : undefined}
+                        >
                           {row.status}
                         </span>
                       </td>
@@ -217,7 +228,7 @@ function MockupDashboard({ parts = {}, logoText = DEFAULT_PREVIEW_LOGO, onFrameS
                       ))}
                     </select>
                   </div>
-                  <button type="submit" className="mockup-dashboard__save">{copy.profile.save}</button>
+                  <button type="submit" className="mockup-dashboard__save" data-inspect="primary-action">{copy.profile.save}</button>
                 </form>
               </div>
             </section>

@@ -36,6 +36,7 @@ function MockupCalendar({ parts = {} }) {
   }, {});
 
   const selectedEvents = eventsByDay[selectedDay] || [];
+  const firstEvent = copy.events[0];
   const upcomingItems = selectedDay === copy.todayDate
     ? copy.upcoming.items
     : selectedEvents.map((event) => ({
@@ -47,11 +48,12 @@ function MockupCalendar({ parts = {} }) {
     <div className="mockup-calendar">
       {show('calendarHeader') && (
         <header className="mockup-calendar__header">
-          <h1 className="mockup-calendar__title">{copy.header.title}</h1>
+          <h1 className="mockup-calendar__title" data-inspect="calendar-title">{copy.header.title}</h1>
           <div className="mockup-calendar__header-actions">
             <button
               type="button"
               className="mockup-calendar__today-btn"
+              data-inspect="calendar-today-btn"
               onClick={() => setSelectedDay(copy.todayDate)}
             >
               {copy.header.today}
@@ -101,6 +103,7 @@ function MockupCalendar({ parts = {} }) {
                       isToday ? 'mockup-calendar__cell--today' : '',
                       isSelected && day ? 'mockup-calendar__cell--selected' : '',
                     ].filter(Boolean).join(' ')}
+                    data-inspect={isToday ? 'calendar-day' : undefined}
                     disabled={!day}
                     onClick={() => day && setSelectedDay(day)}
                     aria-label={day ? `March ${day}` : undefined}
@@ -115,6 +118,13 @@ function MockupCalendar({ parts = {} }) {
                               <span
                                 key={`${event.day}-${event.title}`}
                                 className={`mockup-calendar__event ${EVENT_COLOR_CLASS[event.color] || ''}`}
+                                data-inspect={
+                                  firstEvent
+                                    && event.day === firstEvent.day
+                                    && event.title === firstEvent.title
+                                    ? 'calendar-event'
+                                    : undefined
+                                }
                               >
                                 {event.title}
                               </span>

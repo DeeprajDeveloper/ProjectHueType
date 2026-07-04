@@ -173,7 +173,7 @@ function MockupKanban({ parts = {} }) {
 
       {show('columns') && (
         <div className="mockup-kanban__board">
-          {columns.map((column) => {
+          {columns.map((column, columnIndex) => {
             const isDragOverColumn = dropTarget?.columnId === column.id;
             const isComposing = composingColumnId === column.id;
 
@@ -190,7 +190,7 @@ function MockupKanban({ parts = {} }) {
                 onDrop={(event) => handleDrop(event, column.id)}
               >
                 <header className="mockup-kanban__column-header">
-                  <h2 className="mockup-kanban__column-title">{column.title}</h2>
+                  <h2 className="mockup-kanban__column-title" data-inspect={columnIndex === 0 ? 'kanban-column-title' : undefined}>{column.title}</h2>
                   <span className="mockup-kanban__column-count">{column.cards.length}</span>
                 </header>
 
@@ -217,7 +217,7 @@ function MockupKanban({ parts = {} }) {
                           </span>
                           <div className="mockup-kanban__card-body">
                             <span className="mockup-kanban__card-tag">{card.tag}</span>
-                            <h3 className="mockup-kanban__card-title">{card.title}</h3>
+                            <h3 className="mockup-kanban__card-title" data-inspect={columnIndex === 0 && cardIndex === 0 ? 'kanban-card-title' : undefined}>{card.title}</h3>
                             {show('cardDetails') && (
                               <footer className="mockup-kanban__card-footer">
                                 <span className="mockup-kanban__card-assignee">{card.assignee}</span>
@@ -279,6 +279,7 @@ function MockupKanban({ parts = {} }) {
                     <button
                       type="button"
                       className="mockup-kanban__add"
+                      data-inspect={columnIndex === 0 ? 'kanban-add-button' : undefined}
                       onClick={() => openComposer(column.id)}
                     >
                       + {copy.addCard}

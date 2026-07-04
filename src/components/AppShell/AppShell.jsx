@@ -141,6 +141,10 @@ function AppShell() {
           setSidebarOpen(false);
           setComponentsSidebarOpen(false);
         }
+        const inspectBtn = document.querySelector('[data-tour="inspect"]');
+        if (inspectBtn?.getAttribute('aria-pressed') === 'true') {
+          inspectBtn.click();
+        }
       };
 
       if (prepare === 'sidebar-workspace') {
@@ -210,6 +214,20 @@ function AppShell() {
         return;
       }
 
+      if (prepare === 'open-inspector-demo') {
+        closeOverlays();
+        window.setTimeout(() => {
+          const inspectBtn = document.querySelector('[data-tour="inspect"]');
+          if (inspectBtn?.getAttribute('aria-pressed') !== 'true') {
+            inspectBtn?.click();
+          }
+          window.setTimeout(() => {
+            document.querySelector('.inspector-overlay__dot')?.click();
+          }, 450);
+        }, 120);
+        return;
+      }
+
       if (prepare === 'open-export') {
         setExportOpen(true);
         if (isCompact) {
@@ -238,6 +256,14 @@ function AppShell() {
 
   const tour = useWalkthrough({ onStepEnter: handleTourStepEnter });
   const whatsNew = useWhatsNew({ tourActive: tour.active });
+
+  useEffect(() => {
+    if (tour.active) return;
+    const inspectBtn = document.querySelector('[data-tour="inspect"]');
+    if (inspectBtn?.getAttribute('aria-pressed') === 'true') {
+      inspectBtn.click();
+    }
+  }, [tour.active]);
 
   const handleWhatsNewChangelog = useCallback(() => {
     whatsNew.dismiss();
@@ -477,6 +503,7 @@ function AppShell() {
               typeScaleRatio={typeScaleRatio}
               onOpenContrast={() => handlePanelToggle('info')}
               onShuffle={handleShuffle}
+              onColorChange={setColor}
               lockedCount={Object.values(locks).filter(Boolean).length}
               isCompact={isCompact}
               onShowToast={showToast}

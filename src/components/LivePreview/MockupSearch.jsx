@@ -31,6 +31,7 @@ function MockupSearch({ parts = {} }) {
               defaultValue={copy.header.query}
               placeholder={copy.header.placeholder}
               aria-label="Search"
+              data-inspect="search-input"
             />
           </div>
           <p className="mockup-search__count">{copy.header.resultCount}</p>
@@ -39,7 +40,7 @@ function MockupSearch({ parts = {} }) {
 
       {show('filterChips') && (
         <div className="mockup-search__filters" role="tablist" aria-label="Filter results">
-          {copy.filters.map((filter) => (
+          {copy.filters.map((filter, index) => (
             <button
               key={filter}
               type="button"
@@ -47,6 +48,7 @@ function MockupSearch({ parts = {} }) {
               aria-selected={activeFilter === filter}
               className={`mockup-search__chip ${activeFilter === filter ? 'mockup-search__chip--active' : ''}`}
               onClick={() => setActiveFilter(filter)}
+              data-inspect={index === 0 ? 'filter-chip' : undefined}
             >
               {filter}
             </button>
@@ -63,15 +65,15 @@ function MockupSearch({ parts = {} }) {
 
       {show('resultsList') && (
         <ul className="mockup-search__results">
-          {filtered.map((result) => (
+          {filtered.map((result, index) => (
             <li key={result.id}>
               <article className="mockup-search__result">
                 <div className="mockup-search__result-header">
-                  <h2 className="mockup-search__result-title">{result.title}</h2>
+                  <h2 className="mockup-search__result-title" data-inspect={index === 0 ? 'result-title' : undefined}>{result.title}</h2>
                   <span className="mockup-search__result-type">{result.type}</span>
                 </div>
                 <p className="mockup-search__result-excerpt">{result.excerpt}</p>
-                <p className="mockup-search__result-meta">{result.meta}</p>
+                <p className="mockup-search__result-meta" data-inspect={index === 0 ? 'result-meta' : undefined}>{result.meta}</p>
               </article>
             </li>
           ))}
