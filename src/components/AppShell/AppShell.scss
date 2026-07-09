@@ -418,3 +418,15 @@
     }
   }
 }
+
+.app-shell__inspector-dock {
+  display: none;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+
+  &--active {
+    display: flex;
+    flex-direction: column;
+  }
+}

@@ -26,6 +26,8 @@ function Accordion({
   className = '',
   variant = 'default',
   dataTour,
+  dataInspectDockId,
+  triggerRef,
 }) {
   const stack = useAccordionStack();
   const storageKey = persistKey ? `huetype-accordion-${persistKey}` : null;
@@ -84,9 +86,11 @@ function Accordion({
       data-tour={dataTour}
     >
       <button
+        ref={triggerRef}
         type="button"
         className="accordion__trigger"
         aria-expanded={open}
+        data-inspect-dock-id={dataInspectDockId}
         onClick={handleToggle}
       >
         <span className="accordion__title">{title}</span>

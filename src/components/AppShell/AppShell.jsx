@@ -43,6 +43,8 @@ function AppShell() {
   const [sidebarOpen, setSidebarOpen] = useState(getInitialSidebarOpen);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [originalCombo, setOriginalCombo] = useState(COMBOS[0]);
+  const [inspectorDockActive, setInspectorDockActive] = useState(false);
+  const [inspectorDockPortalEl, setInspectorDockPortalEl] = useState(null);
 
   const { theme, toggleTheme } = useTheme();
   const { toast, showToast } = useToast();
@@ -65,6 +67,13 @@ function AppShell() {
     chipBarArchetypeIds,
     toggleChipBarArchetype,
   } = useUiPreferences();
+
+  const handleInspectorDockActiveChange = useCallback((active) => {
+    setInspectorDockActive(active);
+    if (active) {
+      setComponentsSidebarOpen(true);
+    }
+  }, [setComponentsSidebarOpen]);
 
   const {
     combo,
@@ -507,6 +516,8 @@ function AppShell() {
               lockedCount={Object.values(locks).filter(Boolean).length}
               isCompact={isCompact}
               onShowToast={showToast}
+              dockPortalEl={inspectorDockPortalEl}
+              onInspectorDockActiveChange={handleInspectorDockActiveChange}
             />
           )}
         </main>
@@ -521,6 +532,11 @@ function AppShell() {
         )}
 
         <div className={`app-shell__components ${!componentsSidebarOpen ? 'app-shell__components--collapsed' : ''}`}>
+          <div
+            ref={setInspectorDockPortalEl}
+            className={`app-shell__inspector-dock ${inspectorDockActive ? 'app-shell__inspector-dock--active' : ''}`}
+          />
+          {!inspectorDockActive && (
           <OptionsPanel
             open={componentsSidebarOpen}
             onToggleOpen={setComponentsSidebarOpen}
@@ -573,6 +589,7 @@ function AppShell() {
             onPreviewLogoTextChange={setPreviewLogoText}
             onStartTour={tour.start}
           />
+          )}
         </div>
       </div>
 

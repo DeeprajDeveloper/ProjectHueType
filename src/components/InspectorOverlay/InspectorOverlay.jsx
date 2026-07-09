@@ -1,19 +1,25 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useBreakpoint } from '../../hooks';
 import { getInspectableElements } from '../../data/inspectorRegistry';
 import {
   clampPopupInFrame,
   getConnectorPoints,
+  getConnectorPointsToLeftEdge,
   getDotPositionInFrame,
   getPopupPosition,
   getScrollableElements,
   isElementVisibleInFrame,
+  layoutPopoversOnRight,
 } from '../../utils/inspector';
+import InspectorDockPanel from './InspectorDockPanel';
 import InspectorPopup from './InspectorPopup';
 import './InspectorOverlay.scss';
 
 const HINT_STORAGE_KEY = 'huetype-inspector-hint-seen';
 const DOT_HITBOX = 24;
+const ALL_POPUP_WIDTH = 200;
+const ALL_POPUP_DEFAULT_HEIGHT = 132;
 
 function readHintSeen() {
   try {
@@ -29,22 +35,36 @@ function InspectorOverlay({
   parts,
   paletteColors,
   previewMode,
+  showAllPopovers = false,
+  dockPopovers = false,
+  dockPortalEl,
   onShowToast,
   onColorChange,
 }) {
   const [activeId, setActiveId] = useState(null);
+  const [highlightedId, setHighlightedId] = useState(null);
+  const [expandedDockId, setExpandedDockId] = useState(null);
   const [dotPositions, setDotPositions] = useState([]);
   const [autoPopupPosition, setAutoPopupPosition] = useState(null);
   const [manualPopupPosition, setManualPopupPosition] = useState(null);
   const [connector, setConnector] = useState(null);
+  const [allConnectors, setAllConnectors] = useState([]);
+  const [dockConnectors, setDockConnectors] = useState([]);
+  const [autoPlacements, setAutoPlacements] = useState([]);
+  const [allManualPositions, setAllManualPositions] = useState({});
   const [flashingId, setFlashingId] = useState(null);
   const [showHint, setShowHint] = useState(() => !readHintSeen());
   const [isDraggingPopup, setIsDraggingPopup] = useState(false);
+  const [draggingAllId, setDraggingAllId] = useState(null);
   const breakpoint = useBreakpoint();
   const isCompactPopup = previewMode === 'mobile' || breakpoint === 'mobile';
   const popupMeasureRef = useRef(null);
+  const allPopupRefs = useRef(new Map());
+  const allPopupHeights = useRef(new Map());
+  const dockTriggerRefs = useRef(new Map());
   const measureRafRef = useRef(null);
   const dragStateRef = useRef(null);
+  const bulkLayoutMode = showAllPopovers || dockPopovers;
 
   const entries = useMemo(
     () => getInspectableElements(archetype, parts),
@@ -84,6 +104,154 @@ function InspectorOverlay({
       measure();
     });
   }, [measure]);
+
+  const registerAllPopupRef = useCallback((inspectId, node) => {
+    if (node) {
+      allPopupRefs.current.set(inspectId, node);
+    } else {
+      allPopupRefs.current.delete(inspectId);
+      allPopupHeights.current.delete(inspectId);
+    }
+  }, []);
+
+  const updateDockConnectors = useCallback(() => {
+    const frame = frameRef.current;
+    if (!frame || !dockPopovers || dotPositions.length === 0) {
+      setDockConnectors([]);
+      return;
+    }
+
+    const frameRect = frame.getBoundingClientRect();
+    const nextConnectors = [];
+
+    dotPositions.forEach((dot) => {
+      const trigger = dockTriggerRefs.current.get(dot.entry.inspectId);
+      if (!trigger) return;
+
+      const triggerRect = trigger.getBoundingClientRect();
+      const dotViewport = {
+        x: frameRect.left + dot.x,
+        y: frameRect.top + dot.y,
+      };
+      const line = getConnectorPointsToLeftEdge(dotViewport, triggerRect);
+      nextConnectors.push({
+        inspectId: dot.entry.inspectId,
+        x1: line.x1,
+        y1: line.y1,
+        x2: line.x2,
+        y2: line.y2,
+      });
+    });
+
+    setDockConnectors(nextConnectors);
+  }, [dockPopovers, dotPositions, frameRef]);
+
+  const registerDockTriggerRef = useCallback((inspectId, node) => {
+    if (node) {
+      dockTriggerRefs.current.set(inspectId, node);
+      if (dockPopovers) {
+        window.requestAnimationFrame(() => updateDockConnectors());
+      }
+    } else {
+      dockTriggerRefs.current.delete(inspectId);
+    }
+  }, [dockPopovers, updateDockConnectors]);
+
+  const measureAllPopups = useCallback(() => {
+    const frame = frameRef.current;
+    if (!frame || !showAllPopovers || dotPositions.length === 0) {
+      setAutoPlacements([]);
+      return;
+    }
+
+    const frameRect = frame.getBoundingClientRect();
+
+    dotPositions.forEach((dot) => {
+      const el = allPopupRefs.current.get(dot.entry.inspectId);
+      const nextHeight = el?.offsetHeight ?? ALL_POPUP_DEFAULT_HEIGHT;
+      allPopupHeights.current.set(dot.entry.inspectId, nextHeight);
+    });
+
+    const layoutItems = dotPositions.map((dot) => ({
+      inspectId: dot.entry.inspectId,
+      dotY: dot.y,
+      height: allPopupHeights.current.get(dot.entry.inspectId) ?? ALL_POPUP_DEFAULT_HEIGHT,
+    }));
+
+    const placements = layoutPopoversOnRight(layoutItems, {
+      width: frameRect.width,
+      height: frameRect.height,
+    }, {
+      popupWidth: ALL_POPUP_WIDTH,
+      defaultHeight: ALL_POPUP_DEFAULT_HEIGHT,
+    });
+
+    setAutoPlacements(placements);
+  }, [dotPositions, frameRef, showAllPopovers]);
+
+  const effectivePlacements = useMemo(() => {
+    const autoById = new Map(autoPlacements.map((p) => [p.inspectId, p]));
+    return dotPositions.map((dot) => {
+      const { inspectId } = dot.entry;
+      const manual = allManualPositions[inspectId];
+      const auto = autoById.get(inspectId);
+      if (manual) {
+        return {
+          inspectId,
+          top: manual.top,
+          left: manual.left,
+          width: manual.width ?? ALL_POPUP_WIDTH,
+          height: auto?.height ?? ALL_POPUP_DEFAULT_HEIGHT,
+        };
+      }
+      return auto ?? null;
+    }).filter(Boolean);
+  }, [autoPlacements, allManualPositions, dotPositions]);
+
+  const updateAllConnectors = useCallback(() => {
+    const frame = frameRef.current;
+    if (!frame || !showAllPopovers || effectivePlacements.length === 0) {
+      setAllConnectors([]);
+      return;
+    }
+
+    const frameRect = frame.getBoundingClientRect();
+    const placementById = new Map(effectivePlacements.map((p) => [p.inspectId, p]));
+    const nextConnectors = [];
+
+    dotPositions.forEach((dot) => {
+      const placement = placementById.get(dot.entry.inspectId);
+      if (!placement) return;
+
+      const popupEl = allPopupRefs.current.get(dot.entry.inspectId);
+      const popupHeight = popupEl?.offsetHeight ?? placement.height;
+
+      const dotViewport = {
+        x: frameRect.left + dot.x,
+        y: frameRect.top + dot.y,
+      };
+
+      const popupRect = {
+        top: frameRect.top + placement.top,
+        left: frameRect.left + placement.left,
+        width: placement.width,
+        height: popupHeight,
+        right: frameRect.left + placement.left + placement.width,
+        bottom: frameRect.top + placement.top + popupHeight,
+      };
+
+      const line = getConnectorPoints(dotViewport, popupRect);
+      nextConnectors.push({
+        inspectId: dot.entry.inspectId,
+        x1: line.x1 - frameRect.left,
+        y1: line.y1 - frameRect.top,
+        x2: line.x2 - frameRect.left,
+        y2: line.y2 - frameRect.top,
+      });
+    });
+
+    setAllConnectors(nextConnectors);
+  }, [dotPositions, effectivePlacements, frameRef, showAllPopovers]);
 
   useLayoutEffect(() => {
     measure();
@@ -131,12 +299,37 @@ function InspectorOverlay({
   }, [showHint]);
 
   useEffect(() => {
-    if (!activeId) return;
+    if (showAllPopovers) {
+      setActiveId(null);
+      setManualPopupPosition(null);
+      setAutoPopupPosition(null);
+      setConnector(null);
+      setExpandedDockId(null);
+      return;
+    }
+    if (dockPopovers) {
+      setActiveId(null);
+      setManualPopupPosition(null);
+      setAutoPopupPosition(null);
+      setConnector(null);
+      setAllManualPositions({});
+      setAutoPlacements([]);
+      return;
+    }
+    setHighlightedId(null);
+    setExpandedDockId(null);
+    setAllManualPositions({});
+    setAutoPlacements([]);
+    setDockConnectors([]);
+  }, [showAllPopovers, dockPopovers]);
+
+  useEffect(() => {
+    if (bulkLayoutMode || !activeId) return;
     const stillVisible = dotPositions.some((dot) => dot.entry.inspectId === activeId);
     if (!stillVisible) {
       setActiveId(null);
     }
-  }, [activeId, dotPositions]);
+  }, [activeId, dotPositions, bulkLayoutMode]);
 
   useEffect(() => {
     setManualPopupPosition(null);
@@ -174,6 +367,7 @@ function InspectorOverlay({
   }, [activeDot, frameRef, previewMode]);
 
   useLayoutEffect(() => {
+    if (bulkLayoutMode) return;
     if (!activeDot) {
       setAutoPopupPosition(null);
       return;
@@ -181,9 +375,10 @@ function InspectorOverlay({
     if (manualPopupPosition) return;
 
     setAutoPopupPosition(computeAutoPopupPosition());
-  }, [activeDot, computeAutoPopupPosition, manualPopupPosition, dotPositions]);
+  }, [activeDot, bulkLayoutMode, computeAutoPopupPosition, manualPopupPosition, dotPositions]);
 
   useEffect(() => {
+    if (bulkLayoutMode) return undefined;
     const popupEl = popupMeasureRef.current;
     if (!popupEl || !activeDot || manualPopupPosition) return undefined;
 
@@ -192,10 +387,12 @@ function InspectorOverlay({
     });
     observer.observe(popupEl);
     return () => observer.disconnect();
-  }, [activeDot, computeAutoPopupPosition, manualPopupPosition]);
+  }, [activeDot, bulkLayoutMode, computeAutoPopupPosition, manualPopupPosition]);
 
   useEffect(() => {
-    if (!manualPopupPosition || !frameRef.current || !popupMeasureRef.current) return undefined;
+    if (bulkLayoutMode || !manualPopupPosition || !frameRef.current || !popupMeasureRef.current) {
+      return undefined;
+    }
 
     const frame = frameRef.current;
     const popupEl = popupMeasureRef.current;
@@ -226,9 +423,10 @@ function InspectorOverlay({
 
     window.addEventListener('resize', reclamp);
     return () => window.removeEventListener('resize', reclamp);
-  }, [frameRef, manualPopupPosition]);
+  }, [bulkLayoutMode, frameRef, manualPopupPosition]);
 
   useLayoutEffect(() => {
+    if (bulkLayoutMode) return;
     if (!activeDot || !popupPosition || !frameRef.current) {
       setConnector(null);
       return;
@@ -261,10 +459,132 @@ function InspectorOverlay({
       x2: line.x2 - frameRect.left,
       y2: line.y2 - frameRect.top,
     });
-  }, [activeDot, popupPosition, frameRef, isDraggingPopup]);
+  }, [activeDot, bulkLayoutMode, dockPopovers, frameRef, isDraggingPopup, popupPosition]);
+
+  useLayoutEffect(() => {
+    if (!dockPopovers) {
+      setDockConnectors([]);
+      return undefined;
+    }
+
+    updateDockConnectors();
+    const delays = [50, 200, 450, 800];
+    const timers = delays.map((delay) => window.setTimeout(updateDockConnectors, delay));
+    return () => timers.forEach((timer) => window.clearTimeout(timer));
+  }, [dockPopovers, dotPositions, expandedDockId, updateDockConnectors]);
+
+  useEffect(() => {
+    if (!dockPopovers) return undefined;
+
+    window.addEventListener('resize', updateDockConnectors);
+    window.visualViewport?.addEventListener('resize', updateDockConnectors);
+    return () => {
+      window.removeEventListener('resize', updateDockConnectors);
+      window.visualViewport?.removeEventListener('resize', updateDockConnectors);
+    };
+  }, [dockPopovers, updateDockConnectors]);
+
+  useLayoutEffect(() => {
+    if (!showAllPopovers) {
+      setAutoPlacements([]);
+      setAllConnectors([]);
+      return;
+    }
+
+    measureAllPopups();
+    const delays = [50, 200, 450, 800];
+    const timers = delays.map((delay) => window.setTimeout(measureAllPopups, delay));
+    return () => timers.forEach((timer) => window.clearTimeout(timer));
+  }, [showAllPopovers, dotPositions, measureAllPopups]);
+
+  useLayoutEffect(() => {
+    if (!showAllPopovers) return;
+    updateAllConnectors();
+  }, [showAllPopovers, effectivePlacements, dotPositions, updateAllConnectors, draggingAllId]);
+
+  useEffect(() => {
+    if (!showAllPopovers) return undefined;
+
+    const observers = [];
+    dotPositions.forEach((dot) => {
+      const el = allPopupRefs.current.get(dot.entry.inspectId);
+      if (!el) return;
+      const observer = new ResizeObserver(() => {
+        measureAllPopups();
+        updateAllConnectors();
+      });
+      observer.observe(el);
+      observers.push(observer);
+    });
+
+    return () => observers.forEach((observer) => observer.disconnect());
+  }, [showAllPopovers, dotPositions, effectivePlacements.length, measureAllPopups, updateAllConnectors]);
+
+  const handleAllPopupDragStart = useCallback((inspectId, event) => {
+    if (!showAllPopovers || event.button !== 0 || !frameRef.current) return;
+
+    const frame = frameRef.current;
+    const popupEl = allPopupRefs.current.get(inspectId);
+    if (!popupEl) return;
+
+    const placement = effectivePlacements.find((p) => p.inspectId === inspectId);
+    if (!placement) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    const pointerId = event.pointerId;
+    const startX = event.clientX;
+    const startY = event.clientY;
+    const startTop = placement.top;
+    const startLeft = placement.left;
+    const popupWidth = placement.width ?? ALL_POPUP_WIDTH;
+
+    setDraggingAllId(inspectId);
+    setHighlightedId(inspectId);
+
+    const onPointerMove = (moveEvent) => {
+      if (moveEvent.pointerId !== pointerId) return;
+
+      const frameRect = frame.getBoundingClientRect();
+      const popupSize = {
+        width: popupWidth,
+        height: popupEl.offsetHeight,
+      };
+      const dx = moveEvent.clientX - startX;
+      const dy = moveEvent.clientY - startY;
+      const clamped = clampPopupInFrame(
+        startTop + dy,
+        startLeft + dx,
+        popupSize,
+        { width: frameRect.width, height: frameRect.height },
+      );
+
+      setAllManualPositions((prev) => ({
+        ...prev,
+        [inspectId]: {
+          top: clamped.top,
+          left: clamped.left,
+          width: popupWidth,
+        },
+      }));
+    };
+
+    const onPointerUp = (upEvent) => {
+      if (upEvent.pointerId !== pointerId) return;
+      window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('pointerup', onPointerUp);
+      window.removeEventListener('pointercancel', onPointerUp);
+      setDraggingAllId(null);
+    };
+
+    window.addEventListener('pointermove', onPointerMove);
+    window.addEventListener('pointerup', onPointerUp);
+    window.addEventListener('pointercancel', onPointerUp);
+  }, [effectivePlacements, frameRef, showAllPopovers]);
 
   const handlePopupDragStart = useCallback((event) => {
-    if (event.button !== 0 || !popupPosition || !frameRef.current) return;
+    if (bulkLayoutMode || event.button !== 0 || !popupPosition || !frameRef.current) return;
 
     const frame = frameRef.current;
     const popupEl = popupMeasureRef.current;
@@ -318,14 +638,24 @@ function InspectorOverlay({
     window.addEventListener('pointermove', onPointerMove);
     window.addEventListener('pointerup', onPointerUp);
     window.addEventListener('pointercancel', onPointerUp);
-  }, [frameRef, popupPosition]);
+  }, [bulkLayoutMode, frameRef, popupPosition]);
 
   const handleDotClick = (inspectId) => {
+    if (dockPopovers) {
+      setHighlightedId((current) => (current === inspectId ? null : inspectId));
+      setExpandedDockId(inspectId);
+      return;
+    }
+    if (showAllPopovers) {
+      setHighlightedId((current) => (current === inspectId ? null : inspectId));
+      return;
+    }
     setActiveId((current) => (current === inspectId ? null : inspectId));
   };
 
-  const handleCopied = () => {
-    setFlashingId(activeId);
+  const handleCopied = (inspectId) => {
+    const id = inspectId ?? activeId;
+    setFlashingId(id);
     onShowToast?.('Styles copied — paste into your CSS');
     window.setTimeout(() => setFlashingId(null), 600);
   };
@@ -340,14 +670,88 @@ function InspectorOverlay({
     ? Math.hypot(connector.x2 - connector.x1, connector.y2 - connector.y1)
     : 0;
 
+  const placementById = useMemo(
+    () => new Map(effectivePlacements.map((p) => [p.inspectId, p])),
+    [effectivePlacements],
+  );
+
   const overlayPaletteStyle = {
     '--preview-accent': paletteColors.accent,
     '--inspector-accent': paletteColors.accent,
   };
 
+  const dockPanel = dockPopovers && dockPortalEl
+    ? createPortal(
+      <InspectorDockPanel
+        items={dotPositions.map(({ entry, element }) => ({ entry, element }))}
+        paletteColors={paletteColors}
+        highlightedId={highlightedId}
+        expandedId={expandedDockId}
+        registerTriggerRef={registerDockTriggerRef}
+        onCopied={handleCopied}
+        onApplyFix={handleApplyFix}
+        onScroll={updateDockConnectors}
+      />,
+      dockPortalEl,
+    )
+    : null;
+
   return (
-    <div className="inspector-overlay" style={overlayPaletteStyle}>
-      {connector && (
+    <>
+      {dockPanel}
+      <div
+        className={[
+          'inspector-overlay',
+          showAllPopovers ? 'inspector-overlay--show-all' : '',
+          dockPopovers ? 'inspector-overlay--docked' : '',
+        ].filter(Boolean).join(' ')}
+        style={overlayPaletteStyle}
+      >
+        {dockPopovers ? (
+          <svg className="inspector-overlay__connector inspector-overlay__connector--docked" aria-hidden="true">
+            {dockConnectors.map((line) => {
+              const length = Math.hypot(line.x2 - line.x1, line.y2 - line.y1);
+              const isHighlighted = highlightedId === line.inspectId;
+              return (
+                <line
+                  key={line.inspectId}
+                  x1={line.x1}
+                  y1={line.y1}
+                  x2={line.x2}
+                  y2={line.y2}
+                  className={[
+                    'inspector-overlay__connector-line',
+                    isHighlighted ? 'inspector-overlay__connector-line--highlighted' : '',
+                  ].filter(Boolean).join(' ')}
+                  strokeDasharray={length}
+                  style={{ '--connector-length': `${length}px` }}
+                />
+              );
+            })}
+          </svg>
+        ) : showAllPopovers ? (
+          <svg className="inspector-overlay__connector" aria-hidden="true">
+            {allConnectors.map((line) => {
+              const length = Math.hypot(line.x2 - line.x1, line.y2 - line.y1);
+              const isHighlighted = highlightedId === line.inspectId;
+              return (
+                <line
+                  key={line.inspectId}
+                  x1={line.x1}
+                  y1={line.y1}
+                  x2={line.x2}
+                  y2={line.y2}
+                  className={[
+                    'inspector-overlay__connector-line',
+                    isHighlighted ? 'inspector-overlay__connector-line--highlighted' : '',
+                  ].filter(Boolean).join(' ')}
+                  strokeDasharray={length}
+                  style={{ '--connector-length': `${length}px` }}
+                />
+              );
+            })}
+          </svg>
+        ) : connector && (
         <svg className="inspector-overlay__connector" aria-hidden="true">
           <line
             key={`${connector.x1}-${connector.y1}-${connector.x2}-${connector.y2}`}
@@ -361,12 +765,26 @@ function InspectorOverlay({
         </svg>
       )}
 
-      {showHint && (
+      {showHint && !bulkLayoutMode && (
         <p className="inspector-overlay__hint" role="status">Click any dot to inspect styles</p>
       )}
 
+      {showAllPopovers && (
+        <p className="inspector-overlay__hint inspector-overlay__hint--all" role="status">
+          All elements — drag a panel by its header, or click a dot to highlight
+        </p>
+      )}
+
+      {dockPopovers && (
+        <p className="inspector-overlay__hint inspector-overlay__hint--dock" role="status">
+          Docked to side panel — click a dot to expand its accordion
+        </p>
+      )}
+
       {dotPositions.map((dot) => {
-        const isActive = activeId === dot.entry.inspectId;
+        const isActive = bulkLayoutMode
+          ? highlightedId === dot.entry.inspectId
+          : activeId === dot.entry.inspectId;
         const isFlashing = flashingId === dot.entry.inspectId;
         return (
           <button
@@ -389,7 +807,49 @@ function InspectorOverlay({
         );
       })}
 
-      {activeDot && popupPosition && (
+      {showAllPopovers && dotPositions.map((dot) => {
+        const placement = placementById.get(dot.entry.inspectId);
+        if (!placement) return null;
+
+        const isHighlighted = highlightedId === dot.entry.inspectId;
+        const isFlashing = flashingId === dot.entry.inspectId;
+        const isDragging = draggingAllId === dot.entry.inspectId;
+
+        return (
+          <div
+            key={`popup-${dot.entry.inspectId}`}
+            ref={(node) => registerAllPopupRef(dot.entry.inspectId, node)}
+            className={[
+              'inspector-overlay__popup',
+              'inspector-overlay__popup--all',
+              isHighlighted ? 'inspector-overlay__popup--highlighted' : '',
+              isFlashing ? 'inspector-overlay__popup--copied' : '',
+              isDragging ? 'inspector-overlay__popup--dragging' : '',
+            ].filter(Boolean).join(' ')}
+            style={{
+              top: `${placement.top}px`,
+              left: `${placement.left}px`,
+              width: `${placement.width}px`,
+            }}
+          >
+            <InspectorPopup
+              entry={dot.entry}
+              element={dot.element}
+              paletteColors={paletteColors}
+              width={placement.width}
+              isCompactPopup
+              showAllMode
+              isHighlighted={isHighlighted}
+              isDragging={isDragging}
+              onHeaderPointerDown={(event) => handleAllPopupDragStart(dot.entry.inspectId, event)}
+              onCopied={() => handleCopied(dot.entry.inspectId)}
+              onApplyFix={handleApplyFix}
+            />
+          </div>
+        );
+      })}
+
+      {!showAllPopovers && !dockPopovers && activeDot && popupPosition && (
         <div
           ref={popupMeasureRef}
           className={[
@@ -397,7 +857,6 @@ function InspectorOverlay({
             isDraggingPopup ? 'inspector-overlay__popup--dragging' : '',
           ].filter(Boolean).join(' ')}
           style={{
-            position: 'absolute',
             top: `${popupPosition.top}px`,
             left: `${popupPosition.left}px`,
             width: popupPosition.width ? `${popupPosition.width}px` : undefined,
@@ -409,15 +868,15 @@ function InspectorOverlay({
             paletteColors={paletteColors}
             width={popupPosition.width}
             isCompactPopup={isCompactPopup}
-            isDragging={isDraggingPopup}
             onHeaderPointerDown={handlePopupDragStart}
             onClose={() => setActiveId(null)}
-            onCopied={handleCopied}
+            onCopied={() => handleCopied()}
             onApplyFix={handleApplyFix}
           />
         </div>
       )}
-    </div>
+      </div>
+    </>
   );
 }
 
