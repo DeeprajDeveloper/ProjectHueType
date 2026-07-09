@@ -207,6 +207,32 @@ export function buildTypeStyleCss(step, fonts, basePx, scaleRatio) {
   ].join('; ');
 }
 
+/** Structured type scale for export formats */
+export function buildTypeScaleExport(basePx, scaleRatio, fonts) {
+  return {
+    basePx,
+    scaleRatio,
+    steps: TYPE_SPECIMEN_STEPS.map((step) => ({
+      id: step.id,
+      label: step.label,
+      sizePx: getSpecimenSizePx(step, basePx, scaleRatio),
+      weight: step.weight,
+      lineHeight: step.lineHeight,
+      letterSpacing: step.letterSpacing,
+      role: step.role,
+      use: step.use,
+      fontFamily: step.role === 'mono'
+        ? fonts.body.family
+        : fonts[step.role === 'heading' ? 'heading' : 'body'].family,
+      css: buildTypeStyleCss(step, fonts, basePx, scaleRatio),
+    })),
+    previewVars: PREVIEW_TYPE_MAP.map(({ id, exponent }) => ({
+      id,
+      sizePx: getPreviewSizePx(exponent, basePx, scaleRatio),
+    })),
+  };
+}
+
 /** CSS custom properties for the live preview frame */
 export function getPreviewTypeStyle(basePx = TYPE_BASE_PX, scaleRatio = DEFAULT_SCALE_RATIO) {
   const ratioFactor = scaleRatio / DEFAULT_SCALE_RATIO;

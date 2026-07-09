@@ -404,7 +404,7 @@ function SidebarNav({
 
   const renderPreviewSection = () => (
     <div className="sidebar-nav__section">
-      <p className="sidebar-nav__group-label">Preview</p>
+      <p className="sidebar-nav__group-label">Live Prototypes</p>
       <div className="sidebar-nav__submenu-wrap" ref={openMenuId === 'layouts' ? menuRef : undefined}>
         <button
           type="button"
@@ -421,7 +421,7 @@ function SidebarNav({
           aria-label={navCollapsed ? `Layouts, ${layoutCount} layouts` : undefined}
         >
           <Icon icon={LayoutIcon} size={ICON_SIZE_SM} />
-          <span className="sidebar-nav__item-label">Layouts</span>
+          <span className="sidebar-nav__item-label">Layouts Library</span>
           {!navCollapsed && (
             <span className="sidebar-nav__count" aria-label={`${layoutCount} layouts`}>
               {layoutCount}

@@ -490,6 +490,8 @@ function AppShell() {
           {exportOpen ? (
             <ExportPanel
               combo={combo}
+              typeBasePx={typeBasePx}
+              typeScaleRatio={typeScaleRatio}
               onClose={() => setExportOpen(false)}
               onCopy={() => showToast('Copied to clipboard')}
               onDownload={(filename) => showToast(`Downloaded ${filename}`)}

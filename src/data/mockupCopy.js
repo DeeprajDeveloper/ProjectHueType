@@ -1,4 +1,4 @@
-export const DEFAULT_PREVIEW_LOGO = 'Acme Co.';
+export const DEFAULT_PREVIEW_LOGO = 'HueType Co.';
 
 export function formatMockupCopy(template, vars = {}) {
   return template.replace(/\{(\w+)\}/g, (_, key) => (
@@ -101,9 +101,9 @@ export const MOCKUP_COPY = {
     },
     footer: {
       address: {
-        line1: '128 Market Street, Suite 400',
-        line2: 'San Francisco, CA 94105',
-        line3: 'United States',
+        line1: '182 Fictional Street, Suite 400',
+        line2: 'Sim City, CA 94105',
+        line3: 'Imagine Land',
       },
       menus: [
         { title: 'Product', links: ['Features', 'Pricing', 'Integrations', 'Changelog'] },

@@ -4,7 +4,7 @@ const ARCHETYPE_BY_ID = Object.fromEntries(
   PREVIEW_ARCHETYPES.map((archetype) => [archetype.id, archetype]),
 );
 
-const NEW_BADGE_GROUPS = new Set(['group-3', 'group-4']);
+const NEW_BADGE_GROUPS = new Set();
 
 export function getArchetypeBadge(archetypeId) {
   const group = ARCHETYPE_BY_ID[archetypeId]?.group;

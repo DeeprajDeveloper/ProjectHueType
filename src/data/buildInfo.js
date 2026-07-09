@@ -1,6 +1,6 @@
 /** App build metadata — shown in Build Info panel */
 
-export const APP_VERSION = '1.0.0';
+export const APP_VERSION = '1.0.1';
 export const APP_NAME = 'HueType';
 export const APP_SITE_URL = 'https://huetype.dev';
 export const APP_SITE_HOST = 'huetype.dev';
@@ -19,28 +19,28 @@ export const BUILD_STACK = [
 
 export const BUILD_SUMMARY = [
   'Pair color palettes and fonts, preview them on realistic mockups, check WCAG contrast, and export tokens — all in one workspace.',
-  'v1.0 is the first major release: inspect any element in the live preview, search layouts instantly, and explore 24 interactive archetypes with a clearer, more intuitive shell.',
+  'v1.0+ adds a full style inspector with single, All, and Dock modes — inspect one element, float every panel on the canvas, or dock them into the right sidebar as collapsible accordions.',
 ];
 
 export const WHATS_NEW_HIGHLIGHTS = {
-  title: 'HueType 1.0 — built for everyday use',
-  intro: 'This major release focuses on discoverability and hands-on exploration — find layouts faster, inspect real styles on the canvas, and lift CSS straight into your project.',
+  title: 'HueType 1.0.1 — inspector All & Dock modes',
+  intro: 'The style inspector now supports three layouts: inspect one element at a time, show every panel on the preview, or dock them all into the right sidebar as collapsible accordions.',
   items: [
     {
-      title: 'Style inspector',
-      body: 'Toggle Inspect in the preview bar (or press I) to place dots on key elements. Click any dot for typography, colors, palette roles, WCAG contrast, and copy-ready CSS or Tailwind.',
+      title: 'All inspect mode',
+      body: 'With Inspect on, click All to show every element panel stacked along the right edge of the preview. Drag any panel by its header to reposition it; connector lines link each dot to its panel.',
     },
     {
-      title: 'Draggable inspect popup',
-      body: 'Drag the inspector panel by its header to reposition it in the preview. A live connector line links the panel to the element you are inspecting.',
+      title: 'Dock inspect mode',
+      body: 'Click Dock to move all inspect panels into the right side panel — one accordion per element, collapsed by default. Click a dot on the preview to expand and jump to that element\'s details.',
     },
     {
-      title: 'Layout search',
-      body: 'Search all 24 archetypes from the sidebar or Preview → Layouts — filter by name, group, or keyword without expanding every group.',
+      title: 'Accordion inspector popup',
+      body: 'Single-mode popups organize Styles, Accessibility, and Export code into accordions. Styles opens first on desktop; all sections start collapsed on mobile and in compact All/Dock layouts.',
     },
     {
-      title: '24 interactive layouts',
-      body: 'Groups 1–4 cover marketing through niche surfaces — kanban drag-and-drop, mobile app tabs, calendar picker, media scrubber, and more — with grouped navigation and New badges on recent additions.',
+      title: 'Style inspector (recap)',
+      body: 'Toggle Inspect in the preview bar (or press I) for typography, colors, palette roles, WCAG contrast, fix chips, and copy-ready CSS or Tailwind on any tagged element across all 24 archetypes.',
     },
   ],
 };
@@ -49,7 +49,8 @@ export const BUILD_FEATURES = [
   'Grouped sidebar — Workspace, Customize, and Preview with expandable layout groups and layout search',
   'Collapsed sidebar icon rail with popover menus for Customize (colors/fonts) and Layouts',
   'Style inspector — dot markers on preview elements with typography, color, WCAG, and CSS/Tailwind copy',
-  'Draggable inspector popup with connector line; press I to toggle inspect mode',
+  'Inspector modes — single popup, All (floating panels on the preview), and Dock (accordions in the right sidebar)',
+  'Draggable inspector popup with animated connector line; press I to toggle inspect mode',
   'Preview top bar — live label, WCAG contrast button, Inspect toggle, device frame, and shuffle',
   'Favorite layout quick-select below the preview with customizable chips (up to 8)',
   '17 curated presets with mood, industry, and mode filters plus saved library',
@@ -65,6 +66,29 @@ export const BUILD_FEATURES = [
 ];
 
 export const BUILD_CHANGELOG = [
+  {
+    version: '1.0.1',
+    label: 'Inspector All & Dock modes',
+    date: '2026-07-08',
+    summary: [
+      'The style inspector gains two new layout modes alongside the existing single-element popup.',
+      'All mode stacks compact inspector panels along the right edge of the preview — each linked to its dot by an animated connector. Panels are draggable by header.',
+      'Dock mode moves every inspect panel into the right side panel as collapsible accordions (one per element, collapsed by default). Connectors span from preview dots to the matching accordion trigger.',
+      'Inspector popups now use accordions for Styles, Accessibility, and Export code; the what\'s new modal and build info were updated for this release.',
+    ],
+    changes: [
+      'All inspect mode — Inspect → All shows every element panel on the right of the preview with connector lines',
+      'Draggable All-mode panels — reposition any panel by dragging its header; manual positions persist until mode is toggled off',
+      'Dock inspect mode — Inspect → Dock opens the right sidebar with one accordion per inspectable element',
+      'Dock accordions default collapsed — expand to reveal nested Styles, Accessibility, and Export sections (also collapsed in compact layout)',
+      'Click a preview dot in Dock mode to highlight and expand the matching sidebar accordion',
+      'Viewport-spanning connector lines in Dock mode link preview dots to sidebar accordion triggers',
+      'Mutually exclusive inspect layouts — All and Dock cannot be active at the same time; turning off Inspect resets both',
+      'Inspector popup accordions — Styles, Accessibility, and Export code in single and All modes; Styles open by default on desktop',
+      'Extracted shared InspectorPopupContent for popup, All, and Dock panel bodies',
+      'Fixed AppShell initialization order so the app loads correctly with Dock mode wired to the components sidebar',
+    ],
+  },
   {
     version: '1.0.0',
     label: 'Major release — inspector, layouts & intuitive exploration',
@@ -163,10 +187,11 @@ export const BUILD_CHANGELOG = [
 
 export const BUILD_NOTES = [
   'Press I or click Inspect in the preview bar to turn on the style inspector — click any dot to read styles and copy CSS.',
+  'Use All to float every inspect panel on the preview, or Dock to move them into the right sidebar as collapsed accordions.',
   'Search layouts from the sidebar or Preview → Layouts to jump to an archetype without expanding every group.',
   'Sidebar groups: Workspace (presets), Customize (colors & fonts), Preview (layouts & options).',
   'When collapsed, use the Customize and Layouts icons — they open flyout menus to the right.',
-  'Expand Layouts to browse Groups 1–4 — Groups 3 and 4 are marked New.',
+  'Expand Layouts to browse Groups 1–4 — marketing through niche surfaces.',
   'Pin favorite layouts in the chip bar below the preview via the slider customize button.',
   'Tap the WCAG contrast button in the preview top bar — status on the left, Details on the right.',
   'Export lives in the sidebar footer; theme, share, and save are under the HueType logo.',
