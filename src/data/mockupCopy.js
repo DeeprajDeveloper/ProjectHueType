@@ -343,8 +343,8 @@ export const MOCKUP_COPY = {
       signIn: 'Sign in',
     },
     author: {
-      name: 'Alex Rivera',
-      initials: 'AR',
+      name: 'Deepraj Adhikary',
+      initials: 'DA',
       follow: 'Follow',
     },
     article: {

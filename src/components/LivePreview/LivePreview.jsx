@@ -38,6 +38,7 @@ import MockupError404 from './MockupError404';
 import MockupCalendar from './MockupCalendar';
 import MockupMediaPlayer from './MockupMediaPlayer';
 import { isArchetypePreviewEmpty, getArchetypePreviewLabel, resolveArchetypeParts } from '../PreviewComponentsPanel/previewArchetypes';
+import { MOCKUP_COPY } from '../../data/mockupCopy';
 import { getContrastStatusLabel } from '../../utils/contrast';
 import { getPreviewTypeStyle } from '../../utils/typographyScale';
 import './LivePreview.scss';
@@ -96,7 +97,7 @@ const MOBILE_PREVIEW_DISABLED_MESSAGE =
 
 export { MOBILE_PREVIEW_DISABLED_MESSAGE };
 
-function renderArchetype(archetype, previewMode, parts, logoText, onFrameScrollLock) {
+function renderArchetype(archetype, previewMode, parts, logoText, onFrameScrollLock, previewCopy) {
   const brand = logoText.trim() || 'Acme Co.';
   switch (archetype) {
     case 'dashboard':
@@ -136,9 +137,9 @@ function renderArchetype(archetype, previewMode, parts, logoText, onFrameScrollL
     case 'mobile-app':
       return <MockupMobileApp parts={parts} />;
     case 'waitlist':
-      return <MockupWaitlist parts={parts} logoText={brand} />;
+      return <MockupWaitlist parts={parts} logoText={brand} copy={previewCopy.waitlist} />;
     case 'error404':
-      return <MockupError404 parts={parts} />;
+      return <MockupError404 parts={parts} copy={previewCopy.error404} />;
     case 'calendar':
       return <MockupCalendar parts={parts} />;
     case 'media-player':
@@ -150,6 +151,7 @@ function renderArchetype(archetype, previewMode, parts, logoText, onFrameScrollL
           previewMode={previewMode}
           parts={parts}
           logoText={brand}
+          copy={previewCopy.marketing}
           onFrameScrollLock={onFrameScrollLock}
         />
       );
@@ -165,6 +167,8 @@ const WCAG_STATUS_LABELS = {
 
 const FRAME_OPTIONS = ['desktop', 'tablet', 'mobile'];
 
+const RESIZE_TRANSITION_MS = 450;
+
 function LivePreview({
   combo,
   fontsLoading,
@@ -177,6 +181,7 @@ function LivePreview({
   onToggleChipBarArchetype,
   archetypeParts,
   previewLogoText = '',
+  previewCopy = MOCKUP_COPY,
   typeBasePx,
   typeScaleRatio,
   contrastStatus,
@@ -209,6 +214,8 @@ function LivePreview({
   const frameRef = useRef(null);
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
   const [frameSize, setFrameSize] = useState({ width: 0, height: 0 });
+  const [isResizing, setIsResizing] = useState(false);
+  const hasMountedRef = useRef(false);
   const [tabletOrientation, setTabletOrientationState] = useState(() => {
     try {
       return localStorage.getItem(TABLET_ORIENTATION_KEY) === 'landscape' ? 'landscape' : 'portrait';
@@ -332,6 +339,17 @@ function LivePreview({
     observer.observe(el);
     return () => observer.disconnect();
   }, [previewMode, tabletOrientation, containerWidth, containerHeight, archetype, frameWidth, frameHeight]);
+
+  useEffect(() => {
+    if (!hasMountedRef.current) {
+      hasMountedRef.current = true;
+      return undefined;
+    }
+
+    setIsResizing(true);
+    const timer = window.setTimeout(() => setIsResizing(false), RESIZE_TRANSITION_MS + 80);
+    return () => window.clearTimeout(timer);
+  }, [previewMode, tabletOrientation, archetype]);
 
   const frameShellStyle = {
     ...(frameWidth != null ? { width: `${frameWidth}px` } : {}),
@@ -526,13 +544,18 @@ function LivePreview({
             {fontsLoading && (
               <div className="live-preview__loading">Loading fonts…</div>
             )}
+            {isResizing && (
+              <div className="live-preview__resize-overlay" aria-hidden="true">
+                <span className="live-preview__resize-overlay-text">Resizing Preview</span>
+              </div>
+            )}
             {previewEmpty ? (
               <div className="live-preview__empty">
                 <p>All preview parts are hidden.</p>
-                <p className="live-preview__empty-hint">Turn sections on in Preview → Options.</p>
+                <p className="live-preview__empty-hint">Turn sections on in Preview → Toggle prototype sections.</p>
               </div>
             ) : (
-              renderArchetype(archetype, previewMode, activeParts, previewLogoText, setFrameScrollLocked)
+              renderArchetype(archetype, previewMode, activeParts, previewLogoText, setFrameScrollLocked, previewCopy)
             )}
           </div>
           {inspectorOpen && !previewEmpty && (

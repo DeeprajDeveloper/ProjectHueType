@@ -1,8 +1,7 @@
 import { MOCKUP_COPY } from '../../data/mockupCopy';
 import './MockupHero.scss';
 
-function MockupHero({ onOpenAuth }) {
-  const copy = MOCKUP_COPY.marketing.hero;
+function MockupHero({ copy = MOCKUP_COPY.marketing.hero, onOpenAuth }) {
 
   return (
     <section className="mockup-hero">

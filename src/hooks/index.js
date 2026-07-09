@@ -10,6 +10,12 @@ import { getDefaultArchetypeParts, PREVIEW_ARCHETYPES, mergeArchetypePartsState,
 import { CHIP_BAR_ARCHETYPE_IDS } from '../data/sidebarNavItems';
 import { TYPE_BASE_PX, clampTypeBasePx, DEFAULT_SCALE_RATIO, clampScaleRatio } from '../utils/typographyScale';
 import { applyThemeBranding } from '../utils/themeAssets';
+import { MOCKUP_COPY } from '../data/mockupCopy';
+import {
+  getValueAtPath,
+  setValueAtPath,
+  removeValueAtPath,
+} from '../utils/previewCopyUtils';
 
 export function useComboState(initialCombo) {
   const urlState = readUrlState();
@@ -292,10 +298,27 @@ export function useUiPreferences() {
   const PREVIEW_PARTS_KEY = 'huetype-preview-parts';
   const COMPONENTS_SIDEBAR_KEY = 'huetype-components-sidebar-open';
   const PREVIEW_LOGO_KEY = 'huetype-preview-logo-text';
+  const PREVIEW_COPY_KEY = 'huetype-preview-copy-overrides';
   const CHIP_BAR_KEY = 'huetype-chip-bar-archetypes';
   const VALID_ARCHETYPES = new Set(PREVIEW_ARCHETYPES.map((archetype) => archetype.id));
   const DEFAULT_PREVIEW_LOGO = 'HueType Co.';
   const MAX_CHIP_BAR = 8;
+
+  const sanitizePreviewCopyOverrides = (stored) => {
+    if (!stored || typeof stored !== 'object' || Array.isArray(stored)) return {};
+
+    const sanitized = {};
+
+    for (const [archetype, archetypeOverrides] of Object.entries(stored)) {
+      if (!VALID_ARCHETYPES.has(archetype)) continue;
+      if (!archetypeOverrides || typeof archetypeOverrides !== 'object' || Array.isArray(archetypeOverrides)) {
+        continue;
+      }
+      sanitized[archetype] = archetypeOverrides;
+    }
+
+    return sanitized;
+  };
 
   const readChipBarArchetypeIds = () => {
     try {
@@ -385,6 +408,16 @@ export function useUiPreferences() {
       // ignore
     }
     return DEFAULT_PREVIEW_LOGO;
+  });
+
+  const [previewCopyOverrides, setPreviewCopyOverridesState] = useState(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem(PREVIEW_COPY_KEY));
+      return sanitizePreviewCopyOverrides(stored);
+    } catch {
+      // ignore
+    }
+    return {};
   });
 
   const [chipBarArchetypeIds, setChipBarArchetypeIdsState] = useState(readChipBarArchetypeIds);
@@ -477,6 +510,64 @@ export function useUiPreferences() {
     }
   }, []);
 
+  const persistPreviewCopyOverrides = useCallback((next) => {
+    setPreviewCopyOverridesState(next);
+    try {
+      localStorage.setItem(PREVIEW_COPY_KEY, JSON.stringify(next));
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  const setPreviewCopyOverride = useCallback((archetype, path, value) => {
+    if (!VALID_ARCHETYPES.has(archetype)) return;
+
+    const defaultValue = getValueAtPath(MOCKUP_COPY[archetype], path);
+    const matchesDefault = value === defaultValue
+      || (typeof value === 'string' && typeof defaultValue === 'string' && value.trim() === defaultValue.trim());
+
+    setPreviewCopyOverridesState((prev) => {
+      const currentArchetypeOverrides = prev[archetype] || {};
+      const nextArchetypeOverrides = matchesDefault
+        ? removeValueAtPath(currentArchetypeOverrides, path)
+        : setValueAtPath(currentArchetypeOverrides, path, value);
+
+      const next = { ...prev };
+      if (Object.keys(nextArchetypeOverrides).length === 0) {
+        delete next[archetype];
+      } else {
+        next[archetype] = nextArchetypeOverrides;
+      }
+
+      try {
+        localStorage.setItem(PREVIEW_COPY_KEY, JSON.stringify(next));
+      } catch {
+        // ignore
+      }
+
+      return next;
+    });
+  }, []);
+
+  const resetPreviewCopyForArchetype = useCallback((archetype) => {
+    if (!VALID_ARCHETYPES.has(archetype)) return;
+
+    setPreviewCopyOverridesState((prev) => {
+      if (!prev[archetype]) return prev;
+
+      const next = { ...prev };
+      delete next[archetype];
+
+      try {
+        localStorage.setItem(PREVIEW_COPY_KEY, JSON.stringify(next));
+      } catch {
+        // ignore
+      }
+
+      return next;
+    });
+  }, []);
+
   const persistChipBarArchetypeIds = useCallback((ids) => {
     setChipBarArchetypeIdsState(ids);
     try {
@@ -522,6 +613,10 @@ export function useUiPreferences() {
     setComponentsSidebarOpen,
     previewLogoText,
     setPreviewLogoText,
+    previewCopyOverrides,
+    setPreviewCopyOverride,
+    resetPreviewCopyForArchetype,
+    persistPreviewCopyOverrides,
     chipBarArchetypeIds,
     toggleChipBarArchetype,
     setChipBarArchetypeIds: persistChipBarArchetypeIds,

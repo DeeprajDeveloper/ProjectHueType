@@ -443,6 +443,30 @@
   box-shadow: var(--shadow-sm);
 }
 
+.live-preview__resize-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 15;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--preview-background) 76%, transparent);
+  backdrop-filter: blur(2px);
+  pointer-events: none;
+}
+
+.live-preview__resize-overlay-text {
+  padding: var(--space-2) var(--space-4);
+  font-family: var(--font-chrome);
+  font-size: var(--text-body);
+  font-weight: 600;
+  color: var(--preview-text);
+  background: var(--preview-background);
+  border: 1px solid color-mix(in srgb, var(--preview-text) 14%, transparent);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+}
+
 .live-preview__empty {
   display: flex;
   flex-direction: column;

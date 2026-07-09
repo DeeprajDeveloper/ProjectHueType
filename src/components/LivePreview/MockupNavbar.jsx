@@ -2,9 +2,8 @@ import { useState } from 'react';
 import { MOCKUP_COPY, DEFAULT_PREVIEW_LOGO } from '../../data/mockupCopy';
 import './MockupNavbar.scss';
 
-function MockupNavbar({ compactNav = false, onOpenAuth, logoText = DEFAULT_PREVIEW_LOGO }) {
+function MockupNavbar({ compactNav = false, onOpenAuth, logoText = DEFAULT_PREVIEW_LOGO, copy = MOCKUP_COPY.marketing.navbar }) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const copy = MOCKUP_COPY.marketing.navbar;
 
   const handleAuth = (mode) => {
     setMenuOpen(false);

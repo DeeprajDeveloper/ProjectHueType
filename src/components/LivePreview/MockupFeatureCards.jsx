@@ -1,8 +1,7 @@
 import { MOCKUP_COPY } from '../../data/mockupCopy';
 import './MockupFeatureCards.scss';
 
-function MockupFeatureCards() {
-  const copy = MOCKUP_COPY.marketing.featureCards;
+function MockupFeatureCards({ copy = MOCKUP_COPY.marketing.featureCards }) {
 
   return (
     <section className="mockup-feature-cards">

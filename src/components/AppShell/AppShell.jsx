@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import { COMBOS } from '../../data/combos';
 import {
   useComboState,
@@ -28,6 +28,7 @@ import WhatsNewModal from '../WhatsNewModal/WhatsNewModal';
 import { CHANGELOG_PATH } from '../../data/buildInfo';
 import { submitFeedback } from '../../utils/feedback';
 import { readStoredActivePanel, storeActivePanel, readStoredPreviewMode, storePreviewMode, resolvePanelId } from '../../data/sidebarNavItems';
+import { resolvePreviewCopy } from '../../utils/previewCopyUtils';
 
 function getInitialSidebarOpen() {
   if (typeof window !== 'undefined' && window.matchMedia('(max-width: 639px)').matches) {
@@ -64,9 +65,17 @@ function AppShell() {
     setComponentsSidebarOpen,
     previewLogoText,
     setPreviewLogoText,
+    previewCopyOverrides,
+    setPreviewCopyOverride,
+    resetPreviewCopyForArchetype,
     chipBarArchetypeIds,
     toggleChipBarArchetype,
   } = useUiPreferences();
+
+  const resolvedPreviewCopy = useMemo(
+    () => resolvePreviewCopy(previewCopyOverrides),
+    [previewCopyOverrides],
+  );
 
   const handleInspectorDockActiveChange = useCallback((active) => {
     setInspectorDockActive(active);
@@ -185,7 +194,7 @@ function AppShell() {
 
       if (prepare === 'open-archetypes') {
         if (isCompact) {
-          openSlideOverPanel('preview-settings');
+          openSlideOverPanel('archetypes');
         } else {
           setSidebarOpen(true);
           setActivePanel('archetypes');
@@ -198,6 +207,16 @@ function AppShell() {
             }
           }, 0);
         }
+        return;
+      }
+
+      if (prepare === 'open-preview-edit') {
+        openSlideOverPanel('preview-edit');
+        return;
+      }
+
+      if (prepare === 'open-preview-sections') {
+        openSlideOverPanel('preview-sections');
         return;
       }
 
@@ -510,6 +529,7 @@ function AppShell() {
               onToggleChipBarArchetype={toggleChipBarArchetype}
               archetypeParts={archetypeParts}
               previewLogoText={previewLogoText}
+              previewCopy={resolvedPreviewCopy}
               typeBasePx={typeBasePx}
               typeScaleRatio={typeScaleRatio}
               onOpenContrast={() => handlePanelToggle('info')}
@@ -589,6 +609,9 @@ function AppShell() {
             onToggleArchetypePart={toggleArchetypePart}
             previewLogoText={previewLogoText}
             onPreviewLogoTextChange={setPreviewLogoText}
+            previewCopyOverrides={previewCopyOverrides}
+            onPreviewCopyChange={setPreviewCopyOverride}
+            onResetPreviewCopy={resetPreviewCopyForArchetype}
             onStartTour={tour.start}
           />
           )}

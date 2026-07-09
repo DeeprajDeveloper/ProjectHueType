@@ -12,7 +12,7 @@ export const TOUR_STEPS = [
     target: '[data-tour="sidebar-nav"]',
     title: 'Sidebar navigation',
     content:
-      'The sidebar is grouped into Workspace (presets), Customize (colors & fonts), and Preview (layouts & options). Pick a section to open its panel on the right.',
+      'The sidebar is grouped into Workspace (presets), Customize (colors & fonts), and Live Prototypes (layouts, edit copy, and section toggles). Pick a section to open its panel on the right.',
     placement: 'right',
     compactPlacement: 'bottom',
     prepare: 'sidebar-workspace',
@@ -73,7 +73,7 @@ export const TOUR_STEPS = [
     target: '[data-tour="preview-controls"]',
     title: 'Device frames',
     content:
-      'Switch between desktop, tablet, and mobile widths to stress-test readability and layout at different breakpoints.',
+      'Switch between desktop, tablet, and mobile widths to stress-test readability and layout at different breakpoints. A brief “Resizing Preview” overlay appears while the frame animates.',
     placement: 'bottom',
     compactPlacement: 'bottom',
     prepare: 'close-panels',
@@ -111,14 +111,26 @@ export const TOUR_STEPS = [
     prepare: 'open-layouts-expanded',
   },
   {
-    id: 'prototypes',
-    target: '[data-tour="components-panel"]',
-    title: 'Layouts & preview options',
+    id: 'preview-edit',
+    target: '[data-tour="nav-preview-edit"]',
+    compactTarget: '[data-tour="components-panel"]',
+    title: 'Edit prototype',
     content:
-      'Use Options for per-layout section toggles and logo text. The sidebar and options panel share the same search and grouped layout list.',
-    placement: 'left',
+      'Open Edit prototype to change logo text and key copy — hero headlines, CTAs, waitlist text, and more. Edits update the live preview instantly and save to your browser.',
+    placement: 'right',
     compactPlacement: 'bottom',
-    prepare: 'open-archetypes',
+    prepare: 'open-preview-edit',
+  },
+  {
+    id: 'preview-sections',
+    target: '[data-tour="nav-preview-sections"]',
+    compactTarget: '[data-tour="components-panel"]',
+    title: 'Toggle prototype sections',
+    content:
+      'Use Toggle prototype sections to show or hide parts of the current layout — navbar, hero, charts, pricing tiers, and more — without leaving the preview.',
+    placement: 'right',
+    compactPlacement: 'bottom',
+    prepare: 'open-preview-sections',
   },
   {
     id: 'toolbar',
@@ -166,7 +178,7 @@ export const TOUR_STEPS = [
     target: null,
     title: "You're all set",
     content:
-      'Build Info and Feature Catalog live in the sidebar footer. Press ? for shortcuts, I to inspect, Space to shuffle, and export when you are ready to ship tokens.',
+      'Build Info and Feature Catalog live in the sidebar footer. Press ? for shortcuts, I to inspect, Alt+5 to edit prototype copy, Space to shuffle, and export when you are ready to ship tokens.',
     placement: 'center',
     prepare: 'close-export',
   },

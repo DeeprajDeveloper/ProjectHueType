@@ -1,8 +1,7 @@
 import { MOCKUP_COPY } from '../../data/mockupCopy';
 import './MockupContactForm.scss';
 
-function MockupContactForm() {
-  const copy = MOCKUP_COPY.marketing.contact;
+function MockupContactForm({ copy = MOCKUP_COPY.marketing.contact }) {
 
   return (
     <section className="mockup-contact">

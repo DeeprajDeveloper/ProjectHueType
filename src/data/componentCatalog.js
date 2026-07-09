@@ -173,9 +173,16 @@ export const FEATURE_COMPONENTS = [
   {
     id: 'preview-components-panel',
     label: 'Preview components panel',
-    description: 'Right sidebar to switch live preview archetypes and toggle individual preview sections; collapses to an icon rail. On tablet/mobile, opens as a slide-over panel.',
+    description: 'Right sidebar for layout library, Edit prototype copy, and Toggle prototype sections; collapses to an icon rail. On tablet/mobile, opens as a slide-over panel.',
     status: 'built',
     usedIn: 'App shell',
+  },
+  {
+    id: 'preview-copy-editing',
+    label: 'Edit prototype copy',
+    description: 'Edit logo text and key preview strings from the sidebar; overrides merge with default mockup copy and persist in local storage.',
+    status: 'built',
+    usedIn: 'Live Prototypes → Edit prototype',
   },
   {
     id: 'collapsed-sidebar-rails',
@@ -199,7 +206,7 @@ export const FEATURE_COMPONENTS = [
   {
     id: 'onboarding-tour',
     label: 'Onboarding tour',
-    description: 'First-run walkthrough covering navigation, shuffle, export, Build Info, and Feature Catalog.',
+    description: 'First-run walkthrough covering navigation, prototype editing, section toggles, shuffle, export, Build Info, and Feature Catalog.',
     status: 'built',
   },
   {
@@ -233,7 +240,7 @@ export const LIVE_PREVIEW_COMPONENTS = [
   {
     id: 'device-frame',
     label: 'Device frame preview',
-    description: 'Desktop, tablet (768px), and mobile (375px) frame sizes with animated width transitions. Mockups use container queries so layouts respond inside the frame.',
+    description: 'Desktop, tablet (768px), and mobile (375px) frame sizes with animated width transitions and a brief “Resizing Preview” overlay. Mockups use container queries so layouts respond inside the frame.',
     status: 'built',
     usedIn: 'Live Preview toolbar',
   },
@@ -244,6 +251,6 @@ export const LIVE_PREVIEW_COMPONENTS = [
     label: 'Preview parts toggles',
     description: 'Per-archetype section toggles (e.g. navbar, charts, pricing tiers) persisted in local storage.',
     status: 'built',
-    usedIn: 'Prototypes → Preview settings',
+    usedIn: 'Live Prototypes → Toggle prototype sections',
   },
 ];

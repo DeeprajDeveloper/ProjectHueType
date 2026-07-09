@@ -1,8 +1,7 @@
 import { MOCKUP_COPY } from '../../data/mockupCopy';
 import './MockupTestimonials.scss';
 
-function MockupTestimonials() {
-  const copy = MOCKUP_COPY.marketing.testimonials;
+function MockupTestimonials({ copy = MOCKUP_COPY.marketing.testimonials }) {
 
   return (
     <section className="mockup-testimonials">

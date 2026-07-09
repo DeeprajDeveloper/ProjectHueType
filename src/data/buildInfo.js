@@ -1,6 +1,6 @@
 /** App build metadata — shown in Build Info panel */
 
-export const APP_VERSION = '1.0.1';
+export const APP_VERSION = '1.0.2';
 export const APP_NAME = 'HueType';
 export const APP_SITE_URL = 'https://huetype.dev';
 export const APP_SITE_HOST = 'huetype.dev';
@@ -23,24 +23,24 @@ export const BUILD_SUMMARY = [
 ];
 
 export const WHATS_NEW_HIGHLIGHTS = {
-  title: 'HueType 1.0.1 — inspector All & Dock modes',
-  intro: 'The style inspector now supports three layouts: inspect one element at a time, show every panel on the preview, or dock them all into the right sidebar as collapsible accordions.',
+  title: 'HueType 1.0.2 — edit prototype copy & preview sections',
+  intro: 'Customize live preview text from the sidebar, toggle layout sections in a dedicated panel, and see a resizing overlay when switching device frames.',
   items: [
     {
-      title: 'All inspect mode',
-      body: 'With Inspect on, click All to show every element panel stacked along the right edge of the preview. Drag any panel by its header to reposition it; connector lines link each dot to its panel.',
+      title: 'Edit prototype',
+      body: 'Open Edit prototype under Live Prototypes to change logo text and key copy fields — hero headlines, CTAs, waitlist text, and more. Edits update the preview instantly and persist in local storage.',
     },
     {
-      title: 'Dock inspect mode',
-      body: 'Click Dock to move all inspect panels into the right side panel — one accordion per element, collapsed by default. Click a dot on the preview to expand and jump to that element\'s details.',
+      title: 'Toggle prototype sections',
+      body: 'Section visibility now lives in its own panel. Show or hide navbar, hero, charts, and other parts per layout without mixing them with content editing.',
     },
     {
-      title: 'Accordion inspector popup',
-      body: 'Single-mode popups organize Styles, Accessibility, and Export code into accordions. Styles opens first on desktop; all sections start collapsed on mobile and in compact All/Dock layouts.',
+      title: 'Resizing preview overlay',
+      body: 'Switching desktop, tablet, or mobile frames — or changing layouts — shows a brief “Resizing Preview” overlay while the frame animates to its new size.',
     },
     {
-      title: 'Style inspector (recap)',
-      body: 'Toggle Inspect in the preview bar (or press I) for typography, colors, palette roles, WCAG contrast, fix chips, and copy-ready CSS or Tailwind on any tagged element across all 24 archetypes.',
+      title: 'Inspector modes (recap)',
+      body: 'Press I or use Inspect in the preview bar for single, All, or Dock inspector layouts with typography, WCAG contrast, fix chips, and copy-ready CSS or Tailwind.',
     },
   ],
 };
@@ -52,6 +52,9 @@ export const BUILD_FEATURES = [
   'Inspector modes — single popup, All (floating panels on the preview), and Dock (accordions in the right sidebar)',
   'Draggable inspector popup with animated connector line; press I to toggle inspect mode',
   'Preview top bar — live label, WCAG contrast button, Inspect toggle, device frame, and shuffle',
+  'Edit prototype — customize logo text and key preview copy with changes saved to local storage',
+  'Toggle prototype sections — dedicated panel to show or hide layout parts per archetype',
+  'Resizing preview overlay — brief “Resizing Preview” state while device frames animate',
   'Favorite layout quick-select below the preview with customizable chips (up to 8)',
   '17 curated presets with mood, industry, and mode filters plus saved library',
   '24 live mockup archetypes — marketing, dashboard, kanban, email, mobile app, calendar, and more',
@@ -66,6 +69,25 @@ export const BUILD_FEATURES = [
 ];
 
 export const BUILD_CHANGELOG = [
+  {
+    version: '1.0.2',
+    label: 'Edit prototype copy & preview sections',
+    date: '2026-07-08',
+    summary: [
+      'Live preview text is now editable from the sidebar — logo, hero copy, waitlist headlines, and more update in real time.',
+      'Preview options split into Edit prototype and Toggle prototype sections for clearer workflows.',
+      'A resizing overlay appears briefly when switching device frames or layouts while the preview animates.',
+    ],
+    changes: [
+      'Edit prototype panel — logo text plus grouped copy fields for marketing, waitlist, and 404 layouts',
+      'Preview copy overrides persisted in local storage and merged with default mockup copy',
+      'Toggle prototype sections panel — per-archetype section visibility separated from content editing',
+      'Sidebar Live Prototypes group — Edit prototype and Toggle prototype sections replace the single Options item',
+      'Keyboard shortcuts — Alt+5 opens Edit prototype; Alt+0 opens Toggle prototype sections',
+      'Resizing preview overlay — “Resizing Preview” message while desktop, tablet, or mobile frames transition',
+      'Product tour and build info updated for the new preview panels and resize feedback',
+    ],
+  },
   {
     version: '1.0.1',
     label: 'Inspector All & Dock modes',
@@ -186,10 +208,12 @@ export const BUILD_CHANGELOG = [
 ];
 
 export const BUILD_NOTES = [
+  'Open Edit prototype under Live Prototypes to change logo text and key preview copy — saved automatically.',
+  'Use Toggle prototype sections to show or hide navbar, hero, charts, and other parts per layout.',
   'Press I or click Inspect in the preview bar to turn on the style inspector — click any dot to read styles and copy CSS.',
   'Use All to float every inspect panel on the preview, or Dock to move them into the right sidebar as collapsed accordions.',
   'Search layouts from the sidebar or Preview → Layouts to jump to an archetype without expanding every group.',
-  'Sidebar groups: Workspace (presets), Customize (colors & fonts), Preview (layouts & options).',
+  'Sidebar groups: Workspace (presets), Customize (colors & fonts), Live Prototypes (layouts, edit copy, toggle sections).',
   'When collapsed, use the Customize and Layouts icons — they open flyout menus to the right.',
   'Expand Layouts to browse Groups 1–4 — marketing through niche surfaces.',
   'Pin favorite layouts in the chip bar below the preview via the slider customize button.',

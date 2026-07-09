@@ -13,6 +13,8 @@ import { ARCHETYPE_PARTS, PREVIEW_ARCHETYPES, getAvailableArchetypeGroups, getAr
 import { getArchetypeBadge, getArchetypeGroupBadge } from '../../data/archetypeNav';
 import LayoutSearchField from '../LayoutSearchField/LayoutSearchField';
 import { searchLayouts } from '../../utils/layoutSearch';
+import { getPreviewCopyFieldsForArchetype, groupPreviewCopyFields } from '../../data/previewCopyFields';
+import { getPreviewCopyValue } from '../../utils/previewCopyUtils';
 import './OptionsPanel.scss';
 
 const PANEL_TITLES = {
@@ -20,7 +22,8 @@ const PANEL_TITLES = {
   saved: 'My saved combos',
   colors: 'Colors Palette Visualizer',
   fonts: 'Fonts Visualizer',
-  'preview-settings': 'Prototype Settings',
+  'preview-edit': 'Edit prototype',
+  'preview-sections': 'Toggle prototype sections',
   archetypes: 'Prototype Library',
   info: 'Color & Contrast Info',
   'build-info': 'Build Info',
@@ -28,17 +31,84 @@ const PANEL_TITLES = {
   help: 'Help',
 };
 
-function PreviewSettingsContent({
+function PreviewContentEditor({
+  archetype,
+  previewCopyOverrides,
+  onPreviewCopyChange,
+  onResetPreviewCopy,
+}) {
+  const fields = getPreviewCopyFieldsForArchetype(archetype);
+  const groupedFields = useMemo(() => groupPreviewCopyFields(fields), [fields]);
+  const hasOverrides = Boolean(previewCopyOverrides?.[archetype]);
+
+  if (fields.length === 0) {
+    return (
+      <p className="options-panel__section-hint">
+        Content editing is not available for this layout yet.
+      </p>
+    );
+  }
+
+  return (
+    <div className="options-panel__content-editor">
+      <p className="options-panel__section-hint">
+        Edit text shown in the live preview. Changes are saved automatically.
+      </p>
+
+      {groupedFields.map((group) => (
+        <div key={group.label} className="options-panel__content-group">
+          <h4 className="options-panel__content-group-title">{group.label}</h4>
+          {group.fields.map((field) => {
+            const value = getPreviewCopyValue(previewCopyOverrides, archetype, field.path) ?? '';
+            const inputId = `preview-copy-${archetype}-${field.path.replace(/\./g, '-')}`;
+
+            return (
+              <label key={field.path} className="options-panel__field" htmlFor={inputId}>
+                <span className="options-panel__field-label">{field.label}</span>
+                {field.multiline ? (
+                  <textarea
+                    id={inputId}
+                    className="options-panel__textarea"
+                    value={value}
+                    onChange={(e) => onPreviewCopyChange(archetype, field.path, e.target.value)}
+                    rows={3}
+                  />
+                ) : (
+                  <input
+                    id={inputId}
+                    type="text"
+                    className="options-panel__input"
+                    value={value}
+                    onChange={(e) => onPreviewCopyChange(archetype, field.path, e.target.value)}
+                  />
+                )}
+              </label>
+            );
+          })}
+        </div>
+      ))}
+
+      {hasOverrides && (
+        <button
+          type="button"
+          className="options-panel__reset-content"
+          onClick={() => onResetPreviewCopy(archetype)}
+        >
+          Reset content to defaults
+        </button>
+      )}
+    </div>
+  );
+}
+
+function PreviewEditContent({
   previewLogoText,
   onPreviewLogoTextChange,
   archetype,
-  archetypeParts,
-  onToggleArchetypePart,
+  previewCopyOverrides,
+  onPreviewCopyChange,
+  onResetPreviewCopy,
 }) {
-  const currentParts = ARCHETYPE_PARTS[archetype] || [];
-  const archetypeLabel = PREVIEW_ARCHETYPES.find((a) => a.id === archetype)?.label;
-  const resolvedParts = resolveArchetypeParts(archetype, archetypeParts[archetype]);
-
   return (
     <div className="options-panel__preview-settings">
       <label className="options-panel__field">
@@ -57,26 +127,51 @@ function PreviewSettingsContent({
         />
       </label>
 
-      {currentParts.length > 0 && (
-        <div className="options-panel__parts-group">
-          <h4 className="options-panel__parts-title">
-            Preview parts — {archetypeLabel}
-          </h4>
-          <p className="options-panel__section-hint">
-            Toggle sections visible in the <strong>{archetypeLabel}</strong> preview.
-          </p>
-          <div className="options-panel__toggles">
-            {currentParts.map((part) => (
-              <ComponentToggle
-                key={part.id}
-                label={part.label}
-                checked={resolvedParts[part.id]}
-                onChange={() => onToggleArchetypePart(archetype, part.id)}
-              />
-            ))}
-          </div>
-        </div>
-      )}
+      <div className="options-panel__parts-group">
+        <h4 className="options-panel__parts-title">Preview content</h4>
+        <PreviewContentEditor
+          archetype={archetype}
+          previewCopyOverrides={previewCopyOverrides}
+          onPreviewCopyChange={onPreviewCopyChange}
+          onResetPreviewCopy={onResetPreviewCopy}
+        />
+      </div>
+    </div>
+  );
+}
+
+function PreviewSectionsContent({
+  archetype,
+  archetypeParts,
+  onToggleArchetypePart,
+}) {
+  const currentParts = ARCHETYPE_PARTS[archetype] || [];
+  const archetypeLabel = PREVIEW_ARCHETYPES.find((a) => a.id === archetype)?.label;
+  const resolvedParts = resolveArchetypeParts(archetype, archetypeParts[archetype]);
+
+  if (currentParts.length === 0) {
+    return (
+      <p className="options-panel__section-hint">
+        This layout does not have toggleable sections.
+      </p>
+    );
+  }
+
+  return (
+    <div className="options-panel__preview-settings">
+      <p className="options-panel__section-hint">
+        Toggle sections visible in the <strong>{archetypeLabel}</strong> preview.
+      </p>
+      <div className="options-panel__toggles">
+        {currentParts.map((part) => (
+          <ComponentToggle
+            key={part.id}
+            label={part.label}
+            checked={resolvedParts[part.id]}
+            onChange={() => onToggleArchetypePart(archetype, part.id)}
+          />
+        ))}
+      </div>
     </div>
   );
 }
@@ -275,9 +370,16 @@ function OptionsPanel({
   onToggleArchetypePart,
   previewLogoText,
   onPreviewLogoTextChange,
+  previewCopyOverrides,
+  onPreviewCopyChange,
+  onResetPreviewCopy,
   onStartTour,
 }) {
-  const panelId = activePanel === 'preview-parts' ? 'preview-settings' : activePanel;
+  const panelId = (() => {
+    if (activePanel === 'preview-settings') return 'preview-edit';
+    if (activePanel === 'preview-parts') return 'preview-sections';
+    return activePanel;
+  })();
   const title = PANEL_TITLES[panelId] || 'Options';
 
   if (!open) {
@@ -403,12 +505,24 @@ function OptionsPanel({
           />
         );
 
-      case 'preview-settings':
+      case 'preview-edit':
         return (
           <div className="options-panel__flat-content">
-            <PreviewSettingsContent
+            <PreviewEditContent
               previewLogoText={previewLogoText}
               onPreviewLogoTextChange={onPreviewLogoTextChange}
+              archetype={archetype}
+              previewCopyOverrides={previewCopyOverrides}
+              onPreviewCopyChange={onPreviewCopyChange}
+              onResetPreviewCopy={onResetPreviewCopy}
+            />
+          </div>
+        );
+
+      case 'preview-sections':
+        return (
+          <div className="options-panel__flat-content">
+            <PreviewSectionsContent
               archetype={archetype}
               archetypeParts={archetypeParts}
               onToggleArchetypePart={onToggleArchetypePart}

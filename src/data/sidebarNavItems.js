@@ -4,8 +4,9 @@ import {
   SlidersHorizontalIcon,
   DropIcon,
   TextAaIcon,
-  GearIcon,
   LayoutIcon,
+  PencilSimpleIcon,
+  SquareSplitHorizontalIcon,
   StorefrontIcon,
   ChartPieIcon,
   TagIcon,
@@ -50,7 +51,8 @@ export const CUSTOMIZE_NAV_ITEMS = [
 ];
 
 export const PREVIEW_NAV_ITEMS = [
-  { id: 'preview-settings', label: 'Options', icon: GearIcon },
+  { id: 'preview-edit', label: 'Edit prototype', icon: PencilSimpleIcon },
+  { id: 'preview-sections', label: 'Toggle prototype sections', icon: SquareSplitHorizontalIcon },
 ];
 
 export const ARCHETYPE_NAV_META = {
@@ -120,7 +122,8 @@ export const TOP_NAV_ITEMS = [
 ];
 
 export const PROTOTYPE_NAV_ITEMS = [
-  { id: 'preview-settings', label: 'Prototype Settings', icon: GearIcon },
+  { id: 'preview-edit', label: 'Edit prototype', icon: PencilSimpleIcon },
+  { id: 'preview-sections', label: 'Toggle prototype sections', icon: SquareSplitHorizontalIcon },
   { id: 'archetypes', label: 'Layouts Library', icon: LayoutIcon },
 ];
 
@@ -140,12 +143,15 @@ export const NAV_PANEL_IDS = [
   'saved',
   'colors',
   'fonts',
-  'preview-settings',
+  'preview-edit',
+  'preview-sections',
   'archetypes',
   'info',
   'help',
   'build-info',
   'feature-catalog',
+  // Legacy ids kept for stored panel migration
+  'preview-settings',
   'preview-parts',
 ];
 
@@ -160,7 +166,8 @@ export function resolvePanelId(navId) {
 export function readStoredActivePanel() {
   try {
     const stored = localStorage.getItem(ACTIVE_PANEL_STORAGE_KEY);
-    if (stored === 'preview-parts') return 'preview-settings';
+    if (stored === 'preview-settings') return 'preview-edit';
+    if (stored === 'preview-parts') return 'preview-sections';
     if (stored && NAV_PANEL_ID_SET.has(stored)) return stored;
   } catch {
     // ignore
@@ -243,7 +250,8 @@ export function storePreviewMode(mode) {
 
 export function isPreviewPanelActive(activePanel, panelOpen) {
   return panelOpen && (
-    activePanel === 'preview-settings'
+    activePanel === 'preview-edit'
+    || activePanel === 'preview-sections'
     || activePanel === 'archetypes'
   );
 }

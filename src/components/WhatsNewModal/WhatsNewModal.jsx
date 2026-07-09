@@ -1,14 +1,24 @@
-import { useEffect, useId, useRef } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { ArrowRightIcon, SparkleIcon, XIcon } from '@phosphor-icons/react';
 import { APP_VERSION, CHANGELOG_PATH, WHATS_NEW_HIGHLIGHTS } from '../../data/buildInfo';
 import Icon from '../Icon/Icon';
 import { ICON_SIZE_SM } from '../Icon/iconConfig';
 import './WhatsNewModal.scss';
 
+const WHATS_NEW_IMAGES = [
+  '/announcements/new-feat.jpg',
+  '/announcements/new-feat-2.png',
+];
+
+function pickRandomWhatsNewImage() {
+  return WHATS_NEW_IMAGES[Math.floor(Math.random() * WHATS_NEW_IMAGES.length)];
+}
+
 function WhatsNewModal({ onClose, onViewChangelog }) {
   const titleId = useId();
   const descId = useId();
   const dialogRef = useRef(null);
+  const [heroImage] = useState(pickRandomWhatsNewImage);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -45,10 +55,8 @@ function WhatsNewModal({ onClose, onViewChangelog }) {
           <div className="whats-new-modal__illustration" aria-hidden="true">
             <img
               className="whats-new-modal__image"
-              src="/new-feat.jpg"
+              src={heroImage}
               alt=""
-              width={320}
-              height={480}
               decoding="async"
             />
           </div>

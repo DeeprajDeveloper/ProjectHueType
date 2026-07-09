@@ -1,8 +1,7 @@
 import { MOCKUP_COPY } from '../../data/mockupCopy';
 import './MockupError404.scss';
 
-function MockupError404({ parts = {} }) {
-  const copy = MOCKUP_COPY.error404;
+function MockupError404({ parts = {}, copy = MOCKUP_COPY.error404 }) {
   const show = (id) => parts[id] !== false;
 
   return (

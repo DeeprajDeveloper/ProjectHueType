@@ -6,9 +6,16 @@ import MockupTestimonials from './MockupTestimonials';
 import MockupContactForm from './MockupContactForm';
 import MockupFooter from './MockupFooter';
 import MockupAuthModal from './MockupAuthModal';
+import { MOCKUP_COPY } from '../../data/mockupCopy';
 import './MockupMarketing.scss';
 
-function MockupMarketing({ previewMode = 'desktop', parts = {}, logoText = 'Acme Co.', onFrameScrollLock }) {
+function MockupMarketing({
+  previewMode = 'desktop',
+  parts = {},
+  logoText = 'Acme Co.',
+  copy = MOCKUP_COPY.marketing,
+  onFrameScrollLock,
+}) {
   const [authOpen, setAuthOpen] = useState(false);
   const [authMode, setAuthMode] = useState('login');
   const show = (id) => parts[id] !== false;
@@ -27,14 +34,19 @@ function MockupMarketing({ previewMode = 'desktop', parts = {}, logoText = 'Acme
   return (
     <div className="mockup-marketing">
       {show('navbar') && (
-        <MockupNavbar compactNav={previewMode === 'mobile'} onOpenAuth={openAuth} logoText={logoText} />
+        <MockupNavbar
+          compactNav={previewMode === 'mobile'}
+          onOpenAuth={openAuth}
+          logoText={logoText}
+          copy={copy.navbar}
+        />
       )}
       {show('hero') && (
-        <MockupHero onOpenAuth={() => openAuth('signup')} />
+        <MockupHero copy={copy.hero} onOpenAuth={() => openAuth('signup')} />
       )}
-      {show('featureCards') && <MockupFeatureCards />}
-      {show('testimonials') && <MockupTestimonials />}
-      {show('contactForm') && <MockupContactForm />}
+      {show('featureCards') && <MockupFeatureCards copy={copy.featureCards} />}
+      {show('testimonials') && <MockupTestimonials copy={copy.testimonials} />}
+      {show('contactForm') && <MockupContactForm copy={copy.contact} />}
       {show('footer') && <MockupFooter logoText={logoText} />}
 
       {authOpen && (

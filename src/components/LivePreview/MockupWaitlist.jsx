@@ -2,8 +2,7 @@ import { useState } from 'react';
 import { MOCKUP_COPY, DEFAULT_PREVIEW_LOGO } from '../../data/mockupCopy';
 import './MockupWaitlist.scss';
 
-function MockupWaitlist({ parts = {}, logoText = DEFAULT_PREVIEW_LOGO }) {
-  const copy = MOCKUP_COPY.waitlist;
+function MockupWaitlist({ parts = {}, logoText = DEFAULT_PREVIEW_LOGO, copy = MOCKUP_COPY.waitlist }) {
   const show = (id) => parts[id] !== false;
   const brand = logoText.trim() || copy.brand;
   const [email, setEmail] = useState('');

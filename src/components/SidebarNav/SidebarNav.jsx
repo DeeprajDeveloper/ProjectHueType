@@ -160,7 +160,11 @@ function SidebarNav({
               ? 'nav-customize'
               : item.id === 'fonts'
                 ? 'nav-fonts'
-                : undefined
+                : item.id === 'preview-edit'
+                  ? 'nav-preview-edit'
+                  : item.id === 'preview-sections'
+                    ? 'nav-preview-sections'
+                    : undefined
         }
       >
         <Icon icon={item.icon} size={ICON_SIZE_SM} active={isActive} />
