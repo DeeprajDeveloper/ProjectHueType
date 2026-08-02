@@ -294,7 +294,7 @@ export function useUiPreferences() {
   const PREVIEW_LOGO_KEY = 'huetype-preview-logo-text';
   const CHIP_BAR_KEY = 'huetype-chip-bar-archetypes';
   const VALID_ARCHETYPES = new Set(PREVIEW_ARCHETYPES.map((archetype) => archetype.id));
-  const DEFAULT_PREVIEW_LOGO = 'Acme Co.';
+  const DEFAULT_PREVIEW_LOGO = 'HueType Co.';
   const MAX_CHIP_BAR = 8;
 
   const readChipBarArchetypeIds = () => {

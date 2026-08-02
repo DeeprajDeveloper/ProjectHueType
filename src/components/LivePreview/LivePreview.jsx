@@ -4,8 +4,10 @@ import {
   CaretRightIcon,
   DeviceRotateIcon,
   EyeIcon,
-  ShuffleIcon,
   EyeSlashIcon,
+  ShuffleIcon,
+  SidebarSimpleIcon,
+  SquaresFourIcon,
 } from '@phosphor-icons/react';
 import ContrastBadge from '../ContrastBadge/ContrastBadge';
 import Icon from '../Icon/Icon';
@@ -184,6 +186,8 @@ function LivePreview({
   lockedCount = 0,
   isCompact = false,
   onShowToast,
+  dockPortalEl = null,
+  onInspectorDockActiveChange,
 }) {
   const breakpoint = useBreakpoint();
   const isMobileView = breakpoint === 'mobile';
@@ -199,6 +203,8 @@ function LivePreview({
   const previewEmpty = isArchetypePreviewEmpty(archetype, activeParts);
   const [frameScrollLocked, setFrameScrollLocked] = useState(false);
   const [inspectorOpen, setInspectorOpen] = useState(false);
+  const [inspectorShowAll, setInspectorShowAll] = useState(false);
+  const [inspectorDocked, setInspectorDocked] = useState(false);
   const frameWrapRef = useRef(null);
   const frameRef = useRef(null);
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
@@ -226,11 +232,43 @@ function LivePreview({
   useEffect(() => {
     setFrameScrollLocked(false);
     setInspectorOpen(false);
-  }, [archetype]);
+    setInspectorShowAll(false);
+    setInspectorDocked(false);
+    onInspectorDockActiveChange?.(false);
+  }, [archetype, onInspectorDockActiveChange]);
 
   const toggleInspector = useCallback(() => {
-    setInspectorOpen((open) => !open);
-  }, []);
+    setInspectorOpen((open) => {
+      if (open) {
+        setInspectorShowAll(false);
+        setInspectorDocked(false);
+        onInspectorDockActiveChange?.(false);
+      }
+      return !open;
+    });
+  }, [onInspectorDockActiveChange]);
+
+  const toggleInspectorShowAll = useCallback(() => {
+    setInspectorShowAll((showAll) => {
+      const next = !showAll;
+      if (next) {
+        setInspectorDocked(false);
+        onInspectorDockActiveChange?.(false);
+      }
+      return next;
+    });
+  }, [onInspectorDockActiveChange]);
+
+  const toggleInspectorDock = useCallback(() => {
+    setInspectorDocked((docked) => {
+      const next = !docked;
+      if (next) {
+        setInspectorShowAll(false);
+      }
+      onInspectorDockActiveChange?.(next);
+      return next;
+    });
+  }, [onInspectorDockActiveChange]);
 
   useEffect(() => {
     const handler = (event) => {
@@ -378,20 +416,48 @@ function LivePreview({
               <Icon icon={CaretRightIcon} size={ICON_SIZE_SM} weight="bold" />
             </span>
           </button>
-          <button
-            type="button"
-            className={`live-preview__inspect ${inspectorOpen ? 'live-preview__inspect--active' : ''}`}
-            data-tour="inspect"
-            onClick={toggleInspector}
-            aria-pressed={inspectorOpen}
-            aria-label={inspectorOpen ? 'Turn off style inspector' : 'Turn on style inspector'}
-            title="Inspect element styles (I)"
-          >
-            {!inspectorOpen ? 
-            <Icon icon={EyeSlashIcon} size={ICON_SIZE_SM} weight="fill" /> : <Icon icon={EyeIcon} size={ICON_SIZE_SM} weight="fill" />}
-            
-            <span className="live-preview__inspect-label">Inspect</span>
-          </button>
+          <div className="live-preview__inspect-group">
+            <button
+              type="button"
+              className={`live-preview__inspect ${inspectorOpen ? 'live-preview__inspect--active' : ''}`}
+              data-tour="inspect"
+              onClick={toggleInspector}
+              aria-pressed={inspectorOpen}
+              aria-label={inspectorOpen ? 'Turn off style inspector' : 'Turn on style inspector'}
+              title="Inspect element styles (I)"
+            >
+              {!inspectorOpen
+                ? <Icon icon={EyeSlashIcon} size={ICON_SIZE_SM} weight="fill" />
+                : <Icon icon={EyeIcon} size={ICON_SIZE_SM} weight="fill" />}
+              <span className="live-preview__inspect-label">Inspect</span>
+            </button>
+            {inspectorOpen && (
+              <>
+                <button
+                  type="button"
+                  className={`live-preview__inspect-all ${inspectorShowAll ? 'live-preview__inspect-all--active' : ''}`}
+                  onClick={toggleInspectorShowAll}
+                  aria-pressed={inspectorShowAll}
+                  aria-label={inspectorShowAll ? 'Show one inspector panel at a time' : 'Show all inspector panels'}
+                  title="Show all element panels on the right"
+                >
+                  <Icon icon={SquaresFourIcon} size={ICON_SIZE_SM} weight={inspectorShowAll ? 'fill' : 'regular'} />
+                  <span className="live-preview__inspect-label">All</span>
+                </button>
+                <button
+                  type="button"
+                  className={`live-preview__inspect-dock ${inspectorDocked ? 'live-preview__inspect-dock--active' : ''}`}
+                  onClick={toggleInspectorDock}
+                  aria-pressed={inspectorDocked}
+                  aria-label={inspectorDocked ? 'Undock inspector from side panel' : 'Dock inspector to side panel'}
+                  title="Dock all elements to the right side panel"
+                >
+                  <Icon icon={SidebarSimpleIcon} size={ICON_SIZE_SM} weight={inspectorDocked ? 'fill' : 'regular'} />
+                  <span className="live-preview__inspect-label">Dock</span>
+                </button>
+              </>
+            )}
+          </div>
           {isTablet && (
             <button
               type="button"
@@ -476,6 +542,9 @@ function LivePreview({
               parts={activeParts}
               paletteColors={combo.colors}
               previewMode={previewMode}
+              showAllPopovers={inspectorShowAll}
+              dockPopovers={inspectorDocked}
+              dockPortalEl={dockPortalEl}
               onShowToast={onShowToast}
               onColorChange={onColorChange}
             />

@@ -435,3 +435,58 @@ export function getConnectorPoints(dotPoint, popupRect) {
     y2: popupCenterY,
   };
 }
+
+export function getConnectorPointsToLeftEdge(dotPoint, popupRect) {
+  return {
+    x1: dotPoint.x,
+    y1: dotPoint.y,
+    x2: popupRect.left,
+    y2: popupRect.top + popupRect.height / 2,
+  };
+}
+
+/**
+ * Stack popover panels along the right edge of the preview frame.
+ * Items: { inspectId, dotY, height? }
+ */
+export function layoutPopoversOnRight(items, frameSize, options = {}) {
+  const {
+    popupWidth = 200,
+    margin = 8,
+    gap = 6,
+    defaultHeight = 132,
+  } = options;
+
+  if (!items.length) return [];
+
+  const left = Math.max(margin, frameSize.width - popupWidth - margin);
+  const sorted = [...items].sort((a, b) => a.dotY - b.dotY);
+  const placements = [];
+  let cursor = margin;
+
+  sorted.forEach((item) => {
+    const height = item.height ?? defaultHeight;
+    let top = item.dotY - height / 2;
+    top = Math.max(top, cursor);
+    top = Math.max(margin, Math.min(top, frameSize.height - height - margin));
+    placements.push({
+      inspectId: item.inspectId,
+      dotY: item.dotY,
+      top,
+      left,
+      width: popupWidth,
+      height,
+    });
+    cursor = top + height + gap;
+  });
+
+  const last = placements[placements.length - 1];
+  const overflow = last.top + last.height + margin - frameSize.height;
+  if (overflow > 0) {
+    placements.forEach((placement) => {
+      placement.top = Math.max(margin, placement.top - overflow);
+    });
+  }
+
+  return placements;
+}

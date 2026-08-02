@@ -124,6 +124,16 @@
   line-height: 1;
 }
 
+.live-preview__inspect-group {
+  display: inline-flex;
+  align-items: stretch;
+  flex-shrink: 0;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--surface-base);
+}
+
 .live-preview__inspect {
   @include button-reset;
   display: inline-flex;
@@ -134,9 +144,9 @@
   font-size: 11px;
   font-weight: 600;
   color: var(--text-secondary);
-  background: var(--surface-base);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
+  background: transparent;
+  border: 0;
+  border-radius: 0;
   flex-shrink: 0;
   transition:
     background var(--transition-fast),
@@ -151,11 +161,9 @@
   &--active {
     color: var(--accent-contrast);
     background: var(--accent);
-    border-color: var(--accent);
 
     &:hover {
       background: var(--accent-hover);
-      border-color: var(--accent-hover);
       color: var(--accent-contrast);
     }
   }
@@ -163,6 +171,89 @@
   &:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
+    z-index: 1;
+  }
+}
+
+.live-preview__inspect-all {
+  @include button-reset;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 32px;
+  padding: 0 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 0;
+  border-left: 1px solid var(--border-subtle);
+  border-radius: 0;
+  flex-shrink: 0;
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast);
+
+  &:hover {
+    background: var(--surface-sunken);
+    color: var(--text-primary);
+  }
+
+  &--active {
+    color: var(--accent-contrast);
+    background: var(--accent);
+
+    &:hover {
+      background: var(--accent-hover);
+      color: var(--accent-contrast);
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    z-index: 1;
+  }
+}
+
+.live-preview__inspect-dock {
+  @include button-reset;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 32px;
+  padding: 0 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 0;
+  border-left: 1px solid var(--border-subtle);
+  border-radius: 0;
+  flex-shrink: 0;
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast);
+
+  &:hover {
+    background: var(--surface-sunken);
+    color: var(--text-primary);
+  }
+
+  &--active {
+    color: var(--accent-contrast);
+    background: var(--accent);
+
+    &:hover {
+      background: var(--accent-hover);
+      color: var(--accent-contrast);
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    z-index: 1;
   }
 }
 

@@ -71,6 +71,52 @@
   }
 }
 
+.inspector-overlay--show-all {
+  .inspector-overlay__connector-line {
+    opacity: 0.55;
+    animation: inspector-connector-march 650ms linear infinite;
+  }
+
+  .inspector-overlay__connector-line--highlighted {
+    stroke-width: 1.5;
+    opacity: 0.95;
+  }
+}
+
+.inspector-overlay--docked {
+  .inspector-overlay__connector-line {
+    opacity: 0.55;
+    animation: inspector-connector-march 650ms linear infinite;
+  }
+
+  .inspector-overlay__connector-line--highlighted {
+    stroke-width: 1.5;
+    opacity: 0.95;
+  }
+}
+
+.inspector-overlay__connector--docked {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 170;
+  pointer-events: none;
+}
+
+.inspector-overlay__popup--all {
+  z-index: 5;
+
+  &.inspector-overlay__popup--highlighted,
+  &.inspector-overlay__popup--dragging {
+    z-index: 7;
+  }
+
+  &.inspector-overlay__popup--copied .inspector-popup {
+    outline-color: #2f9e62;
+  }
+}
+
 .inspector-overlay__hint {
   position: absolute;
   top: 12px;
@@ -88,6 +134,16 @@
   border-radius: var(--radius-full);
   box-shadow: var(--shadow-md);
   pointer-events: none;
+
+  &--all {
+    max-width: calc(100% - 220px);
+    text-align: center;
+  }
+
+  &--dock {
+    max-width: calc(100% - 240px);
+    text-align: center;
+  }
 }
 
 .inspector-overlay__dot {
@@ -109,8 +165,8 @@
   &::before {
     content: '';
     display: block;
-    width: 8px;
-    height: 8px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
     background: var(--inspector-accent, var(--preview-accent));
     border: 2px solid #fff;

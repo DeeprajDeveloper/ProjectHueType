@@ -45,8 +45,8 @@ export const WORKSPACE_NAV_ITEMS = [
 ];
 
 export const CUSTOMIZE_NAV_ITEMS = [
-  { id: 'colors', label: 'Colors', icon: DropIcon },
-  { id: 'fonts', label: 'Fonts', icon: TextAaIcon },
+  { id: 'colors', label: 'Color Visualiser', icon: DropIcon },
+  { id: 'fonts', label: 'Font Visualiser', icon: TextAaIcon },
 ];
 
 export const PREVIEW_NAV_ITEMS = [
@@ -120,13 +120,13 @@ export const TOP_NAV_ITEMS = [
 ];
 
 export const PROTOTYPE_NAV_ITEMS = [
-  { id: 'preview-settings', label: 'Options', icon: GearIcon },
-  { id: 'archetypes', label: 'Layouts', icon: LayoutIcon },
+  { id: 'preview-settings', label: 'Prototype Settings', icon: GearIcon },
+  { id: 'archetypes', label: 'Layouts Library', icon: LayoutIcon },
 ];
 
 export const PROTOTYPE_GROUP = {
   id: 'prototypes',
-  label: 'Preview',
+  label: 'Live Prototypes',
   icon: LayoutIcon,
   children: PROTOTYPE_NAV_ITEMS,
 };

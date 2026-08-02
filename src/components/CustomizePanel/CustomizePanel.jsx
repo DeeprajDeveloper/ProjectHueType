@@ -289,7 +289,7 @@ function CustomizePanel({
   const colorsContent = (
     <>
       <div className="customize-panel__colors-chrome">
-        <div
+        {/* <div
           className={[
             'customize-panel__color-selectors-sticky',
             selectorsCompact ? 'customize-panel__color-selectors-sticky--visible' : '',
@@ -310,7 +310,7 @@ function CustomizePanel({
               compact
             />
           </div>
-        </div>
+        </div> */}
 
         <div className="customize-panel__color-selectors customize-panel__color-selectors--inflow">
           <ColorSelectors
